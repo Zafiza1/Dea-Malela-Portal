@@ -24,4 +24,3 @@ yarn-error.log
 .vercelignore
 RAILWAY_DEPLOYMENT.md
 railway.toml
-vercel.json

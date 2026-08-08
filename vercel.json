@@ -1,0 +1,27 @@
+{
+  "builds": [
+    {
+      "src": "Dockerfile",
+      "use": "@vercel/docker"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ],
+  "env": {
+    "APP_NAME": "Pesantren Modern Internasional Dea Malela",
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_KEY": "",
+    "APP_URL": "",
+    "DB_CONNECTION": "mysql",
+    "DB_HOST": "",
+    "DB_PORT": "3306",
+    "DB_DATABASE": "",
+    "DB_USERNAME": "",
+    "DB_PASSWORD": ""
+  }
+}

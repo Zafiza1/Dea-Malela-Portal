@@ -5,7 +5,7 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Update .env with Vercel environment variables
+# Update .env with Render environment variables
 if [ -n "$APP_NAME" ]; then
     sed -i "s|APP_NAME=.*|APP_NAME=\"${APP_NAME}\"|g" .env
 fi
@@ -39,14 +39,23 @@ fi
 if [ -n "$DB_PASSWORD" ]; then
     sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=${DB_PASSWORD}|g" .env
 fi
+if [ -n "$CACHE_DRIVER" ]; then
+    sed -i "s|CACHE_STORE=.*|CACHE_STORE=${CACHE_DRIVER}|g" .env
+fi
+if [ -n "$SESSION_DRIVER" ]; then
+    sed -i "s|SESSION_DRIVER=.*|SESSION_DRIVER=${SESSION_DRIVER}|g" .env
+fi
+if [ -n "$QUEUE_CONNECTION" ]; then
+    sed -i "s|QUEUE_CONNECTION=.*|QUEUE_CONNECTION=${QUEUE_CONNECTION}|g" .env
+fi
 
 # Generate application key if not set
 if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
     php artisan key:generate
 fi
 
-# Run migrations (optional - comment out if you want to run manually)
-# php artisan migrate --force
+# Run migrations automatically on Render
+php artisan migrate --force
 
 # Clear and cache config
 php artisan config:cache

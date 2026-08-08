@@ -14,6 +14,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/api/health', function () {
+    return response()->json(['status' => 'ok', 'message' => 'Application is healthy']);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     

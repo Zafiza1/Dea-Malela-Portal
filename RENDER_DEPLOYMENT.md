@@ -1,9 +1,10 @@
-# Render Deployment Guide
+# Render Deployment Guide (Docker)
 
 ## Prerequisites
 - GitHub account with your project pushed
 - Render account (free tier available)
 - Understanding of PostgreSQL (Render provides built-in database)
+- Docker knowledge (optional, as Render handles this)
 
 ## Render Free Tier Limits
 
@@ -28,10 +29,11 @@
 
 #### Option A: Automatic Deployment
 1. Go to [render.com](https://render.com)
-2. Click "New +" → "Web Service"
+2. Click "New +" → "Blueprint"
 3. Connect your GitHub repository
 4. Render will detect `render.yaml` file
-5. Click "Deploy"
+5. Click "Apply Blueprint"
+6. This will create both web service and database automatically
 
 #### Option B: Manual Configuration
 If render.yaml is not detected:
@@ -39,12 +41,16 @@ If render.yaml is not detected:
 2. Connect repository: `Zafiza1/Dea-Malela-Portal`
 3. Configure settings:
    - **Name**: dea-malela-portal
-   - **Environment**: PHP
-   - **Build Command**: `composer install --no-dev --optimize-autoloader && npm install && npm run build`
-   - **Start Command**: `php artisan serve --host=0.0.0.0 --port=$PORT`
+   - **Environment**: Docker
+   - **Docker Context**: `.`
+   - **Dockerfile Path**: `./Dockerfile`
+   - **Plan**: Free
 
 ### 3. Add PostgreSQL Database
 
+**If using render.yaml**: Database is created automatically.
+
+**Manual setup**:
 1. Click "New +" → "PostgreSQL"
 2. Configure:
    - **Name**: dea-malela-db
@@ -106,7 +112,7 @@ MAIL_FROM_NAME="Pesantren Modern Internasional Dea Malela"
 
 ### 6. Build Assets
 
-Assets should build automatically during deployment. If not:
+Assets are built automatically during Docker build process. If needed:
 
 1. Open Render Shell
 2. Run: `npm run build`
@@ -127,6 +133,7 @@ APP_URL=https://your-app-name.onrender.com
 
 ## Post-Deployment Checklist
 
+- [ ] Docker build completed successfully
 - [ ] Database migrations completed
 - [ ] Assets built successfully
 - [ ] Storage link created
@@ -183,14 +190,24 @@ Upgrade in web service → "Settings":
 
 ## Troubleshooting
 
-### Build Fails
-**Symptoms**: Build errors during deployment
+### Docker Build Fails
+**Symptoms**: Build errors during Docker image creation
 
 **Solutions**:
 - Check build logs in Render dashboard
-- Ensure `composer.json` and `package.json` are correct
-- Verify PHP version compatibility (Render uses PHP 8.2+)
-- Check for missing dependencies
+- Ensure Dockerfile is correct and dependencies are available
+- Verify PHP version compatibility (using PHP 8.2)
+- Check for missing extensions in Dockerfile
+- Ensure enough disk space (Docker builds can be large)
+
+### Build Timeout
+**Symptoms**: Build takes too long and times out
+
+**Solutions**:
+- This is common on free tier with Docker builds
+- Consider reducing dependencies
+- Use multi-stage builds to reduce image size
+- Upgrade to paid plan for faster builds
 
 ### Database Connection Issues
 **Symptoms**: SQLSTATE connection errors
@@ -200,14 +217,15 @@ Upgrade in web service → "Settings":
 - Check if database service is running
 - Ensure `DB_CONNECTION=pgsql` is set
 - Test connection in Render Shell: `php artisan tinker`
+- Check if Docker container can reach database
 
 ### Assets Not Loading
 **Symptoms**: 404 errors for CSS/JS files
 
 **Solutions**:
 - Run `php artisan storage:link` in Shell
-- Ensure `npm run build` completed
-- Check `public/build` directory exists
+- Ensure `npm run build` completed during Docker build
+- Check `public/build` directory exists in container
 - Clear cache: `php artisan cache:clear`
 
 ### Application Not Starting
@@ -217,13 +235,15 @@ Upgrade in web service → "Settings":
 - Check logs for specific errors
 - Verify all environment variables are set
 - Ensure `APP_KEY` is correct
-- Check if port conflicts (Render uses `$PORT`)
+- Check Docker CMD instruction is correct
+- Verify Apache is running in container
 
 ### Slow Performance
 **Symptoms**: Slow response times
 
 **Solutions**:
 - This is normal on free tier (0.1 CPU)
+- Docker adds some overhead
 - Consider upgrading to paid plan
 - Optimize database queries
 - Implement caching
@@ -235,6 +255,7 @@ Upgrade in web service → "Settings":
 - Check migration files in `database/migrations`
 - Run specific migration: `php artisan migrate:rollback`
 - Fresh install: `php artisan migrate:fresh --seed`
+- Ensure database connection is working first
 
 ## Cost Management
 
@@ -272,10 +293,32 @@ Render automatically deploys when you push to GitHub:
 - Push to other branches → Preview deployments
 - Pull requests → Preview deployments
 
+**Note**: Docker builds take longer than native builds, especially on free tier.
+
 ### Disable Auto-Deploy
 1. Go to web service → "Settings"
 2. Disable "Auto-Deploy"
 3. Deploy manually when needed
+
+## Docker-Specific Tips
+
+### Optimize Dockerfile
+- Use multi-stage builds to reduce image size
+- Layer Docker commands efficiently
+- Cache dependencies properly
+- Remove unnecessary files in final image
+
+### Reduce Build Time
+- Use Render's build cache
+- Minimize dependency changes
+- Consider using `.dockerignore`
+- Optimize npm and composer commands
+
+### Debug Docker Issues
+1. Check Render build logs
+2. Test Docker locally: `docker build -t test .`
+3. Run container locally: `docker run -p 80:80 test`
+4. Check Docker logs: `docker logs <container-id>`
 
 ## Backup & Recovery
 
@@ -337,6 +380,12 @@ Add Redis service in render.yaml if needed.
 - Use VPS (DigitalOcean, Linode)
 - $5-10/month
 - Full control over environment
+
+**Option 4: Traditional PHP Hosting**
+- Shared hosting (cPanel)
+- VPS with PHP installed
+- Direct deployment without Docker
+- Often cheaper for simple Laravel apps
 
 ## Getting Help
 

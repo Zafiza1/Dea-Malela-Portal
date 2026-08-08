@@ -21,3 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+.vercelignore
+RAILWAY_DEPLOYMENT.md
+railway.toml
+vercel.json

@@ -18,7 +18,7 @@ export default function GuruShow({ guru, auth }: any) {
                                 </h1>
                                 <div className="space-x-2">
                                     <Link
-                                        href="/guru"
+                                        href={isAdmin ? '/guru' : '/dashboard'}
                                         className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
                                     >
                                         Kembali

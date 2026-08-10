@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
+import FileUpload from '@/Components/FileUpload';
+import FilePreviewModal from '@/Components/FilePreviewModal';
 
 export default function SuratIndex({ folders, files, currentFolder, breadcrumb }: any) {
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
+    const [selectedFileForPreview, setSelectedFileForPreview] = useState<any>(null);
 
     const folderForm = useForm({
         nama: '',
@@ -21,7 +24,7 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
             onSuccess: () => {
                 folderForm.reset();
                 setShowCreateFolder(false);
-                window.location.reload();
+                router.reload();
             },
         } as any);
     };
@@ -41,30 +44,24 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
             onSuccess: () => {
                 fileForm.reset();
                 setShowUploadFile(false);
-                window.location.reload();
+                router.reload();
             },
         } as any);
     };
 
     const deleteFolder = (folderId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus folder ini?')) {
-            fetch(`/surat/folder/${folderId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-            }).then(() => window.location.reload());
+            router.delete(`/surat/folder/${folderId}`, {
+                onSuccess: () => router.reload(),
+            });
         }
     };
 
     const deleteFile = (fileId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
-            fetch(`/surat/file/${fileId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-            }).then(() => window.location.reload());
+            router.delete(`/surat/file/${fileId}`, {
+                onSuccess: () => router.reload(),
+            });
         }
     };
 
@@ -121,17 +118,16 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                             {showUploadFile && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                                     <h3 className="font-semibold mb-3">Upload File</h3>
-                                    <form onSubmit={uploadFile} className="flex space-x-2">
-                                        <input
-                                            type="file"
-                                            onChange={e => fileForm.setData('file', e.target.files?.[0] || null)}
-                                            className="flex-1 px-4 py-2 border rounded-lg"
-                                            required
+                                    <form onSubmit={uploadFile}>
+                                        <FileUpload
+                                            onFileSelect={(file) => fileForm.setData('file', file)}
+                                            disabled={fileForm.processing}
+                                            className="mb-4"
                                         />
                                         <button
                                             type="submit"
                                             disabled={fileForm.processing}
-                                            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                                            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
                                         >
                                             {fileForm.processing ? 'Mengupload...' : 'Upload'}
                                         </button>
@@ -204,6 +200,12 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                                         </div>
                                                     </div>
                                                     <div className="flex space-x-2">
+                                                        <button
+                                                            onClick={() => setSelectedFileForPreview(file)}
+                                                            className="text-green-600 hover:text-green-800"
+                                                        >
+                                                            Preview
+                                                        </button>
                                                         <a
                                                             href={`/surat/file/${file.id}/download`}
                                                             className="text-blue-600 hover:text-blue-800"
@@ -227,6 +229,15 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                     </div>
                 </div>
             </div>
+
+            {/* File Preview Modal */}
+            {selectedFileForPreview && (
+                <FilePreviewModal
+                    isOpen={!!selectedFileForPreview}
+                    onClose={() => setSelectedFileForPreview(null)}
+                    file={selectedFileForPreview}
+                />
+            )}
         </>
     );
 }

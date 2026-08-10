@@ -8,6 +8,7 @@ import {
     Upload,
     Calendar
 } from 'lucide-react';
+import PageTransition, { StaggerContainer, StaggerItem } from '@/Components/PageTransition';
 
 interface DashboardProps {
     stats: {
@@ -128,51 +129,57 @@ export default function Dashboard({ stats, recentDocuments, auth }: DashboardPro
         <DashboardLayout header="Dashboard">
             <Head title="Dashboard - Pesantren Modern Internasional Dea Malela" />
 
-            <div className="space-y-6">
-                {/* Welcome Section */}
-                <div className="bg-gradient-to-r from-green-700 via-green-600 to-yellow-400 rounded-2xl p-6 text-white shadow-lg">
-                    <h1 className="text-2xl font-bold mb-2">
-                        {isAdmin ? 'Dashboard Admin' : 'Dashboard Guru'}
-                    </h1>
-                    <p className="text-green-100">
-                        {isAdmin 
-                            ? 'Selamat datang, Admin. Kelola data guru, santri, dan dokumen surat menyurat.'
-                            : `Selamat datang, ${auth.user.name}. Kelola profil dan dokumen surat menyurat.`
-                        }
-                    </p>
-                </div>
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {statCards.map((stat) => (
-                        <div key={stat.title} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                                    <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                                </div>
-                                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
-                                    <stat.icon className="w-6 h-6 text-white" />
-                                </div>
-                            </div>
+            <PageTransition>
+                <StaggerContainer className="space-y-6">
+                    {/* Welcome Section */}
+                    <StaggerItem>
+                        <div className="bg-gradient-to-r from-green-700 via-green-600 to-yellow-400 rounded-2xl p-6 text-white shadow-lg">
+                            <h1 className="text-2xl font-bold mb-2">
+                                {isAdmin ? 'Dashboard Admin' : 'Dashboard Guru'}
+                            </h1>
+                            <p className="text-green-100">
+                                {isAdmin 
+                                    ? 'Selamat datang, Admin. Kelola data guru, santri, dan dokumen surat menyurat.'
+                                    : `Selamat datang, ${auth.user.name}. Kelola profil dan dokumen surat menyurat.`
+                                }
+                            </p>
                         </div>
-                    ))}
-                </div>
+                    </StaggerItem>
 
-                {/* Recent Documents */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                            <FileText className="w-5 h-5 mr-2 text-green-600" />
-                            {isAdmin ? 'Dokumen Terbaru' : 'Dokumen Terbaru Anda'}
-                        </h2>
-                        <a
-                            href="/surat"
-                            className="text-sm text-green-600 hover:text-green-700 font-medium"
-                        >
-                            Lihat Semua
-                        </a>
-                    </div>
+                    {/* Stats Grid */}
+                    <StaggerItem>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {statCards.map((stat) => (
+                                <div key={stat.title} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-default">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                                            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                                        </div>
+                                        <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md hover:scale-110 transition-transform duration-300`}>
+                                            <stat.icon className="w-6 h-6 text-white" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </StaggerItem>
+
+                    {/* Recent Documents */}
+                    <StaggerItem>
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                                    <FileText className="w-5 h-5 mr-2 text-green-600" />
+                                    {isAdmin ? 'Dokumen Terbaru' : 'Dokumen Terbaru Anda'}
+                                </h2>
+                                <a
+                                    href="/surat"
+                                    className="text-sm text-green-600 hover:text-green-700 font-medium"
+                                >
+                                    Lihat Semua
+                                </a>
+                            </div>
 
                     {recentDocuments.length > 0 ? (
                         <div className="space-y-3">
@@ -210,105 +217,91 @@ export default function Dashboard({ stats, recentDocuments, auth }: DashboardPro
                             <p>Belum ada dokumen yang diupload</p>
                         </div>
                     )}
-                </div>
+                        </div>
+                    </StaggerItem>
 
-                {/* Quick Actions */}
-                {isAdmin ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <a
-                            href="/guru"
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-green-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                                    <Users className="w-6 h-6 text-green-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Kelola Guru</h3>
-                                    <p className="text-sm text-gray-500">Manajemen data pendidik</p>
-                                </div>
-                            </div>
-                        </a>
+                    {/* Quick Actions */}
+                    <StaggerItem>
+                        {isAdmin ? (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <a href="/guru" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-green-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                            <Users className="w-6 h-6 text-green-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Kelola Guru</h3>
+                                            <p className="text-sm text-gray-500">Manajemen data pendidik</p>
+                                        </div>
+                                    </div>
+                                </a>
 
-                        <a
-                            href="/santri"
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-blue-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                    <BookOpen className="w-6 h-6 text-blue-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Kelola Santri</h3>
-                                    <p className="text-sm text-gray-500">Manajemen data santri</p>
-                                </div>
-                            </div>
-                        </a>
+                                <a href="/santri" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-blue-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                            <BookOpen className="w-6 h-6 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Kelola Santri</h3>
+                                            <p className="text-sm text-gray-500">Manajemen data santri</p>
+                                        </div>
+                                    </div>
+                                </a>
 
-                        <a
-                            href="/surat"
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-purple-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                    <FileText className="w-6 h-6 text-purple-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Surat Menyurat</h3>
-                                    <p className="text-sm text-gray-500">Manajemen dokumen</p>
-                                </div>
+                                <a href="/surat" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-purple-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                            <FileText className="w-6 h-6 text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Surat Menyurat</h3>
+                                            <p className="text-sm text-gray-500">Manajemen dokumen</p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <a
-                            href={`/guru/${auth.user.guru?.id}`}
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-green-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                                    <Users className="w-6 h-6 text-green-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Profil Saya</h3>
-                                    <p className="text-sm text-gray-500">Kelola profil & dokumen</p>
-                                </div>
-                            </div>
-                        </a>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <a href={`/guru/${auth.user.guru?.id}`} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-green-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                            <Users className="w-6 h-6 text-green-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Profil Saya</h3>
+                                            <p className="text-sm text-gray-500">Kelola profil & dokumen</p>
+                                        </div>
+                                    </div>
+                                </a>
 
-                        <a
-                            href="/surat"
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-purple-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                    <FileText className="w-6 h-6 text-purple-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Surat Menyurat</h3>
-                                    <p className="text-sm text-gray-500">Buat folder & upload surat</p>
-                                </div>
-                            </div>
-                        </a>
+                                <a href="/surat" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-purple-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                            <FileText className="w-6 h-6 text-purple-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Surat Menyurat</h3>
+                                            <p className="text-sm text-gray-500">Buat folder & upload surat</p>
+                                        </div>
+                                    </div>
+                                </a>
 
-                        <a
-                            href="/santri"
-                            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-blue-300 group"
-                        >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                                    <BookOpen className="w-6 h-6 text-blue-600" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-900">Data Santri</h3>
-                                    <p className="text-sm text-gray-500">Lihat foto & biodata santri</p>
-                                </div>
+                                <a href="/santri" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all hover:border-blue-300 group">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                                            <BookOpen className="w-6 h-6 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">Data Santri</h3>
+                                            <p className="text-sm text-gray-500">Lihat foto & biodata santri</p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
-                )}
-            </div>
+                        )}
+                    </StaggerItem>
+                </StaggerContainer>
+            </PageTransition>
         </DashboardLayout>
     );
 }

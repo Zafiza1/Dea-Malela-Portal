@@ -13,7 +13,7 @@ class GuruPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('guru');
+        return $user->hasRole('admin');
     }
 
     /**

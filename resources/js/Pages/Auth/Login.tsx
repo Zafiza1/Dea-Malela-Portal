@@ -1,11 +1,10 @@
 import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { BookOpen } from 'lucide-react';
+import { FormField, validationSchemas } from '@/Components/Form';
+import { useState } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -18,6 +17,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         password: '',
         remember: false,
     });
+
+    const [touched, setTouched] = useState({ username: false, password: false });
+
+    const handleFieldChange = (name: string, value: string) => {
+        setData(name as any, value);
+        setTouched(prev => ({ ...prev, [name]: true }));
+    };
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,40 +57,35 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         )}
 
                         <form onSubmit={submit} className="space-y-6">
-                            <div>
-                                <InputLabel htmlFor="username" className="text-gray-700 font-medium">
-                                    Username
-                                </InputLabel>
+                            <FormField
+                                name="username"
+                                label="Username"
+                                type="text"
+                                value={data.username}
+                                onChange={handleFieldChange}
+                                validation={validationSchemas.username}
+                                error={errors.username}
+                                touched={touched.username}
+                                placeholder="Masukkan username"
+                                className="mb-4"
+                            />
 
-                                <TextInput
-                                    type="text"
-                                    name="username"
-                                    value={data.username}
-                                    className="mt-1 block w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                    autoComplete="username"
-                                    isFocused={true}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('username', e.target.value)}
-                                />
-
-                                <InputError message={errors.username} className="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel htmlFor="password" className="text-gray-700 font-medium">
-                                    Password
-                                </InputLabel>
-
-                                <TextInput
-                                    type="password"
-                                    name="password"
-                                    value={data.password}
-                                    className="mt-1 block w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                                    autoComplete="current-password"
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('password', e.target.value)}
-                                />
-
-                                <InputError message={errors.password} className="mt-2" />
-                            </div>
+                            <FormField
+                                name="password"
+                                label="Password"
+                                type="password"
+                                value={data.password}
+                                onChange={handleFieldChange}
+                                validation={{
+                                    required: true,
+                                    minLength: 6,
+                                    message: 'Password minimal 6 karakter',
+                                }}
+                                error={errors.password}
+                                touched={touched.password}
+                                placeholder="Masukkan password"
+                                className="mb-4"
+                            />
 
                             <div className="flex items-center justify-between">
                                 <label className="flex items-center">

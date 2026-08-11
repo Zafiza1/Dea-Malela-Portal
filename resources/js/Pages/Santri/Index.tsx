@@ -1,5 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DataTable from '@/Components/DataTable';
+import { ArrowLeft } from 'lucide-react';
 
 export default function SantriIndex({ santri, auth }: any) {
     const isAdmin = auth.user.roles?.some((r: any) => r.name === 'admin');
@@ -70,18 +71,27 @@ export default function SantriIndex({ santri, auth }: any) {
     return (
         <>
             <Head title="Data Santri" />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold">
-                            {isAdmin ? 'Data Santri' : 'Data Santri (View Only)'}
-                        </h1>
+            <div className="py-6 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
+                            <Link
+                                href="/dashboard"
+                                className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                                <span className="font-medium">Kembali</span>
+                            </Link>
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                                {isAdmin ? 'Data Santri' : 'Data Santri (View Only)'}
+                            </h1>
+                        </div>
                         {isAdmin && (
                             <Link
                                 href="/santri/create"
-                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md w-full sm:w-auto justify-center"
                             >
-                                Tambah Santri
+                                <span className="font-medium">Tambah Santri</span>
                             </Link>
                         )}
                     </div>

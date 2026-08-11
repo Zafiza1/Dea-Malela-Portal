@@ -29,7 +29,7 @@ interface NavigationItem {
 export default function DashboardLayout({ header, children }: DashboardLayoutProps) {
     const page = usePage();
     const user = (page.props as any).auth.user as any;
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const { theme, toggleTheme } = useTheme();
 
     const isAdmin = user.roles?.some((r: any) => r.name === 'admin');
@@ -42,11 +42,19 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
             { name: 'Data Santri', href: '/santri', icon: BookOpen },
         ] : []),
         ...(isGuru ? [
-            { name: 'Profil Saya', href: `/guru/${user.guru?.id}`, icon: Users },
+            { 
+                name: 'Profil Saya', 
+                href: user.guru?.id ? `/guru/${user.guru.id}` : '/profile', 
+                icon: Users 
+            },
             { name: 'Data Santri', href: '/santri', icon: BookOpen },
         ] : []),
         { name: 'Surat Menyurat', href: '/surat', icon: FileText },
         ...(isAdmin ? [{ name: 'User Management', href: '/user', icon: Settings }] : []),
+        // Fallback untuk memastikan minimal menu selalu tampil
+        ...((!isAdmin && !isGuru) ? [
+            { name: 'Profile', href: '/profile', icon: Users },
+        ] : []),
     ];
 
     return (
@@ -68,14 +76,16 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
             )}
 
             {/* Sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-green-800 to-green-900 dark:from-gray-800 dark:to-gray-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-green-800 to-green-900 dark:from-gray-800 dark:to-gray-900 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="flex items-center justify-center h-16 px-4 border-b border-green-700">
                         <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                                <BookOpen className="w-5 h-5 text-green-700" />
-                            </div>
+                            <img
+                                src="/images/logo.png"
+                                alt="Dea Malela Logo"
+                                className="w-10 h-10 object-contain"
+                            />
                             <span className="text-white font-bold text-lg">Dea Malela</span>
                         </div>
                     </div>
@@ -139,7 +149,7 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
                 <div className="sticky top-0 z-30 flex items-center h-16 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="lg:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="p-2 rounded-md text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                         aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
                         aria-expanded={sidebarOpen}
                     >

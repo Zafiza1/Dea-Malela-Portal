@@ -1,17 +1,14 @@
 import Checkbox from '@/Components/Checkbox';
 import PrimaryButton from '@/Components/PrimaryButton';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { BookOpen } from 'lucide-react';
+import { Head, useForm } from '@inertiajs/react';
 import { FormField, validationSchemas } from '@/Components/Form';
 import { useState } from 'react';
 
 interface LoginProps {
     status?: string;
-    canResetPassword?: boolean;
 }
 
-export default function Login({ status, canResetPassword }: LoginProps) {
+export default function Login({ status }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
         username: '',
         password: '',
@@ -34,20 +31,22 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <GuestLayout>
+        <>
             <Head title="Login - Pesantren Modern Internasional Dea Malela" />
 
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-700 via-green-600 to-yellow-400 px-4">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-700 via-green-600 to-yellow-400 px-4 sm:px-6">
                 <div className="w-full max-w-md">
-                    <div className="bg-white rounded-2xl shadow-2xl p-8 backdrop-blur-sm bg-opacity-95">
-                        <div className="flex flex-col items-center mb-8">
-                            <div className="w-20 h-20 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                                <BookOpen className="w-10 h-10 text-white" />
-                            </div>
-                            <h1 className="text-2xl font-bold text-gray-800 text-center">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 backdrop-blur-sm bg-opacity-95">
+                        <div className="flex flex-col items-center mb-6 sm:mb-8">
+                            <img
+                                src="/images/logo.png"
+                                alt="Dea Malela Logo"
+                                className="w-20 h-20 sm:w-24 sm:h-24 object-contain mb-3 sm:mb-4"
+                            />
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">
                                 Pesantren Modern Internasional
                             </h1>
-                            <p className="text-gray-600 text-center mt-1">Dea Malela</p>
+                            <p className="text-gray-600 text-center mt-1 text-sm sm:text-base">Dea Malela</p>
                         </div>
 
                         {status && (
@@ -56,7 +55,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             </div>
                         )}
 
-                        <form onSubmit={submit} className="space-y-6">
+                        <form onSubmit={submit} className="space-y-4 sm:space-y-6">
                             <FormField
                                 name="username"
                                 label="Username"
@@ -87,7 +86,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 className="mb-4"
                             />
 
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center">
                                 <label className="flex items-center">
                                     <Checkbox
                                         name="remember"
@@ -101,15 +100,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                         Ingat saya
                                     </span>
                                 </label>
-
-                                {canResetPassword && (
-                                    <Link
-                                        href={(window as any).route('password.request')}
-                                        className="text-sm text-green-600 hover:text-green-700 font-medium"
-                                    >
-                                        Lupa password?
-                                    </Link>
-                                )}
                             </div>
 
                             <PrimaryButton 
@@ -120,12 +110,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             </PrimaryButton>
                         </form>
 
-                        <div className="mt-6 text-center text-sm text-gray-500">
-                            <p>© 2024 Pesantren Modern Internasional Dea Malela</p>
+                        <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-500">
+                            <p>© 2026 Pesantren Modern Internasional Dea Malela</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </>
     );
 }

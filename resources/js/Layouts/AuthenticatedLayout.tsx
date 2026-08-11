@@ -1,12 +1,16 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
+interface AuthenticatedLayoutProps {
+    header?: React.ReactNode;
+    children: React.ReactNode;
+}
+
+export default function AuthenticatedLayout({ header, children }: AuthenticatedLayoutProps) {
+    const user = (usePage().props as any).auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -17,16 +21,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                                </Link>
-                            </div>
-
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    href={(window as any).route('dashboard')}
+                                    active={(window as any).route().current('dashboard')}
                                 >
                                     Dashboard
                                 </NavLink>
@@ -62,12 +60,12 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
-                                            href={route('profile.edit')}
+                                            href={(window as any).route('profile.edit')}
                                         >
                                             Profile
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href={route('logout')}
+                                            href={(window as any).route('logout')}
                                             method="post"
                                             as="button"
                                         >
@@ -129,8 +127,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            href={(window as any).route('dashboard')}
+                            active={(window as any).route().current('dashboard')}
                         >
                             Dashboard
                         </ResponsiveNavLink>
@@ -147,12 +145,12 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
+                            <ResponsiveNavLink href={(window as any).route('profile.edit')}>
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
-                                href={route('logout')}
+                                href={(window as any).route('logout')}
                                 as="button"
                             >
                                 Log Out

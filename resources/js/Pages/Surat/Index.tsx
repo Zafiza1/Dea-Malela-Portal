@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import FileUpload from '@/Components/FileUpload';
 import FilePreviewModal from '@/Components/FilePreviewModal';
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import { ArrowLeft } from 'lucide-react';
 
 export default function SuratIndex({ folders, files, currentFolder, breadcrumb }: any) {
     const [showCreateFolder, setShowCreateFolder] = useState(false);
@@ -66,26 +68,35 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
     };
 
     return (
-        <>
+        <DashboardLayout header="Surat Menyurat">
             <Head title="Surat Menyurat" />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="py-6 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h1 className="text-2xl font-bold">Surat Menyurat</h1>
-                                <div className="space-x-2">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                                <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
+                                    <a
+                                        href="/dashboard"
+                                        className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+                                    >
+                                        <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                                        <span className="font-medium">Kembali</span>
+                                    </a>
+                                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Surat Menyurat</h1>
+                                </div>
+                                <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button
                                         onClick={() => setShowCreateFolder(!showCreateFolder)}
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md flex-1 sm:flex-none justify-center"
                                     >
-                                        {showCreateFolder ? 'Batal' : 'Buat Folder'}
+                                        <span className="font-medium">{showCreateFolder ? 'Batal' : 'Buat Folder'}</span>
                                     </button>
                                     <button
                                         onClick={() => setShowUploadFile(!showUploadFile)}
-                                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                        className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md flex-1 sm:flex-none justify-center"
                                     >
-                                        {showUploadFile ? 'Batal' : 'Upload File'}
+                                        <span className="font-medium">{showUploadFile ? 'Batal' : 'Upload File'}</span>
                                     </button>
                                 </div>
                             </div>
@@ -150,27 +161,27 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                 </div>
                             )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                                 {/* Folders */}
                                 <div>
-                                    <h2 className="text-lg font-semibold mb-3">Folders</h2>
+                                    <h2 className="text-base sm:text-lg font-semibold mb-3">Folders</h2>
                                     <div className="space-y-2">
                                         {folders.map((folder: any) => (
                                             <div
                                                 key={folder.id}
-                                                className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                                                className="p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <a
                                                         href={`/surat?folder_id=${folder.id}`}
                                                         className="flex items-center flex-1"
                                                     >
-                                                        <span className="text-2xl mr-3">📁</span>
-                                                        <span className="font-medium">{folder.nama}</span>
+                                                        <span className="text-xl sm:text-2xl mr-2 sm:mr-3">📁</span>
+                                                        <span className="font-medium text-sm sm:text-base">{folder.nama}</span>
                                                     </a>
                                                     <button
                                                         onClick={() => deleteFolder(folder.id)}
-                                                        className="text-red-600 hover:text-red-800 ml-2"
+                                                        className="text-red-600 hover:text-red-800 ml-2 text-sm"
                                                     >
                                                         Hapus
                                                     </button>
@@ -182,24 +193,24 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
 
                                 {/* Files */}
                                 <div>
-                                    <h2 className="text-lg font-semibold mb-3">Files</h2>
+                                    <h2 className="text-base sm:text-lg font-semibold mb-3">Files</h2>
                                     <div className="space-y-2">
                                         {files.map((file: any) => (
                                             <div
                                                 key={file.id}
-                                                className="p-4 bg-gray-50 rounded-lg"
+                                                className="p-3 sm:p-4 bg-gray-50 rounded-lg"
                                             >
-                                                <div className="flex items-center justify-between">
+                                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                                                     <div className="flex items-center flex-1">
-                                                        <span className="text-2xl mr-3">📄</span>
+                                                        <span className="text-xl sm:text-2xl mr-2 sm:mr-3">📄</span>
                                                         <div className="flex-1">
-                                                            <span className="font-medium block">{file.nama_file}</span>
-                                                            <span className="text-sm text-gray-500">
+                                                            <span className="font-medium block text-sm sm:text-base">{file.nama_file}</span>
+                                                            <span className="text-xs sm:text-sm text-gray-500">
                                                                 {(file.file_size / 1024).toFixed(2)} KB
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div className="flex space-x-2">
+                                                    <div className="flex space-x-2 sm:space-x-3 text-sm">
                                                         <button
                                                             onClick={() => setSelectedFileForPreview(file)}
                                                             className="text-green-600 hover:text-green-800"
@@ -238,6 +249,6 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                     file={selectedFileForPreview}
                 />
             )}
-        </>
+        </DashboardLayout>
     );
 }

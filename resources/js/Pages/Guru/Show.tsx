@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import { ArrowLeft } from 'lucide-react';
 
 export default function GuruShow({ guru, auth }: any) {
     const isAdmin = auth.user.roles?.some((r: any) => r.name === 'admin');
@@ -6,46 +8,47 @@ export default function GuruShow({ guru, auth }: any) {
     const isOwnProfile = isGuru && auth.user.guru?.id === guru.id;
 
     return (
-        <>
+        <DashboardLayout header={isOwnProfile ? 'Profil Saya' : 'Profil Guru'}>
             <Head title={`Profil Guru - ${guru.nama_lengkap}`} />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="py-6 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h1 className="text-2xl font-bold">
-                                    {isOwnProfile ? 'Profil Saya' : 'Profil Guru'}
-                                </h1>
-                                <div className="space-x-2">
+                        <div className="p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                                <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
                                     <Link
                                         href={isAdmin ? '/guru' : '/dashboard'}
-                                        className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
+                                        className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
                                     >
-                                        Kembali
+                                        <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                                        <span className="font-medium">Kembali</span>
                                     </Link>
-                                    {isAdmin && (
-                                        <Link
-                                            href={`/guru/${guru.id}/edit`}
-                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                                        >
-                                            Edit
-                                        </Link>
-                                    )}
+                                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                                        {isOwnProfile ? 'Profil Saya' : 'Profil Guru'}
+                                    </h1>
                                 </div>
+                                {isAdmin && (
+                                    <Link
+                                        href={`/guru/${guru.id}/edit`}
+                                        className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md w-full sm:w-auto justify-center"
+                                    >
+                                        <span className="font-medium">Edit</span>
+                                    </Link>
+                                )}
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                                 {/* Left Column - Photo and Basic Info */}
                                 <div>
-                                    <div className="mb-6">
+                                    <div className="mb-6 flex justify-center">
                                         {guru.foto ? (
                                             <img
                                                 src={`/storage/${guru.foto}`}
                                                 alt={guru.nama_lengkap}
-                                                className="w-48 h-48 object-cover rounded-lg mx-auto"
+                                                className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-lg"
                                             />
                                         ) : (
-                                            <div className="w-48 h-48 bg-gray-200 rounded-lg mx-auto flex items-center justify-center">
+                                            <div className="w-40 h-40 sm:w-48 sm:h-48 bg-gray-200 rounded-lg flex items-center justify-center">
                                                 <span className="text-gray-500">No Photo</span>
                                             </div>
                                         )}
@@ -54,12 +57,12 @@ export default function GuruShow({ guru, auth }: any) {
                                     <div className="space-y-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-500">Nama Lengkap</label>
-                                            <p className="text-lg font-medium">{guru.nama_lengkap}</p>
+                                            <p className="text-base sm:text-lg font-medium">{guru.nama_lengkap}</p>
                                         </div>
 
                                         <div>
                                             <label className="block text-sm font-medium text-gray-500">Jabatan</label>
-                                            <p className="text-lg">{guru.jabatan}</p>
+                                            <p className="text-base sm:text-lg">{guru.jabatan}</p>
                                         </div>
 
                                         <div>
@@ -113,9 +116,9 @@ export default function GuruShow({ guru, auth }: any) {
                             </div>
 
                             {/* Documents Section */}
-                            <div className="mt-8 border-t pt-6">
-                                <h2 className="text-xl font-bold mb-4">Dokumen</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="mt-6 sm:mt-8 border-t pt-6">
+                                <h2 className="text-lg sm:text-xl font-bold mb-4">Dokumen</h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="p-4 bg-gray-50 rounded-lg">
                                         <h3 className="font-medium mb-2">KTP</h3>
                                         {guru.ktp_path ? (
@@ -132,7 +135,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                     encType="multipart/form-data"
                                                     className="mt-2"
                                                 >
-                                                    <input type="file" name="ktp" className="w-full px-2 py-1 border rounded" />
+                                                    <input type="file" name="ktp" className="w-full px-2 py-1 border rounded text-sm" />
                                                     <button
                                                         type="submit"
                                                         className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
@@ -147,7 +150,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                 action={`/guru/${guru.id}/upload-ktp`}
                                                 encType="multipart/form-data"
                                             >
-                                                <input type="file" name="ktp" className="w-full px-2 py-1 border rounded" />
+                                                <input type="file" name="ktp" className="w-full px-2 py-1 border rounded text-sm" />
                                                 <button
                                                     type="submit"
                                                     className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
@@ -174,7 +177,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                     encType="multipart/form-data"
                                                     className="mt-2"
                                                 >
-                                                    <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded" />
+                                                    <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded text-sm" />
                                                     <button
                                                         type="submit"
                                                         className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
@@ -189,7 +192,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                 action={`/guru/${guru.id}/upload-sk`}
                                                 encType="multipart/form-data"
                                             >
-                                                <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded" />
+                                                <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded text-sm" />
                                                 <button
                                                     type="submit"
                                                     className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
@@ -205,6 +208,6 @@ export default function GuruShow({ guru, auth }: any) {
                     </div>
                 </div>
             </div>
-        </>
+        </DashboardLayout>
     );
 }

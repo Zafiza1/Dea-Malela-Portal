@@ -72,20 +72,20 @@ export default function DataTable({
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             {/* Header */}
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-4 sm:p-6 border-b border-gray-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Data Table</h2>
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">Data Table</h2>
                     
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                         {searchable && (
-                            <form onSubmit={handleSearchSubmit} className="relative">
+                            <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-auto">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Cari..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
+                                    className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-64 text-sm"
                                 />
                             </form>
                         )}
@@ -93,10 +93,10 @@ export default function DataTable({
                         {filterable && (
                             <button
                                 onClick={() => setShowFilter(!showFilter)}
-                                className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                                className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-sm"
                             >
                                 <Filter className="w-4 h-4" />
-                                Filter
+                                <span className="hidden sm:inline">Filter</span>
                             </button>
                         )}
                     </div>
@@ -112,13 +112,13 @@ export default function DataTable({
 
             {/* Table */}
             <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-full">
                     <thead className="bg-gray-50">
                         <tr>
                             {columns.map((column) => (
                                 <th
                                     key={column.key}
-                                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                                    className={`px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
                                         column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''
                                     }`}
                                     onClick={() => column.sortable && handleSort(column.key)}
@@ -133,7 +133,7 @@ export default function DataTable({
                                     </div>
                                 </th>
                             ))}
-                            {actions && <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>}
+                            {actions && <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>}
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -142,22 +142,22 @@ export default function DataTable({
                             Array.from({ length: 5 }).map((_, index) => (
                                 <tr key={index}>
                                     {columns.map((column) => (
-                                        <td key={column.key} className="px-6 py-4">
+                                        <td key={column.key} className="px-4 sm:px-6 py-4">
                                             <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
                                         </td>
                                     ))}
-                                    {actions && <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse"></div></td>}
+                                    {actions && <td className="px-4 sm:px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse"></div></td>}
                                 </tr>
                             ))
                         ) : data.length === 0 ? (
                             // Empty state
                             <tr>
-                                <td colSpan={columns.length + (actions ? 1 : 0)} className="px-6 py-12 text-center">
+                                <td colSpan={columns.length + (actions ? 1 : 0)} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
                                     <div className="flex flex-col items-center">
-                                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                            <Search className="w-8 h-8 text-gray-400" />
+                                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                            <Search className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
                                         </div>
-                                        <p className="text-gray-500">{emptyMessage}</p>
+                                        <p className="text-sm sm:text-base text-gray-500">{emptyMessage}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -166,12 +166,12 @@ export default function DataTable({
                             data.map((item, index) => (
                                 <tr key={index} className="hover:bg-gray-50 transition">
                                     {columns.map((column) => (
-                                        <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                                        <td key={column.key} className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
                                             {renderCell(item, column)}
                                         </td>
                                     ))}
                                     {actions && (
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                        <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-sm">
                                             {actions(item)}
                                         </td>
                                     )}
@@ -184,8 +184,8 @@ export default function DataTable({
 
             {/* Pagination */}
             {pagination && (
-                <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
-                    <div className="text-sm text-gray-500">
+                <div className="px-4 sm:px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-xs sm:text-sm text-gray-500 text-center sm:text-left">
                         Menampilkan {((pagination.current_page - 1) * pagination.per_page) + 1} - {Math.min(pagination.current_page * pagination.per_page, pagination.total)} dari {pagination.total} data
                     </div>
                     
@@ -204,7 +204,7 @@ export default function DataTable({
                                 <button
                                     key={pageNum}
                                     onClick={() => onPageChange && onPageChange(pageNum)}
-                                    className={`px-3 py-1 rounded-lg transition ${
+                                    className={`px-3 py-1 rounded-lg transition text-sm ${
                                         pagination.current_page === pageNum
                                             ? 'bg-green-600 text-white'
                                             : 'border border-gray-200 hover:bg-gray-50'

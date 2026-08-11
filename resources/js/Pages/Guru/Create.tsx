@@ -1,5 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import { ArrowLeft } from 'lucide-react';
 
 export default function GuruCreate() {
     const handleSubmit = (e: React.FormEvent) => {
@@ -9,20 +11,23 @@ export default function GuruCreate() {
     };
 
     return (
-        <>
+        <DashboardLayout header="Tambah Guru">
             <Head title="Tambah Guru" />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="py-6 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h1 className="text-2xl font-bold">Tambah Guru</h1>
-                                <Link
-                                    href="/guru"
-                                    className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition"
-                                >
-                                    Kembali
-                                </Link>
+                        <div className="p-4 sm:p-6">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                                <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
+                                    <Link
+                                        href="/guru"
+                                        className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+                                    >
+                                        <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                                        <span className="font-medium">Kembali</span>
+                                    </Link>
+                                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Tambah Guru</h1>
+                                </div>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6" method="POST" action="/guru" encType="multipart/form-data">
@@ -214,6 +219,6 @@ export default function GuruCreate() {
                     </div>
                 </div>
             </div>
-        </>
+        </DashboardLayout>
     );
 }

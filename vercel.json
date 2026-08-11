@@ -3,7 +3,6 @@
     "regions": [
         "hnd1"
     ],
-    "buildCommand": "npm run build",
     "builds": [
         {
             "src": "/api/index.php",

@@ -37,6 +37,7 @@
     ],
     "env": {
         "APP_NAME": "Pesantren Modern Internasional Dea Malela",
+        "APP_ENV": "production",
         "APP_DEBUG": "false",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
@@ -49,6 +50,7 @@
         "SESSION_DRIVER": "cookie",
         "VIEW_COMPILED_PATH": "/tmp",
         "DB_CONNECTION": "sqlite",
-        "DB_DATABASE": "/tmp/database.sqlite"
+        "DB_DATABASE": "/tmp/database.sqlite",
+        "VITE_APP_NAME": "Pesantren Modern Internasional Dea Malela"
     }
 }

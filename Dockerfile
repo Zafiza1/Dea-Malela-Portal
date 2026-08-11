@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd && \
     docker-php-ext-enable pdo pdo_mysql
 
+# Configure PHP-FPM to listen on all interfaces
+RUN sed -i 's/;listen = 127.0.0.1:9000/listen = 0.0.0.0:9000/g' /usr/local/etc/php-fpm.d/www.conf
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

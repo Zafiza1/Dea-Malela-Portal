@@ -2,8 +2,11 @@
 /node_modules
 /public/hot
 /public/storage
+/public/D*
+/D*
 /storage/*.key
 /storage/pail
+/storage/logs
 /vendor
 .env
 .env.backup

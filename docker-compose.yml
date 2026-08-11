@@ -1,4 +1,18 @@
 services:
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dea_malela_portal
+      MYSQL_ROOT_PASSWORD: sig1234
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel
+
   app:
     build:
       context: .
@@ -12,6 +26,11 @@ services:
       APP_ENV: production
       APP_DEBUG: false
       APP_URL: https://dea-malela-portal.onrender.com
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: dea_malela_portal
+      DB_USERNAME: laravel
+      DB_PASSWORD: laravel
     networks:
       - laravel
 
@@ -20,7 +39,7 @@ services:
     container_name: laravel_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./:/var/www/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
@@ -32,3 +51,6 @@ services:
 networks:
   laravel:
     driver: bridge
+
+volumes:
+  db_data:

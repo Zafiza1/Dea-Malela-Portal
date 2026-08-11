@@ -3,7 +3,7 @@
     "regions": [
         "hnd1"
     ],
-    "buildCommand": "composer run vercel",
+    "buildCommand": "npm run build",
     "builds": [
         {
             "src": "/api/index.php",

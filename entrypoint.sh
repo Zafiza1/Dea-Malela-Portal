@@ -62,5 +62,5 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Start Apache
-apache2-foreground
+# Start PHP-FPM
+php-fpm

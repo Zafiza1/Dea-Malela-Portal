@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: laravel_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dea_malela_portal
+      MYSQL_ROOT_PASSWORD: sig1234
+      MYSQL_USER: root
+      MYSQL_PASSWORD: sig1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+  app:
+    # ... existing config ...
+    depends_on:
+      - mysql
+
+networks:
+  laravel:
+    driver: bridge
+
+volumes:
+  mysql_data:

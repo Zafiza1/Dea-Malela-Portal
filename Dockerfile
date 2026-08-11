@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -9,12 +9,11 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libapache2-mod-xsendfile \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd && \
-    docker-php-ext-enable pdo pdo_mysql pdo_pgsql
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd && \
+    docker-php-ext-enable pdo pdo_mysql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -42,33 +41,13 @@ RUN npm install && npm run build
 # Copy environment file (Vercel will provide environment variables)
 RUN cp .env.example .env || true
 
-# Enable Apache modules
-RUN a2enmod rewrite headers
-
-# Configure Apache for Laravel (Render uses dynamic port)
-RUN cat > /etc/apache2/sites-available/000-default.conf <<EOF
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/public
-    
-    <Directory /var/www/html/public>
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-    
-    ErrorLog \${APACHE_LOG_DIR}/error.log
-    CustomLog \${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Expose port (Render uses dynamic port mapping)
-EXPOSE 80
+# Expose PHP-FPM port
+EXPOSE 9000
 
 # Use entrypoint script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

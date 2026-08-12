@@ -1,48 +1,97 @@
+import { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
-import DataTable from '@/Components/DataTable';
-import { ArrowLeft } from 'lucide-react';
+import DashboardLayout from '@/Layouts/DashboardLayout';
+import { ArrowLeft, Eye, Edit, Trash2 } from 'lucide-react';
+import LoadingSpinner from '@/Components/LoadingSpinner';
+import type { User, PaginatedResponse } from '../../types/global';
 
-export default function GuruIndex({ gurus, auth }: any) {
-    const isAdmin = auth.user.roles?.some((r: any) => r.name === 'admin');
+interface Guru {
+    id: number;
+    nama_lengkap: string;
+    email: string;
+    jabatan: string;
+    status: string;
+}
 
-    const columns = [
-        {
-            key: 'nama_lengkap',
-            label: 'Nama',
-            render: (guru: any) => (
-                <div>
-                    <div className="font-medium text-gray-900">{guru.nama_lengkap}</div>
-                    <div className="text-sm text-gray-500">{guru.email}</div>
-                </div>
-            ),
-        },
-        {
-            key: 'jabatan',
-            label: 'Jabatan',
-        },
-        {
-            key: 'status',
-            label: 'Status',
-            render: (guru: any) => (
-                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    guru.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                    {guru.status === 'aktif' ? 'Aktif' : 'Tidak Aktif'}
-                </span>
-            ),
-        },
-    ];
+interface GuruIndexProps {
+    gurus: PaginatedResponse<Guru>;
+    auth: {
+        user: User;
+    };
+}
 
-    const handlePageChange = (page: number) => {
-        router.get('/guru', { page });
+export default function GuruIndex({ gurus, auth }: GuruIndexProps) {
+    const isAdmin = auth.user.roles?.some((r) => r.name === 'admin');
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+
+    const handleDelete = (guruId: number) => {
+        if (confirm('Apakah Anda yakin ingin menghapus data guru ini?')) {
+            setDeletingId(guruId);
+            router.delete(`/guru/${guruId}`, {
+                onSuccess: () => {
+                    setDeletingId(null);
+                    router.reload();
+                },
+                onError: () => {
+                    setDeletingId(null);
+                },
+            });
+        }
     };
 
-    const handleSearch = (query: string) => {
-        router.get('/guru', { search: query });
-    };
+    // const handleDelete = (guruId: number) => {
+    //     if (confirm('Apakah Anda yakin ingin menghapus data guru ini?')) {
+    //         setDeletingId(guruId);
+    //         router.delete(`/guru/${guruId}`, {
+    //             onSuccess: () => {
+    //                 setDeletingId(null);
+    //                 router.reload();
+    //             },
+    //             onError: () => {
+    //                 setDeletingId(null);
+    //             },
+    //         });
+    //     }
+    // };
+
+    // const columns = [
+    //     {
+    //         key: 'nama_lengkap',
+    //         label: 'Nama',
+    //         render: (guru: Guru) => (
+    //             <div>
+    //                 <div className="font-medium text-gray-900">{guru.nama_lengkap}</div>
+    //                 <div className="text-sm text-gray-500">{guru.email}</div>
+    //             </div>
+    //         ),
+    //     },
+    //     {
+    //         key: 'jabatan',
+    //         label: 'Jabatan',
+    //     },
+    //     {
+    //         key: 'status',
+    //         label: 'Status',
+    //         render: (guru: Guru) => (
+    //             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+    //                 guru.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+    //             }`}>
+    //                 {guru.status === 'aktif' ? 'Aktif' : 'Tidak Aktif'}
+    //             </span>
+    //         ),
+    //     },
+    // ];
+
+    // const handlePageChange = (page: number) => {
+    //     router.get('/guru', { page });
+    // };
+
+    // const handleSearch = (query: string) => {
+    //     router.get('/guru', { search: query });
+    // };
 
     return (
-        <>
+        <DashboardLayout header="Data Guru">
             <Head title="Data Guru" />
             <div className="py-6 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
@@ -69,33 +118,114 @@ export default function GuruIndex({ gurus, auth }: any) {
                         )}
                     </div>
 
-                    <DataTable
-                        data={gurus.data}
-                        columns={columns}
-                        pagination={{
-                            current_page: gurus.current_page,
-                            last_page: gurus.last_page,
-                            per_page: gurus.per_page,
-                            total: gurus.total,
-                        }}
-                        onPageChange={handlePageChange}
-                        onSearch={handleSearch}
-                        emptyMessage="Tidak ada data guru"
-                        actions={(guru: any) => (
-                            <div className="flex items-center space-x-2">
-                                <Link href={`/guru/${guru.id}`} className="text-green-600 hover:text-green-700">
-                                    Lihat
-                                </Link>
-                                {isAdmin && (
-                                    <Link href={`/guru/${guru.id}/edit`} className="text-blue-600 hover:text-blue-700">
-                                        Edit
-                                    </Link>
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table className="w-full min-w-full">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jabatan</th>
+                                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {gurus.data.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={4} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                                            <p className="text-sm text-gray-500">Tidak ada data guru</p>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    gurus.data.map((guru: Guru) => (
+                                        <tr key={guru.id} className="hover:bg-gray-50 transition">
+                                            <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
+                                                <div>
+                                                    <div className="font-medium text-gray-900">{guru.nama_lengkap}</div>
+                                                    <div className="text-sm text-gray-500">{guru.email}</div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">{guru.jabatan}</td>
+                                            <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
+                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                    guru.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                    {guru.status === 'aktif' ? 'Aktif' : 'Tidak Aktif'}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-sm">
+                                                <div className="flex items-center space-x-2 justify-end">
+                                                    <Link
+                                                        href={`/guru/${guru.id}`}
+                                                        className="flex items-center px-3 py-1.5 text-sm text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                                                    >
+                                                        <Eye className="w-4 h-4 mr-1" />
+                                                        Lihat
+                                                    </Link>
+                                                    {isAdmin && (
+                                                        <>
+                                                            <Link
+                                                                href={`/guru/${guru.id}/edit`}
+                                                                className="flex items-center px-3 py-1.5 text-sm text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                                                            >
+                                                                <Edit className="w-4 h-4 mr-1" />
+                                                                Edit
+                                                            </Link>
+                                                            <button
+                                                                onClick={() => handleDelete(guru.id)}
+                                                                disabled={deletingId === guru.id}
+                                                                className="flex items-center px-3 py-1.5 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center"
+                                                            >
+                                                                {deletingId === guru.id ? (
+                                                                    <LoadingSpinner size="sm" />
+                                                                ) : (
+                                                                    <>
+                                                                        <Trash2 className="w-4 h-4 mr-1" />
+                                                                        Hapus
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
                                 )}
+                            </tbody>
+                        </table>
+                        
+                        {/* Simple Pagination */}
+                        {gurus.last_page > 1 && (
+                            <div className="px-4 sm:px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                                <div className="text-xs sm:text-sm text-gray-500">
+                                    Menampilkan {((gurus.current_page - 1) * gurus.per_page) + 1} - {Math.min(gurus.current_page * gurus.per_page, gurus.total)} dari {gurus.total} data
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {gurus.current_page > 1 && (
+                                        <Link
+                                            href={`/guru?page=${gurus.current_page - 1}`}
+                                            className="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-sm"
+                                        >
+                                            Previous
+                                        </Link>
+                                    )}
+                                    <span className="px-3 py-1 rounded-lg bg-green-600 text-white text-sm">
+                                        {gurus.current_page}
+                                    </span>
+                                    {gurus.current_page < gurus.last_page && (
+                                        <Link
+                                            href={`/guru?page=${gurus.current_page + 1}`}
+                                            className="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition text-sm"
+                                        >
+                                            Next
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
                         )}
-                    />
+                    </div>
                 </div>
             </div>
-        </>
+        </DashboardLayout>
     );
 }

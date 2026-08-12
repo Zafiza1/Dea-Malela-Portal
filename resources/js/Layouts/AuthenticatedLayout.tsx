@@ -2,7 +2,8 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import type { User } from '../types/global';
 
 interface AuthenticatedLayoutProps {
     header?: React.ReactNode;
@@ -10,7 +11,7 @@ interface AuthenticatedLayoutProps {
 }
 
 export default function AuthenticatedLayout({ header, children }: AuthenticatedLayoutProps) {
-    const user = (usePage().props as any).auth.user;
+    const user = useMemo(() => (usePage().props as any).auth.user as User, []);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
     LayoutDashboard, 
     Users, 
@@ -9,11 +9,9 @@ import {
     LogOut,
     Menu,
     X,
-    ChevronRight,
-    Moon,
-    Sun
+    ChevronRight
 } from 'lucide-react';
-import { useTheme } from '@/Contexts/ThemeContext';
+import type { User } from '../types/global';
 
 interface DashboardLayoutProps {
     header?: string;
@@ -23,19 +21,23 @@ interface DashboardLayoutProps {
 interface NavigationItem {
     name: string;
     href: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
 }
 
 export default function DashboardLayout({ header, children }: DashboardLayoutProps) {
     const page = usePage();
-    const user = (page.props as any).auth.user as any;
+    const user = (page.props as any).auth.user as User;
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const { theme, toggleTheme } = useTheme();
 
-    const isAdmin = user.roles?.some((r: any) => r.name === 'admin');
-    const isGuru = user.roles?.some((r: any) => r.name === 'guru');
+    const isAdmin = useMemo(() => 
+        user?.roles?.some((r) => r.name === 'admin') || false, [user?.roles]
+    );
+    
+    const isGuru = useMemo(() => 
+        user?.roles?.some((r) => r.name === 'guru') || false, [user?.roles]
+    );
 
-    const navigation: NavigationItem[] = [
+    const navigation: NavigationItem[] = useMemo(() => [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         ...(isAdmin ? [
             { name: 'Profil Pendidik', href: '/guru', icon: Users },
@@ -55,7 +57,7 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
         ...((!isAdmin && !isGuru) ? [
             { name: 'Profile', href: '/profile', icon: Users },
         ] : []),
-    ];
+    ], [isAdmin, isGuru, user.guru?.id]);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -163,17 +165,6 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition dark:bg-gray-700 dark:hover:bg-gray-600"
-                            aria-label="Toggle theme"
-                        >
-                            {theme === 'light' ? (
-                                <Moon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                            ) : (
-                                <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                            )}
-                        </button>
                         <div className="hidden sm:block text-right">
                             <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{user.name}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{user.roles?.[0]?.name || 'User'}</p>

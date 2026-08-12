@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SuratFile;
 use App\Models\SuratFolder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -24,24 +25,25 @@ class SuratController extends Controller
         })
             ->with(['uploadedBy', 'folder'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($file) {
+                // Map to match FilePreviewModal interface
+                return [
+                    'id' => $file->id,
+                    'nama_file' => $file->nama_file,
+                    'file_path' => $file->path, // Map 'path' to 'file_path'
+                    'file_type' => $file->file_type,
+                    'file_size' => $file->file_size,
+                ];
+            });
 
         $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
-        $breadcrumb = [];
-        
-        if ($currentFolder) {
-            $temp = $currentFolder;
-            while ($temp) {
-                array_unshift($breadcrumb, $temp);
-                $temp = $temp->parent;
-            }
-        }
 
         return Inertia::render('Surat/Index', [
             'folders' => $folders,
             'files' => $files,
             'currentFolder' => $currentFolder,
-            'breadcrumb' => $breadcrumb,
+            'parentFolder' => $currentFolder ? $currentFolder->parent : null,
         ]);
     }
 
@@ -74,6 +76,11 @@ class SuratController extends Controller
 
     public function deleteFolder(SuratFolder $folder)
     {
+        // Manual permission check using Gate directly
+        if (!Gate::allows('delete', $folder)) {
+            abort(403, 'You do not have permission to delete this folder');
+        }
+
         if ($folder->children()->exists() || $folder->files()->exists()) {
             return back()->with('error', 'Folder tidak kosong');
         }

@@ -1,55 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { X, Download, ExternalLink, File, Image as ImageIcon, FileText, Music, Video, Archive } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Download, ExternalLink, Image as ImageIcon, FileText, Music, Video, Archive, AlertCircle } from 'lucide-react';
+import type { FileData } from '../types/global';
 
 interface FilePreviewModalProps {
     isOpen: boolean;
     onClose: () => void;
-    file: {
-        id: number;
-        nama_file: string;
-        file_path: string;
-        file_type: string;
-        file_size: number;
-    } | null;
+    file: FileData | null;
 }
 
 export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewModalProps) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const fileIdRef = useRef<number | null>(null);
+    const previewUrlRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (isOpen && file) {
-            loadPreview();
-        }
-        return () => {
-            if (previewUrl) {
-                URL.revokeObjectURL(previewUrl);
+        let isCancelled = false;
+
+        const loadPreview = async () => {
+            if (!file || !file.file_path) {
+                if (!isCancelled) {
+                    setError('File path is not available');
+                    setLoading(false);
+                }
+                return;
+            }
+
+            if (!isCancelled) {
+                setLoading(true);
+                setError(null);
+            }
+
+            try {
+                const response = await fetch(`/storage/${file.file_path}`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    previewUrlRef.current = url;
+                    if (!isCancelled) {
+                        setPreviewUrl(url);
+                    }
+                } else {
+                    if (!isCancelled) {
+                        setError(`Failed to load file preview: ${response.statusText}`);
+                    }
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    setError(err instanceof Error ? err.message : 'Failed to load file preview');
+                }
+            } finally {
+                if (!isCancelled) {
+                    setLoading(false);
+                }
             }
         };
-    }, [isOpen, file]);
 
-    const loadPreview = async () => {
-        if (!file) return;
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            const response = await fetch(`/storage/${file.file_path}`);
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                setPreviewUrl(url);
-            } else {
-                setError('Failed to load file preview');
-            }
-        } catch (err) {
-            setError('Failed to load file preview');
-        } finally {
-            setLoading(false);
+        if (isOpen && file && file.id !== fileIdRef.current) {
+            fileIdRef.current = file.id;
+            loadPreview();
         }
-    };
+
+        return () => {
+            isCancelled = true;
+            if (previewUrlRef.current) {
+                URL.revokeObjectURL(previewUrlRef.current);
+                previewUrlRef.current = null;
+            }
+        };
+    }, [isOpen, file?.id, file?.file_path]);
 
     const getFileIcon = (fileType: string) => {
         if (fileType.startsWith('image/')) {
@@ -83,11 +103,17 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
     if (!isOpen || !file) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div 
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="file-preview-title"
+        >
             {/* Backdrop */}
             <div 
                 className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
                 onClick={onClose}
+                aria-hidden="true"
             />
 
             {/* Modal */}
@@ -98,16 +124,23 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                         <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                             {React.createElement(getFileIcon(file.file_type), {
                                 className: 'w-5 h-5 text-gray-600',
+                                'aria-hidden': 'true',
                             })}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 truncate">{file.nama_file}</h3>
+                            <h3 
+                                id="file-preview-title"
+                                className="font-semibold text-gray-900 truncate"
+                            >
+                                {file.nama_file}
+                            </h3>
                             <p className="text-sm text-gray-500">{formatFileSize(file.file_size)}</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-gray-600 transition"
+                        className="p-2 text-gray-400 hover:text-gray-600 transition rounded-lg hover:bg-gray-100"
+                        aria-label="Close preview"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -121,12 +154,14 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                         </div>
                     ) : error ? (
                         <div className="flex flex-col items-center justify-center h-64 text-center">
-                            <File className="w-16 h-16 text-gray-300 mb-4" />
-                            <p className="text-gray-500 mb-4">{error}</p>
+                            <AlertCircle className="w-16 h-16 text-red-300 mb-4" />
+                            <p className="text-gray-500 mb-2 font-medium">Preview Error</p>
+                            <p className="text-sm text-gray-400 mb-4">{error}</p>
                             <a
                                 href={`/storage/${file.file_path}`}
                                 download={file.nama_file}
                                 className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                aria-label={`Download ${file.nama_file}`}
                             >
                                 <Download className="w-4 h-4" />
                                 <span>Download File</span>
@@ -198,6 +233,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                     <button
                         onClick={onClose}
                         className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition"
+                        aria-label="Close preview"
                     >
                         Close
                     </button>
@@ -205,6 +241,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                         href={`/storage/${file.file_path}`}
                         download={file.nama_file}
                         className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                        aria-label={`Download ${file.nama_file}`}
                     >
                         <Download className="w-4 h-4" />
                         <span>Download</span>

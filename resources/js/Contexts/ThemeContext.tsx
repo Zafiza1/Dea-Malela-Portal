@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -33,9 +33,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
             root.classList.remove('dark');
         }
-        
-        // Save to localStorage
-        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        // Save to localStorage (separate to avoid infinite loop)
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('theme', theme);
+        }
     }, [theme]);
 
     const toggleTheme = () => {

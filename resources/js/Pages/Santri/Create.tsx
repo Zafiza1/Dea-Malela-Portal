@@ -1,13 +1,31 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft } from 'lucide-react';
 
 export default function SantriCreate() {
+    const { data, setData, post, processing, errors } = useForm({
+        nis: '',
+        nama: '',
+        jenis_kelamin: 'L',
+        tempat_lahir: '',
+        tanggal_lahir: '',
+        nama_ayah: '',
+        nama_ibu: '',
+        alamat: '',
+        nomor_hp: '',
+        jenjang: '',
+        kelas: '',
+        status: 'aktif',
+        tanggal_masuk: '',
+        catatan: '',
+        foto: null as File | null,
+    });
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const form = e.target as HTMLFormElement;
-        form.submit();
+        
+        post('/santri');
     };
 
     return (
@@ -30,7 +48,7 @@ export default function SantriCreate() {
                                 </div>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6" method="POST" action="/santri" encType="multipart/form-data">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -38,10 +56,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="nis"
+                                            value={data.nis}
+                                            onChange={(e) => setData('nis', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.nis && <p className="text-red-500 text-sm mt-1">{errors.nis}</p>}
                                     </div>
 
                                     <div>
@@ -50,10 +70,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="nama"
+                                            value={data.nama}
+                                            onChange={(e) => setData('nama', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.nama && <p className="text-red-500 text-sm mt-1">{errors.nama}</p>}
                                     </div>
 
                                     <div>
@@ -61,13 +83,15 @@ export default function SantriCreate() {
                                             Jenis Kelamin
                                         </label>
                                         <select
-                                            name="jenis_kelamin"
+                                            value={data.jenis_kelamin}
+                                            onChange={(e) => setData('jenis_kelamin', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         >
                                             <option value="L">Laki-laki</option>
                                             <option value="P">Perempuan</option>
                                         </select>
+                                        {errors.jenis_kelamin && <p className="text-red-500 text-sm mt-1">{errors.jenis_kelamin}</p>}
                                     </div>
 
                                     <div>
@@ -76,10 +100,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="tempat_lahir"
+                                            value={data.tempat_lahir}
+                                            onChange={(e) => setData('tempat_lahir', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.tempat_lahir && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir}</p>}
                                     </div>
 
                                     <div>
@@ -88,10 +114,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="date"
-                                            name="tanggal_lahir"
+                                            value={data.tanggal_lahir}
+                                            onChange={(e) => setData('tanggal_lahir', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.tanggal_lahir && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir}</p>}
                                     </div>
 
                                     <div>
@@ -100,10 +128,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="nama_ayah"
+                                            value={data.nama_ayah}
+                                            onChange={(e) => setData('nama_ayah', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.nama_ayah && <p className="text-red-500 text-sm mt-1">{errors.nama_ayah}</p>}
                                     </div>
 
                                     <div>
@@ -112,10 +142,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="nama_ibu"
+                                            value={data.nama_ibu}
+                                            onChange={(e) => setData('nama_ibu', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.nama_ibu && <p className="text-red-500 text-sm mt-1">{errors.nama_ibu}</p>}
                                     </div>
 
                                     <div>
@@ -124,10 +156,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="nomor_hp"
+                                            value={data.nomor_hp}
+                                            onChange={(e) => setData('nomor_hp', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.nomor_hp && <p className="text-red-500 text-sm mt-1">{errors.nomor_hp}</p>}
                                     </div>
 
                                     <div>
@@ -135,7 +169,8 @@ export default function SantriCreate() {
                                             Jenjang
                                         </label>
                                         <select
-                                            name="jenjang"
+                                            value={data.jenjang}
+                                            onChange={(e) => setData('jenjang', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         >
@@ -144,6 +179,7 @@ export default function SantriCreate() {
                                             <option value="SMP">SMP</option>
                                             <option value="SMA">SMA</option>
                                         </select>
+                                        {errors.jenjang && <p className="text-red-500 text-sm mt-1">{errors.jenjang}</p>}
                                     </div>
 
                                     <div>
@@ -152,10 +188,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="text"
-                                            name="kelas"
+                                            value={data.kelas}
+                                            onChange={(e) => setData('kelas', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.kelas && <p className="text-red-500 text-sm mt-1">{errors.kelas}</p>}
                                     </div>
 
                                     <div>
@@ -164,10 +202,12 @@ export default function SantriCreate() {
                                         </label>
                                         <input
                                             type="date"
-                                            name="tanggal_masuk"
+                                            value={data.tanggal_masuk}
+                                            onChange={(e) => setData('tanggal_masuk', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         />
+                                        {errors.tanggal_masuk && <p className="text-red-500 text-sm mt-1">{errors.tanggal_masuk}</p>}
                                     </div>
 
                                     <div>
@@ -175,13 +215,15 @@ export default function SantriCreate() {
                                             Status
                                         </label>
                                         <select
-                                            name="status"
+                                            value={data.status}
+                                            onChange={(e) => setData('status', e.target.value)}
                                             className="w-full px-4 py-2 border rounded-lg"
                                             required
                                         >
                                             <option value="aktif">Aktif</option>
                                             <option value="tidak_aktif">Tidak Aktif</option>
                                         </select>
+                                        {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status}</p>}
                                     </div>
                                 </div>
 
@@ -190,11 +232,13 @@ export default function SantriCreate() {
                                         Alamat
                                     </label>
                                     <textarea
-                                        name="alamat"
+                                        value={data.alamat}
+                                        onChange={(e) => setData('alamat', e.target.value)}
                                         className="w-full px-4 py-2 border rounded-lg"
                                         rows={3}
                                         required
                                     />
+                                    {errors.alamat && <p className="text-red-500 text-sm mt-1">{errors.alamat}</p>}
                                 </div>
 
                                 <div>
@@ -202,10 +246,12 @@ export default function SantriCreate() {
                                         Catatan
                                     </label>
                                     <textarea
-                                        name="catatan"
+                                        value={data.catatan}
+                                        onChange={(e) => setData('catatan', e.target.value)}
                                         className="w-full px-4 py-2 border rounded-lg"
                                         rows={3}
                                     />
+                                    {errors.catatan && <p className="text-red-500 text-sm mt-1">{errors.catatan}</p>}
                                 </div>
 
                                 <div>
@@ -214,18 +260,20 @@ export default function SantriCreate() {
                                     </label>
                                     <input
                                         type="file"
-                                        name="foto"
+                                        onChange={(e) => setData('foto', e.target.files?.[0] || null)}
                                         className="w-full px-4 py-2 border rounded-lg"
                                         accept="image/*"
                                     />
+                                    {errors.foto && <p className="text-red-500 text-sm mt-1">{errors.foto}</p>}
                                 </div>
 
                                 <div className="flex justify-end">
                                     <button
                                         type="submit"
-                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                                        disabled={processing}
+                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                                     >
-                                        Simpan
+                                        {processing ? 'Menyimpan...' : 'Simpan'}
                                     </button>
                                 </div>
                             </form>

@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, memo } from 'react';
 import { ChevronLeft, ChevronRight, Search, Filter } from 'lucide-react';
+import type { PaginationMeta } from '../types/global';
+import { useDebounce } from '../hooks/useDebounce';
 
-interface Column {
+interface Column<T = unknown> {
     key: string;
     label: string;
-    render?: (item: any) => React.ReactNode;
+    render?: (item: T) => React.ReactNode;
     sortable?: boolean;
 }
 
-interface DataTableProps {
-    data: any[];
-    columns: Column[];
+interface DataTableProps<T = unknown> {
+    data: T[];
+    columns: Column<T>[];
     searchable?: boolean;
     filterable?: boolean;
-    pagination?: {
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
+    pagination?: PaginationMeta;
     onPageChange?: (page: number) => void;
     onSearch?: (query: string) => void;
-    onFilter?: (filters: any) => void;
+    onFilter?: (filters: Record<string, unknown>) => void;
     loading?: boolean;
     emptyMessage?: string;
-    actions?: (item: any) => React.ReactNode;
+    actions?: (item: T) => React.ReactNode;
+    debounceDelay?: number;
 }
 
-export default function DataTable({
+function DataTableInternal<T = unknown>({
     data,
     columns,
     searchable = true,
@@ -39,38 +37,74 @@ export default function DataTable({
     loading = false,
     emptyMessage = 'Tidak ada data',
     actions,
-}: DataTableProps) {
+    debounceDelay = 300,
+}: DataTableProps<T>) {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [showFilter, setShowFilter] = useState(false);
 
-    // Simple debounced search - only trigger on form submit or explicit call
-    const handleSearchSubmit = (e: React.FormEvent) => {
+    // Debounced search implementation using custom hook
+    const debouncedSearchQuery = useDebounce(searchQuery, debounceDelay);
+
+    useEffect(() => {
+        if (onSearch) {
+            onSearch(debouncedSearchQuery);
+        }
+    }, [debouncedSearchQuery]); // Removed onSearch from dependencies
+
+    const handleSearchSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         if (onSearch) {
-            onSearch(searchQuery);
+            onSearch(debouncedSearchQuery);
         }
-    };
+    }, [debouncedSearchQuery, onSearch]);
 
-    const handleSort = (column: string) => {
+    const handleSort = useCallback((column: string) => {
         if (sortColumn === column) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
         } else {
             setSortColumn(column);
             setSortDirection('asc');
         }
-    };
+    }, [sortColumn, sortDirection]);
 
-    const renderCell = (item: any, column: Column) => {
+    const renderCell = useCallback((item: T, column: Column<T>) => {
         if (column.render) {
             return column.render(item);
         }
-        return item[column.key];
-    };
+        return (item as Record<string, unknown>)[column.key] as React.ReactNode;
+    }, []);
+
+    // Memoize sorted data if client-side sorting is needed
+    const sortedData = useMemo(() => {
+        if (!sortColumn) return data;
+        
+        return [...data].sort((a, b) => {
+            const aValue = (a as Record<string, unknown>)[sortColumn];
+            const bValue = (b as Record<string, unknown>)[sortColumn];
+            
+            if (aValue === bValue) return 0;
+            
+            // Handle different types safely
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                const comparison = aValue.localeCompare(bValue);
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+            
+            if (typeof aValue === 'number' && typeof bValue === 'number') {
+                const comparison = aValue < bValue ? -1 : 1;
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+            
+            // Fallback for other types
+            const comparison = String(aValue || '').localeCompare(String(bValue || ''));
+            return sortDirection === 'asc' ? comparison : -comparison;
+        });
+    }, [data, sortColumn, sortDirection]);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" role="region" aria-label="Data table">
             {/* Header */}
             <div className="p-4 sm:p-6 border-b border-gray-100">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -79,13 +113,14 @@ export default function DataTable({
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                         {searchable && (
                             <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-auto">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />
                                 <input
                                     type="text"
                                     placeholder="Cari..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-64 text-sm"
+                                    aria-label="Search data"
                                 />
                             </form>
                         )}
@@ -94,6 +129,8 @@ export default function DataTable({
                             <button
                                 onClick={() => setShowFilter(!showFilter)}
                                 className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition text-sm"
+                                aria-expanded={showFilter}
+                                aria-label="Toggle filters"
                             >
                                 <Filter className="w-4 h-4" />
                                 <span className="hidden sm:inline">Filter</span>
@@ -149,7 +186,7 @@ export default function DataTable({
                                     {actions && <td className="px-4 sm:px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse"></div></td>}
                                 </tr>
                             ))
-                        ) : data.length === 0 ? (
+                        ) : sortedData.length === 0 ? (
                             // Empty state
                             <tr>
                                 <td colSpan={columns.length + (actions ? 1 : 0)} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
@@ -163,7 +200,7 @@ export default function DataTable({
                             </tr>
                         ) : (
                             // Data rows
-                            data.map((item, index) => (
+                            sortedData.map((item, index) => (
                                 <tr key={index} className="hover:bg-gray-50 transition">
                                     {columns.map((column) => (
                                         <td key={column.key} className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
@@ -227,4 +264,7 @@ export default function DataTable({
             )}
         </div>
     );
-}
+};
+
+const DataTable = memo(DataTableInternal) as typeof DataTableInternal;
+export default DataTable;

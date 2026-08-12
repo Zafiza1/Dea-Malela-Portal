@@ -2,26 +2,48 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import LoadingSpinner from '@/Components/LoadingSpinner';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { Camera, User as UserIcon } from 'lucide-react';
+import type { User } from '../../../types/global';
+
+// @ts-ignore - TextInput component has inaccurate type definitions
+const TextInputAny = TextInput as any;
+
+interface UpdateProfileInformationProps {
+    mustVerifyEmail?: boolean;
+    status?: string;
+    className?: string;
+}
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = '',
-}) {
-    const user = usePage().props.auth.user;
+}: UpdateProfileInformationProps) {
+    const page = usePage();
+    const user = (page.props as any).auth.user as User;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
+            profile_photo: null as File | null,
         });
 
-    const submit = (e) => {
+    const submit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        patch('/profile', {
+            forceFormData: true,
+        });
+    };
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setData('profile_photo' as any, e.target.files[0]);
+        }
     };
 
     return (
@@ -37,14 +59,49 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                {/* Profile Photo Section */}
+                <div className="flex items-center space-x-6">
+                    <div className="relative">
+                        {user.profile_photo_path ? (
+                            <img
+                                src={`/storage/${user.profile_photo_path}`}
+                                alt={user.name}
+                                className="h-20 w-20 rounded-full object-cover"
+                            />
+                        ) : (
+                            <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
+                                <UserIcon className="h-10 w-10 text-gray-400" />
+                            </div>
+                        )}
+                        <label htmlFor="profile_photo" className="absolute bottom-0 right-0 bg-green-600 hover:bg-green-700 text-white rounded-full p-1 cursor-pointer transition-colors">
+                            <Camera className="h-4 w-4" />
+                        </label>
+                        <input
+                            id="profile_photo"
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                        />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Profile Photo</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 2MB</p>
+                        {errors.profile_photo && (
+                            <p className="mt-1 text-sm text-red-600">{errors.profile_photo}</p>
+                        )}
+                    </div>
+                </div>
 
-                    <TextInput
-                        id="name"
+                <div>
+                    <InputLabel htmlFor="name" value="Name">
+                        Name
+                    </InputLabel>
+
+                    <TextInputAny
                         className="mt-1 block w-full"
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e: any) => setData('name' as any, e.target.value)}
                         required
                         isFocused
                         autoComplete="name"
@@ -54,14 +111,15 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Email">
+                        Email
+                    </InputLabel>
 
-                    <TextInput
-                        id="email"
+                    <TextInputAny
                         type="email"
                         className="mt-1 block w-full"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e: any) => setData('email' as any, e.target.value)}
                         required
                         autoComplete="username"
                     />
@@ -74,7 +132,7 @@ export default function UpdateProfileInformation({
                         <p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
                             Your email address is unverified.
                             <Link
-                                href={route('verification.send')}
+                                href="/email/verification-notification"
                                 method="post"
                                 as="button"
                                 className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
@@ -93,7 +151,9 @@ export default function UpdateProfileInformation({
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing} className="min-w-[100px] justify-center">
+                        {processing ? <LoadingSpinner size="sm" /> : 'Save'}
+                    </PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Guru;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -26,10 +27,10 @@ class GuruController extends Controller
 
         return Inertia::render('Guru/Index', [
             'gurus' => $gurus,
-            'filters' => $request->only(['search', 'status']),
             'auth' => [
                 'user' => request()->user()->load('roles'),
             ],
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
@@ -52,12 +53,32 @@ class GuruController extends Controller
             'pendidikan_terakhir' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
             'status' => 'required|in:aktif,tidak_aktif',
+            'username' => 'required|string|unique:users,username|max:255',
+            'password' => 'required|string|min:8|confirmed',
             'foto' => 'nullable|image|max:2048',
             'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'sk_kerja' => 'nullable|file|mimes:pdf|max:2048',
         ]);
 
-        $guru = Guru::create($validated);
+        // Create user account
+        $user = User::create([
+            'name' => $validated['nama_lengkap'],
+            'username' => $validated['username'],
+            'email' => $validated['email'] ?? null,
+            'password' => bcrypt($validated['password']),
+            'is_active' => true,
+        ]);
+
+        // Assign guru role
+        $user->assignRole('guru');
+
+        // Remove user-related fields from validated data
+        $guruData = array_diff_key($validated, array_flip(['username', 'password', 'password_confirmation']));
+
+        // Create guru with user relationship
+        $guru = Guru::create($guruData);
+        $guru->user()->associate($user);
+        $guru->save();
 
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('guru/foto', 'public');
@@ -76,7 +97,7 @@ class GuruController extends Controller
 
         $guru->save();
 
-        return redirect()->route('guru.index')->with('success', 'Data guru berhasil disimpan');
+        return redirect()->route('guru.index')->with('success', 'Data guru dan akun login berhasil dibuat');
     }
 
     public function show(Guru $guru)
@@ -85,9 +106,6 @@ class GuruController extends Controller
 
         return Inertia::render('Guru/Show', [
             'guru' => $guru,
-            'auth' => [
-                'user' => request()->user()->load('roles', 'guru'),
-            ],
         ]);
     }
 
@@ -118,6 +136,9 @@ class GuruController extends Controller
             'ktp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'sk_kerja' => 'nullable|file|mimes:pdf|max:2048',
         ]);
+
+        // Remove file fields from validated data to prevent overwriting with null
+        $validated = array_diff_key($validated, array_flip(['foto', 'ktp', 'sk_kerja']));
 
         $guru->update($validated);
 

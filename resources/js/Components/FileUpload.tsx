@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, FileText, Music, Video, Archive } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { Upload, X, Image as ImageIcon, FileText, Music, Video, Archive, AlertCircle } from 'lucide-react';
 
 interface FileUploadProps {
     onFileSelect: (file: File) => void;
@@ -7,6 +7,8 @@ interface FileUploadProps {
     maxSize?: number; // in bytes
     disabled?: boolean;
     className?: string;
+    id?: string;
+    label?: string;
 }
 
 export default function FileUpload({
@@ -15,25 +17,27 @@ export default function FileUpload({
     maxSize = 10 * 1024 * 1024, // 10MB default
     disabled = false,
     className = '',
+    id = 'file-upload',
+    label = 'Upload file',
 }: FileUploadProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleDragOver = (e: React.DragEvent) => {
+    const handleDragOver = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         if (!disabled) {
             setIsDragging(true);
         }
-    };
+    }, [disabled]);
 
-    const handleDragLeave = (e: React.DragEvent) => {
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
-    };
+    }, []);
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
         setIsDragging(false);
 
@@ -43,16 +47,16 @@ export default function FileUpload({
         if (files.length > 0) {
             handleFile(files[0]);
         }
-    };
+    }, [disabled]);
 
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
             handleFile(files[0]);
         }
-    };
+    }, []);
 
-    const handleFile = (file: File) => {
+    const handleFile = useCallback((file: File) => {
         setError(null);
 
         // Check file size
@@ -69,7 +73,7 @@ export default function FileUpload({
 
         setSelectedFile(file);
         onFileSelect(file);
-    };
+    }, [maxSize, accept, onFileSelect]);
 
     const handleRemove = () => {
         setSelectedFile(null);
@@ -105,11 +109,13 @@ export default function FileUpload({
         <div className={className}>
             <input
                 ref={inputRef}
+                id={id}
                 type="file"
                 onChange={handleFileSelect}
                 accept={accept}
                 disabled={disabled}
                 className="hidden"
+                aria-label={label}
             />
 
             {!selectedFile ? (
@@ -123,8 +129,20 @@ export default function FileUpload({
                             ? 'border-green-500 bg-green-50'
                             : 'border-gray-300 hover:border-green-400 hover:bg-gray-50'
                     } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    role="button"
+                    tabIndex={disabled ? -1 : 0}
+                    aria-label={label}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            !disabled && inputRef.current?.click();
+                        }
+                    }}
                 >
-                    <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-green-500' : 'text-gray-400'}`} />
+                    <Upload 
+                        className={`w-12 h-12 mx-auto mb-4 ${isDragging ? 'text-green-500' : 'text-gray-400'}`}
+                        aria-hidden="true"
+                    />
                     <p className="text-gray-600 mb-2">
                         {isDragging ? 'Drop file here' : 'Drag & drop file here'}
                     </p>
@@ -133,6 +151,7 @@ export default function FileUpload({
                         type="button"
                         disabled={disabled}
                         className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                        aria-label="Browse files"
                     >
                         Browse Files
                     </button>
@@ -166,8 +185,9 @@ export default function FileUpload({
             )}
 
             {error && (
-                <div className="mt-2 text-sm text-red-600">
-                    {error}
+                <div className="mt-2 flex items-center text-sm text-red-600" role="alert">
+                    <AlertCircle className="w-4 h-4 mr-1" aria-hidden="true" />
+                    <span>{error}</span>
                 </div>
             )}
         </div>

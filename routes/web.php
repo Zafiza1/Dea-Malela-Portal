@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\UserController;
+use App\Models\SuratFolder;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,38 +36,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/guru/{guru}/download-sk', [GuruController::class, 'downloadSk'])->name('guru.download-sk')->middleware('can:view,guru');
 
     // Santri Routes
-    Route::middleware('can:viewAny,App\Models\Santri')->group(function () {
-        Route::get('/santri', [SantriController::class, 'index'])->name('santri.index');
-        Route::get('/santri/create', [SantriController::class, 'create'])->name('santri.create')->middleware('can:create,App\Models\Santri');
-        Route::post('/santri', [SantriController::class, 'store'])->name('santri.store')->middleware('can:create,App\Models\Santri');
-        Route::get('/santri/{santri}', [SantriController::class, 'show'])->name('santri.show')->middleware('can:view,santri');
-        Route::get('/santri/{santri}/edit', [SantriController::class, 'edit'])->name('santri.edit')->middleware('can:update,santri');
-        Route::put('/santri/{santri}', [SantriController::class, 'update'])->name('santri.update')->middleware('can:update,santri');
-        Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy')->middleware('can:delete,santri');
-    });
+    Route::get('/santri', [SantriController::class, 'index'])->name('santri.index')->middleware('can:viewAny,App\Models\Santri');
+    Route::get('/santri/create', [SantriController::class, 'create'])->name('santri.create')->middleware('can:create,App\Models\Santri');
+    Route::post('/santri', [SantriController::class, 'store'])->name('santri.store')->middleware('can:create,App\Models\Santri');
+    Route::get('/santri/{santri}', [SantriController::class, 'show'])->name('santri.show')->middleware('can:view,santri');
+    Route::get('/santri/{santri}/edit', [SantriController::class, 'edit'])->name('santri.edit')->middleware('can:update,santri');
+    Route::put('/santri/{santri}', [SantriController::class, 'update'])->name('santri.update')->middleware('can:update,santri');
+    Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy')->middleware('can:delete,santri');
 
     // Surat Routes
-    Route::middleware('can:viewAny,App\Models\SuratFile')->group(function () {
-        Route::get('/surat', [SuratController::class, 'index'])->name('surat.index');
-        Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder')->middleware('can:create,App\Models\SuratFile');
-        Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware('can:update,App\Models\SuratFile');
-        Route::delete('/surat/folder/{folder}', [SuratController::class, 'deleteFolder'])->name('surat.delete-folder')->middleware('can:delete,App\Models\SuratFile');
-        Route::post('/surat/upload', [SuratController::class, 'uploadFile'])->name('surat.upload')->middleware('can:create,App\Models\SuratFile');
-        Route::get('/surat/file/{file}/download', [SuratController::class, 'downloadFile'])->name('surat.download')->middleware('can:download,file');
-        Route::delete('/surat/file/{file}', [SuratController::class, 'deleteFile'])->name('surat.delete-file')->middleware('can:delete,file');
-        Route::put('/surat/file/{file}', [SuratController::class, 'renameFile'])->name('surat.rename-file')->middleware('can:update,file');
-    });
+    Route::get('/surat', [SuratController::class, 'index'])->name('surat.index')->middleware('can:viewAny,App\Models\SuratFile');
+    Route::post('/surat/upload', [SuratController::class, 'uploadFile'])->name('surat.upload')->middleware('can:create,App\Models\SuratFile');
+    Route::get('/surat/file/{file}/download', [SuratController::class, 'downloadFile'])->name('surat.download')->middleware('can:download,file');
+    Route::delete('/surat/file/{file}', [SuratController::class, 'deleteFile'])->name('surat.delete-file')->middleware('can:delete,file');
+    Route::put('/surat/file/{file}', [SuratController::class, 'renameFile'])->name('surat.rename-file')->middleware('can:update,file');
+
+    // Surat Folder Routes
+    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder')->middleware('can:create,App\Models\SuratFolder');
+    Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware('can:update,folder');
+
+    // Separate folder delete route with manual permission check
+    Route::delete('/surat/folder/{folder}', [SuratController::class, 'deleteFolder'])
+        ->name('surat.delete-folder')
+        ->middleware(['auth', 'verified']);
 
     // User Routes
-    Route::middleware('can:viewAny,App\Models\User')->group(function () {
-        Route::get('/user', [UserController::class, 'index'])->name('user.index');
-        Route::get('/user/create', [UserController::class, 'create'])->name('user.create')->middleware('can:create,App\Models\User');
-        Route::post('/user', [UserController::class, 'store'])->name('user.store')->middleware('can:create,App\Models\User');
-        Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit')->middleware('can:update,user');
-        Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update')->middleware('can:update,user');
-        Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy')->middleware('can:delete,user');
-        Route::post('/user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password')->middleware('can:resetPassword,user');
-    });
+    Route::get('/user', [UserController::class, 'index'])->name('user.index')->middleware('can:viewAny,App\Models\User');
+    Route::get('/user/create', [UserController::class, 'create'])->name('user.create')->middleware('can:create,App\Models\User');
+    Route::post('/user', [UserController::class, 'store'])->name('user.store')->middleware('can:create,App\Models\User');
+    Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit')->middleware('can:update,user');
+    Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update')->middleware('can:update,user');
+    Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy')->middleware('can:delete,user');
+    Route::post('/user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password')->middleware('can:resetPassword,user');
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

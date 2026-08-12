@@ -31,10 +31,10 @@ class SantriController extends Controller
 
         return Inertia::render('Santri/Index', [
             'santri' => $santri,
-            'filters' => $request->only(['search', 'status', 'jenjang']),
             'auth' => [
-                'user' => $request->user()->load('roles'),
+                'user' => request()->user()->load('roles'),
             ],
+            'filters' => $request->only(['search', 'status', 'jenjang']),
         ]);
     }
 
@@ -110,6 +110,9 @@ class SantriController extends Controller
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|max:2048',
         ]);
+
+        // Remove file fields from validated data to prevent overwriting with null
+        $validated = array_diff_key($validated, array_flip(['foto']));
 
         $santri->update($validated);
 

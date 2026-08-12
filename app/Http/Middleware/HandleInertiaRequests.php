@@ -19,7 +19,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
-        return parent::version($request);
+        return null; // Disable asset versioning to prevent auto-reload
     }
 
     /**
@@ -29,10 +29,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? $user->load('roles', 'guru') : null,
             ],
         ];
     }

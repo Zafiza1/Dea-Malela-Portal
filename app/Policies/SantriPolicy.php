@@ -21,7 +21,7 @@ class SantriPolicy
      */
     public function view(User $user, Santri $santri): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('admin') || $user->hasRole('guru');
     }
 
     /**

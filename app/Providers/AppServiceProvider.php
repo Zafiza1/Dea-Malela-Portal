@@ -8,10 +8,12 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\Guru;
 use App\Models\Santri;
 use App\Models\SuratFile;
+use App\Models\SuratFolder;
 use App\Models\User;
 use App\Policies\GuruPolicy;
 use App\Policies\SantriPolicy;
 use App\Policies\SuratFilePolicy;
+use App\Policies\SuratFolderPolicy;
 use App\Policies\UserPolicy;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Guru::class, GuruPolicy::class);
         Gate::policy(Santri::class, SantriPolicy::class);
         Gate::policy(SuratFile::class, SuratFilePolicy::class);
+        Gate::policy(SuratFolder::class, SuratFolderPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
     }
 }

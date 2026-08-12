@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import FileUpload from '@/Components/FileUpload';
-import FilePreviewModal from '@/Components/FilePreviewModal';
+// import FilePreviewModal from '@/Components/FilePreviewModal';
+import LoadingSpinner from '@/Components/LoadingSpinner';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download, Trash2, FolderOpen } from 'lucide-react';
+import type { FileData, Folder } from '../../types/global';
 
-export default function SuratIndex({ folders, files, currentFolder, breadcrumb }: any) {
+interface SuratIndexProps {
+    folders: Folder[];
+    files: FileData[];
+    currentFolder?: Folder | null;
+    parentFolder?: Folder | null;
+}
+
+export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
-    const [selectedFileForPreview, setSelectedFileForPreview] = useState<any>(null);
+    // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
+    const [deletingFolderId, setDeletingFolderId] = useState<number | null>(null);
+    const [deletingFileId, setDeletingFileId] = useState<number | null>(null);
 
     const folderForm = useForm({
         nama: '',
@@ -18,9 +29,9 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
     const fileForm = useForm({
         file: null as File | null,
         folder_id: currentFolder?.id || null,
-    });
+    } as any);
 
-    const createFolder = (e: React.FormEvent) => {
+    const createFolder = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         folderForm.post('/surat/folder', {
             onSuccess: () => {
@@ -28,44 +39,50 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                 setShowCreateFolder(false);
                 router.reload();
             },
-        } as any);
-    };
+        });
+    }, [folderForm]);
 
-    const uploadFile = (e: React.FormEvent) => {
+    const uploadFile = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-        const formData = new FormData();
-        if (fileForm.data.file) {
-            formData.append('file', fileForm.data.file);
-        }
-        if (fileForm.data.folder_id) {
-            formData.append('folder_id', String(fileForm.data.folder_id));
-        }
-
+        
         fileForm.post('/surat/upload', {
-            data: formData,
             onSuccess: () => {
                 fileForm.reset();
                 setShowUploadFile(false);
                 router.reload();
             },
         } as any);
-    };
+    }, [fileForm]);
 
-    const deleteFolder = (folderId: number) => {
+    const deleteFolder = useCallback((folderId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus folder ini?')) {
+            setDeletingFolderId(folderId);
             router.delete(`/surat/folder/${folderId}`, {
-                onSuccess: () => router.reload(),
+                onSuccess: () => {
+                    setDeletingFolderId(null);
+                    router.reload();
+                },
+                onError: () => {
+                    setDeletingFolderId(null);
+                },
             });
         }
-    };
+    }, []);
 
-    const deleteFile = (fileId: number) => {
+    const deleteFile = useCallback((fileId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
+            setDeletingFileId(fileId);
             router.delete(`/surat/file/${fileId}`, {
-                onSuccess: () => router.reload(),
+                onSuccess: () => {
+                    setDeletingFileId(null);
+                    router.reload();
+                },
+                onError: () => {
+                    setDeletingFileId(null);
+                },
             });
         }
-    };
+    }, []);
 
     return (
         <DashboardLayout header="Surat Menyurat">
@@ -77,11 +94,20 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                                 <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
                                     <a
-                                        href="/dashboard"
+                                        href={
+                                            currentFolder 
+                                                ? (parentFolder ? `/surat?folder_id=${parentFolder.id}` : '/surat')
+                                                : '/dashboard'
+                                        }
                                         className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
                                     >
                                         <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                                        <span className="font-medium">Kembali</span>
+                                        <span className="font-medium">
+                                            {currentFolder 
+                                                ? (parentFolder ? `Kembali ke ${parentFolder.nama}` : 'Kembali ke Root')
+                                                : 'Kembali ke Dashboard'
+                                            }
+                                        </span>
                                     </a>
                                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Surat Menyurat</h1>
                                 </div>
@@ -113,13 +139,18 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                             placeholder="Nama Folder"
                                             className="flex-1 px-4 py-2 border rounded-lg"
                                             required
+                                            disabled={folderForm.processing}
                                         />
                                         <button
                                             type="submit"
                                             disabled={folderForm.processing}
-                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center min-w-[100px] justify-center"
                                         >
-                                            {folderForm.processing ? 'Membuat...' : 'Buat'}
+                                            {folderForm.processing ? (
+                                                <LoadingSpinner size="sm" />
+                                            ) : (
+                                                'Buat'
+                                            )}
                                         </button>
                                     </form>
                                 </div>
@@ -138,26 +169,15 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                         <button
                                             type="submit"
                                             disabled={fileForm.processing}
-                                            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                                            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center min-h-[42px]"
                                         >
-                                            {fileForm.processing ? 'Mengupload...' : 'Upload'}
+                                            {fileForm.processing ? (
+                                                <LoadingSpinner size="sm" />
+                                            ) : (
+                                                'Upload'
+                                            )}
                                         </button>
                                     </form>
-                                </div>
-                            )}
-                            
-                            {/* Breadcrumb */}
-                            {breadcrumb && breadcrumb.length > 0 && (
-                                <div className="mb-4 flex items-center space-x-2">
-                                    <a href="/surat" className="text-blue-600 hover:underline">Root</a>
-                                    {breadcrumb.map((folder: any) => (
-                                        <React.Fragment key={folder.id}>
-                                            <span>/</span>
-                                            <a href={`/surat?folder_id=${folder.id}`} className="text-blue-600 hover:underline">
-                                                {folder.nama}
-                                            </a>
-                                        </React.Fragment>
-                                    ))}
                                 </div>
                             )}
 
@@ -176,14 +196,22 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                                         href={`/surat?folder_id=${folder.id}`}
                                                         className="flex items-center flex-1"
                                                     >
-                                                        <span className="text-xl sm:text-2xl mr-2 sm:mr-3">📁</span>
+                                                        <FolderOpen className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-blue-600" />
                                                         <span className="font-medium text-sm sm:text-base">{folder.nama}</span>
                                                     </a>
                                                     <button
                                                         onClick={() => deleteFolder(folder.id)}
-                                                        className="text-red-600 hover:text-red-800 ml-2 text-sm"
+                                                        disabled={deletingFolderId === folder.id}
+                                                        className="flex items-center px-3 py-1.5 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center"
                                                     >
-                                                        Hapus
+                                                        {deletingFolderId === folder.id ? (
+                                                            <LoadingSpinner size="sm" />
+                                                        ) : (
+                                                            <>
+                                                                <Trash2 className="w-4 h-4 mr-1" />
+                                                                Hapus
+                                                            </>
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>
@@ -210,24 +238,34 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div className="flex space-x-2 sm:space-x-3 text-sm">
-                                                        <button
+                                                    <div className="flex space-x-2 sm:space-x-3">
+                                                        {/* <button
                                                             onClick={() => setSelectedFileForPreview(file)}
-                                                            className="text-green-600 hover:text-green-800"
+                                                            className="flex items-center px-3 py-1.5 text-sm text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
                                                         >
+                                                            <Eye className="w-4 h-4 mr-1" />
                                                             Preview
-                                                        </button>
+                                                        </button> */}
                                                         <a
                                                             href={`/surat/file/${file.id}/download`}
-                                                            className="text-blue-600 hover:text-blue-800"
+                                                            className="flex items-center px-3 py-1.5 text-sm text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
                                                         >
+                                                            <Download className="w-4 h-4 mr-1" />
                                                             Download
                                                         </a>
                                                         <button
                                                             onClick={() => deleteFile(file.id)}
-                                                            className="text-red-600 hover:text-red-800"
+                                                            disabled={deletingFileId === file.id}
+                                                            className="flex items-center px-3 py-1.5 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center"
                                                         >
-                                                            Hapus
+                                                            {deletingFileId === file.id ? (
+                                                                <LoadingSpinner size="sm" />
+                                                            ) : (
+                                                                <>
+                                                                    <Trash2 className="w-4 h-4 mr-1" />
+                                                                    Hapus
+                                                                </>
+                                                            )}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -241,14 +279,14 @@ export default function SuratIndex({ folders, files, currentFolder, breadcrumb }
                 </div>
             </div>
 
-            {/* File Preview Modal */}
-            {selectedFileForPreview && (
+            {/* File Preview Modal - temporarily disabled */}
+            {/* {selectedFileForPreview && (
                 <FilePreviewModal
-                    isOpen={!!selectedFileForPreview}
+                    isOpen={true}
                     onClose={() => setSelectedFileForPreview(null)}
                     file={selectedFileForPreview}
                 />
-            )}
+            )} */}
         </DashboardLayout>
     );
 }

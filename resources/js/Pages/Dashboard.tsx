@@ -9,17 +9,10 @@ import {
     Calendar
 } from 'lucide-react';
 import PageTransition, { StaggerContainer, StaggerItem } from '@/Components/PageTransition';
+import type { User, DashboardStats } from '../types/global';
 
 interface DashboardProps {
-    stats: {
-        total_guru: number;
-        guru_aktif: number;
-        guru_tidak_aktif: number;
-        total_santri: number;
-        total_surat: number;
-        total_folder: number;
-        upload_hari_ini: number;
-    };
+    stats: DashboardStats;
     recentDocuments: Array<{
         id: number;
         nama_file: string;
@@ -29,17 +22,7 @@ interface DashboardProps {
         file_size: number;
     }>;
     auth: {
-        user: {
-            id: number;
-            name: string;
-            username: string;
-            email: string;
-            roles: Array<{ name: string }>;
-            guru?: {
-                id: number;
-                nama_lengkap: string;
-            };
-        };
+        user: User;
     };
 }
 

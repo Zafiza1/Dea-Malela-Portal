@@ -10,6 +10,9 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <!-- Content Security Policy for mixed content -->
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.tsx'])

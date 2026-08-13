@@ -31,11 +31,26 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
         
+        // Force HTTPS for asset URLs in production
+        if (app()->environment('production')) {
+            $this->forceHttpsForAssets();
+        }
+        
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $user ? $user->load('roles', 'guru') : null,
             ],
         ];
+    }
+
+    /**
+     * Force HTTPS for all asset URLs
+     */
+    protected function forceHttpsForAssets(): void
+    {
+        if (request()->secure()) {
+            config(['app.asset_url' => str_replace('http://', 'https://', config('app.asset_url', config('app.url')))]);
+        }
     }
 }

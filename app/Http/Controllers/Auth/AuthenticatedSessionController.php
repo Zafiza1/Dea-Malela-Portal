@@ -30,6 +30,9 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         try {
+            // Debug logging
+            \Log::info('Login attempt for username: ' . $request->username);
+            
             $request->authenticate();
 
             $request->session()->regenerate();
@@ -38,9 +41,10 @@ class AuthenticatedSessionController extends Controller
         } catch (\Exception $e) {
             // Log error untuk debugging
             \Log::error('Login error: ' . $e->getMessage());
+            \Log::error('Login error trace: ' . $e->getTraceAsString());
             
             return back()->withErrors([
-                'email' => 'Login gagal. Silakan cek kembali kredensial Anda.',
+                'username' => 'Login gagal: ' . $e->getMessage(),
             ]);
         }
     }

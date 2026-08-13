@@ -23,8 +23,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-.vercelignore
+.vercel
+!/public/images
 RAILWAY_DEPLOYMENT.md
 railway.toml
-
-.vercel

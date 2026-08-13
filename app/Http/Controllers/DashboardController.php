@@ -15,20 +15,34 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $stats = [
-            'total_guru' => Guru::count(),
-            'guru_aktif' => Guru::where('status', 'aktif')->count(),
-            'guru_tidak_aktif' => Guru::where('status', 'tidak_aktif')->count(),
-            'total_santri' => Santri::count(),
-            'total_surat' => SuratFile::count(),
-            'total_folder' => SuratFolder::count(),
-            'upload_hari_ini' => SuratFile::whereDate('created_at', today())->count(),
-        ];
+        try {
+            $stats = [
+                'total_guru' => Guru::count(),
+                'guru_aktif' => Guru::where('status', 'aktif')->count(),
+                'guru_tidak_aktif' => Guru::where('status', 'tidak_aktif')->count(),
+                'total_santri' => Santri::count(),
+                'total_surat' => SuratFile::count(),
+                'total_folder' => SuratFolder::count(),
+                'upload_hari_ini' => SuratFile::whereDate('created_at', today())->count(),
+            ];
 
-        $recentDocuments = SuratFile::with(['uploadedBy', 'folder'])
-            ->latest()
-            ->take(5)
-            ->get();
+            $recentDocuments = SuratFile::with(['uploadedBy', 'folder'])
+                ->latest()
+                ->take(5)
+                ->get();
+        } catch (\Exception $e) {
+            // Fallback jika database tidak terhubung
+            $stats = [
+                'total_guru' => 0,
+                'guru_aktif' => 0,
+                'guru_tidak_aktif' => 0,
+                'total_santri' => 0,
+                'total_surat' => 0,
+                'total_folder' => 0,
+                'upload_hari_ini' => 0,
+            ];
+            $recentDocuments = collect();
+        }
 
         $user = request()->user();
         

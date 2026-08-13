@@ -12,6 +12,7 @@ class SuratFile extends Model
     protected $fillable = [
         'nama_file',
         'path',
+        'file_path',
         'file_type',
         'file_size',
         'folder_id',

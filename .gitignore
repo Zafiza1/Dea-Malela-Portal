@@ -27,3 +27,4 @@ yarn-error.log
 !/public/images
 RAILWAY_DEPLOYMENT.md
 railway.toml
+!/database/database.sqlite

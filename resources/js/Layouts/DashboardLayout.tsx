@@ -87,7 +87,15 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
                                 src="/images/logo.png"
                                 alt="Dea Malela Logo"
                                 className="w-10 h-10 object-contain"
+                                onError={(e) => {
+                                    // Fallback jika logo tidak berhasil dimuat
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                    (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                }}
                             />
+                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center hidden">
+                                <span className="text-green-800 font-bold text-xl">DM</span>
+                            </div>
                             <span className="text-white font-bold text-lg">Dea Malela</span>
                         </div>
                     </div>

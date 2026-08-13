@@ -19,7 +19,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
-        return null; // Disable asset versioning to prevent auto-reload
+        return parent::version($request);
     }
 
     /**

@@ -12,4 +12,5 @@ export default defineConfig({
         watch: null,
         hmr: false,
     },
+    base: '/', // Ensure assets are served from root
 });

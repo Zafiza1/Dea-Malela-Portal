@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nis')->unique();
             $table->string('nama');
-            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('jenis_kelamin', 1); // 'L' or 'P'
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('nama_ayah');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('nomor_hp');
             $table->string('jenjang');
             $table->string('kelas');
-            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
+            $table->string('status', 20)->default('aktif'); // 'aktif' or 'tidak_aktif'
             $table->date('tanggal_masuk');
             $table->text('catatan')->nullable();
             $table->string('foto')->nullable();

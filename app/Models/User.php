@@ -14,6 +14,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasRoles;
 
     /**
+     * The field name used for authentication.
+     */
+    public function username(): string
+    {
+        return 'username';
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

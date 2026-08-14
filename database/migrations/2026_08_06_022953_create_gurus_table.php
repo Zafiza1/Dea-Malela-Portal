@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nama_lengkap');
-            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('jenis_kelamin', 1); // 'L' or 'P'
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('jabatan');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('alamat');
             $table->string('pendidikan_terakhir');
             $table->date('tanggal_masuk');
-            $table->enum('status', ['aktif', 'tidak_aktif'])->default('aktif');
+            $table->string('status', 20)->default('aktif'); // 'aktif' or 'tidak_aktif'
             $table->string('foto')->nullable();
             $table->string('ktp_path')->nullable();
             $table->string('sk_kerja_path')->nullable();

@@ -29,5 +29,7 @@ class Santri extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
         'tanggal_masuk' => 'date',
+        'status' => 'string',
+        'jenis_kelamin' => 'string',
     ];
 }

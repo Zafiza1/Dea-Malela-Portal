@@ -54,7 +54,11 @@
         "DB_DATABASE": "postgres",
         "DB_USERNAME": "postgres",
         "DB_PASSWORD": "deamalela@123",
-        "DB_SSLMODE": "require"
+        "DB_SSLMODE": "require",
+        "PGHOST": "db.wzlhobpewqaxbucoafdl.supabase.co",
+        "PGDATABASE": "postgres",
+        "PGUSER": "postgres",
+        "PGPASSWORD": "deamalela@123"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build && php artisan migrate --force && php artisan db:seed --force"

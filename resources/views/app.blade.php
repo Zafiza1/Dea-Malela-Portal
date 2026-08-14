@@ -13,6 +13,28 @@
         <!-- Content Security Policy for mixed content -->
         <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
+        <!-- Prevent invalid storage requests at DOM level -->
+        <script>
+            (function() {
+                const originalCreateElement = document.createElement;
+                document.createElement = function(tagName) {
+                    const element = originalCreateElement.call(document, tagName);
+                    if (tagName.toLowerCase() === 'img') {
+                        const originalSetAttribute = element.setAttribute;
+                        element.setAttribute = function(name, value) {
+                            if (name === 'src' && (value.includes('/storage/0') || value.includes('/storage/null') || value === '/storage/' || value.endsWith('/storage/'))) {
+                                console.error('BLOCKED: Invalid img src at DOM level:', value);
+                                element.style.display = 'none';
+                                return;
+                            }
+                            return originalSetAttribute.call(this, name, value);
+                        };
+                    }
+                    return element;
+                };
+            })();
+        </script>
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.tsx'])

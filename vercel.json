@@ -49,18 +49,18 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
         "DB_CONNECTION": "pgsql",
-        "DATABASE_URL": "postgresql://postgres:deamalela@123@db.wzlhobpewqaxbucoafdl.supabase.co:5432/postgres?sslmode=require",
-        "DB_HOST": "db.wzlhobpewqaxbucoafdl.supabase.co",
-        "DB_PORT": "5432",
+        "DATABASE_URL": "postgresql://postgres.wzlhobpewqaxbucoafdl:deamalela@123@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require",
+        "DB_HOST": "aws-0-ap-south-1.pooler.supabase.com",
+        "DB_PORT": "6543",
         "DB_DATABASE": "postgres",
-        "DB_USERNAME": "postgres",
+        "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
         "DB_PASSWORD": "deamalela@123",
         "DB_SSLMODE": "require",
-        "PGHOST": "db.wzlhobpewqaxbucoafdl.supabase.co",
+        "PGHOST": "aws-0-ap-south-1.pooler.supabase.com",
         "PGDATABASE": "postgres",
-        "PGUSER": "postgres",
+        "PGUSER": "postgres.wzlhobpewqaxbucoafdl",
         "PGPASSWORD": "deamalela@123"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
-    "buildCommand": "npm run build && php artisan migrate --force && php artisan db:seed --force"
+    "buildCommand": "npm run build"
 }

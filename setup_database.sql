@@ -212,9 +212,13 @@ INSERT INTO users (name, username, email, password, is_active)
 VALUES ('Administrator', 'admin', 'admin@deamalela.com', '$2y$12$/jdyWr4AqgkuOvohTjkvL.4r1ofVzdc2bXm6zRt97kYCnw1juXcpO', TRUE)
 ON CONFLICT (username) DO NOTHING;
 
--- Insert default role
+-- Insert default roles
 INSERT INTO roles (name, guard_name) 
 VALUES ('admin', 'web')
+ON CONFLICT (name, guard_name) DO NOTHING;
+
+INSERT INTO roles (name, guard_name) 
+VALUES ('guru', 'web')
 ON CONFLICT (name, guard_name) DO NOTHING;
 
 -- Assign admin role to admin user

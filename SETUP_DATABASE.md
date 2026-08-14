@@ -74,6 +74,19 @@ WHERE username = 'admin';
 
 Atau jalankan file `update_admin_password.sql` di SQL Editor Supabase.
 
+## Jika Tambah Guru Error
+
+Jika saat menambah guru muncul error "There is no role named `guru`", jalankan SQL berikut:
+
+```sql
+-- Add missing 'guru' role
+INSERT INTO roles (name, guard_name) 
+VALUES ('guru', 'web')
+ON CONFLICT (name, guard_name) DO NOTHING;
+```
+
+Atau jalankan file `add_guru_role.sql` di SQL Editor Supabase.
+
 ## Penjelasan Konfigurasi
 
 ### Vercel Environment

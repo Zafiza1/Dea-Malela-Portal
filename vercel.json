@@ -49,7 +49,12 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
         "DB_CONNECTION": "pgsql",
-        "DATABASE_URL": "postgresql://neondb_owner:npg_NXOd2x7sCpie@ep-lively-hill-auf3qss9.c-10.us-east-1.aws.neon.tech/neondb?sslmode=require&options=endpoint%3Dep-lively-hill-auf3qss9"
+        "DB_HOST": "db.wzlhobpewqaxbucoafdl.supabase.co",
+        "DB_PORT": "5432",
+        "DB_DATABASE": "postgres",
+        "DB_USERNAME": "postgres",
+        "DB_PASSWORD": "deamalela@123",
+        "DB_SSLMODE": "require"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build && php artisan migrate --force && php artisan db:seed --force"

@@ -16,6 +16,10 @@
             "dest": "/public/build/assets/$1"
         },
         {
+            "src": "/assets/(.*)",
+            "dest": "/public/build/assets/$1"
+        },
+        {
             "src": "/images/(.*)",
             "dest": "/public/images/$1"
         },
@@ -45,12 +49,13 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
         "DB_CONNECTION": "pgsql",
-        "DB_HOST": "ep-lively-hill-auf3qss9.c-10.us-east-1.aws.neon.tech",
+        "DB_HOST": "ep-lively-hill-auf3qss9-pooler.c-10.us-east-1.aws.neon.tech",
         "DB_PORT": "5432",
         "DB_DATABASE": "neondb",
         "DB_USERNAME": "neondb_owner",
         "DB_PASSWORD": "npg_NXOd2x7sCpie",
-        "DB_SSLMODE": "require"
+        "DB_SSLMODE": "require",
+        "DB_OPTIONS": "endpoint=ep-lively-hill-auf3qss9"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build && php artisan migrate --force && php artisan db:seed --force"

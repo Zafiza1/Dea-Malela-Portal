@@ -34,6 +34,7 @@ class SuratController extends Controller
                     'file_path' => $file->path,
                     'file_type' => $file->file_type,
                     'file_size' => $file->file_size,
+                    'file_url' => $file->path ? Storage::disk('supabase')->url($file->path) : null,
                 ];
             });
 
@@ -107,7 +108,7 @@ class SuratController extends Controller
             $fileType = $file->getClientOriginalExtension();
             $fileSize = $file->getSize();
 
-            $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'public');
+            $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'supabase');
 
             SuratFile::create([
                 'nama_file' => $fileName,
@@ -126,12 +127,12 @@ class SuratController extends Controller
 
     public function downloadFile(SuratFile $file)
     {
-        return Storage::disk('public')->download($file->path);
+        return Storage::disk('supabase')->download($file->path);
     }
 
     public function deleteFile(SuratFile $file)
     {
-        Storage::disk('public')->delete($file->path);
+        Storage::disk('supabase')->delete($file->path);
         $file->delete();
 
         return back()->with('success', 'File berhasil dihapus');

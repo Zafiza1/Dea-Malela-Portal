@@ -19,7 +19,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
         let isCancelled = false;
 
         const loadPreview = async () => {
-            if (!file || !file.file_path) {
+            if (!file || !file.file_path || file.file_path === '0' || file.file_path === 0) {
                 if (!isCancelled) {
                     setError('File path is not available');
                     setLoading(false);
@@ -33,7 +33,9 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
             }
 
             try {
-                const response = await fetch(`/storage/${file.file_path}`);
+                // Use file_url if available (from Supabase), otherwise fall back to local storage
+                const urlToFetch = file.file_url || `/storage/${file.file_path}`;
+                const response = await fetch(urlToFetch);
                 if (response.ok) {
                     const blob = await response.blob();
                     const url = URL.createObjectURL(blob);
@@ -158,7 +160,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                             <p className="text-gray-500 mb-2 font-medium">Preview Error</p>
                             <p className="text-sm text-gray-400 mb-4">{error}</p>
                             <a
-                                href={`/storage/${file.file_path}`}
+                                href={file.file_url || `/storage/${file.file_path}`}
                                 download={file.nama_file}
                                 className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                                 aria-label={`Download ${file.nama_file}`}
@@ -207,7 +209,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                             <p className="text-sm text-gray-400 mb-4">Download the file to view its contents</p>
                             <div className="flex space-x-3">
                                 <a
-                                    href={`/storage/${file.file_path}`}
+                                    href={file.file_url || `/storage/${file.file_path}`}
                                     download={file.nama_file}
                                     className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                                 >
@@ -215,7 +217,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                                     <span>Download</span>
                                 </a>
                                 <a
-                                    href={`/storage/${file.file_path}`}
+                                    href={file.file_url || `/storage/${file.file_path}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center space-x-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
@@ -238,7 +240,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                         Close
                     </button>
                     <a
-                        href={`/storage/${file.file_path}`}
+                        href={file.file_url || `/storage/${file.file_path}`}
                         download={file.nama_file}
                         className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                         aria-label={`Download ${file.nama_file}`}

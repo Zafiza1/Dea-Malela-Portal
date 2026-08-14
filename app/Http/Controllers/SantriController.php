@@ -29,6 +29,12 @@ class SantriController extends Controller
 
         $santri = $query->latest()->paginate(10);
 
+        // Generate URLs for existing files
+        $santri->getCollection()->transform(function ($s) {
+            $s->foto_url = $s->foto ? Storage::disk('supabase')->url($s->foto) : null;
+            return $s;
+        });
+
         return Inertia::render('Santri/Index', [
             'santri' => $santri,
             'auth' => [
@@ -66,7 +72,7 @@ class SantriController extends Controller
         $santri = Santri::create($validated);
 
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('santri/foto', 'public');
+            $fotoPath = $request->file('foto')->store('santri/foto', 'supabase');
             $santri->foto = $fotoPath;
             $santri->save();
         }
@@ -76,6 +82,9 @@ class SantriController extends Controller
 
     public function show(Santri $santri)
     {
+        // Generate URL for existing file
+        $santri->foto_url = $santri->foto ? Storage::disk('supabase')->url($santri->foto) : null;
+
         return Inertia::render('Santri/Show', [
             'santri' => $santri,
             'auth' => [
@@ -86,6 +95,9 @@ class SantriController extends Controller
 
     public function edit(Santri $santri)
     {
+        // Generate URL for existing file
+        $santri->foto_url = $santri->foto ? Storage::disk('supabase')->url($santri->foto) : null;
+
         return Inertia::render('Santri/Edit', [
             'santri' => $santri,
         ]);
@@ -118,9 +130,9 @@ class SantriController extends Controller
 
         if ($request->hasFile('foto')) {
             if ($santri->foto) {
-                Storage::disk('public')->delete($santri->foto);
+                Storage::disk('supabase')->delete($santri->foto);
             }
-            $fotoPath = $request->file('foto')->store('santri/foto', 'public');
+            $fotoPath = $request->file('foto')->store('santri/foto', 'supabase');
             $santri->foto = $fotoPath;
             $santri->save();
         }
@@ -131,7 +143,7 @@ class SantriController extends Controller
     public function destroy(Santri $santri)
     {
         if ($santri->foto) {
-            Storage::disk('public')->delete($santri->foto);
+            Storage::disk('supabase')->delete($santri->foto);
         }
 
         $santri->delete();

@@ -109,6 +109,7 @@ export interface FileData {
   file_path: string;
   file_type: string;
   file_size: number;
+  file_url?: string;
   folder?: Folder;
   uploadedBy?: User;
   created_at: string;

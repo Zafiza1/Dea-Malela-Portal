@@ -2,6 +2,14 @@ import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft, Eye, Edit, Trash2 } from 'lucide-react';
 
+interface Santri {
+    id: number;
+    nama: string;
+    nis: string;
+    foto?: string;
+    foto_url?: string;
+}
+
 export default function SantriIndex({ santri, auth }: any) {
     const isAdmin = auth.user.roles?.some((r: any) => r.name === 'admin');
 
@@ -142,7 +150,12 @@ export default function SantriIndex({ santri, auth }: any) {
                                             <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
                                                 {s.foto ? (
                                                     <img
-                                                        src={`/storage/${s.foto}`}
+                                                        src={s.foto_url}
+                                                        alt={s.nama}
+                                                        className="h-10 w-10 object-cover rounded-full"
+                                                        onError={(e) => {
+                                                            e.currentTarget.style.display = 'none';
+                                                        }}
                                                         alt={s.nama}
                                                         className="w-12 h-12 object-cover rounded-full"
                                                     />

@@ -49,10 +49,10 @@
         "APP_DEBUG": "true",
         "APP_LOG_LEVEL": "debug",
         "DB_CONNECTION": "pgsql",
-        "DB_HOST": "ep-lively-hill-auf3qss9.c-10.us-east-1.aws.neon.tech",
+        "DB_HOST": "$PGHOST",
         "DB_PORT": "5432",
-        "DB_DATABASE": "neondb",
-        "DB_USERNAME": "neondb_owner",
-        "DB_PASSWORD": "npg_NXOd2x7sCpie"
+        "DB_DATABASE": "$PGDATABASE",
+        "DB_USERNAME": "$PGUSER",
+        "DB_PASSWORD": "$PGPASSWORD"
     }
 }

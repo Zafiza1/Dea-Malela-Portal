@@ -19,7 +19,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
         let isCancelled = false;
 
         const loadPreview = async () => {
-            if (!file || !file.file_path || file.file_path === '0' || file.file_path === 0) {
+            if (!file || !file.file_path || file.file_path === '0' || file.file_path === 0 || file.file_path === '' || file.file_path === null) {
                 if (!isCancelled) {
                     setError('File path is not available');
                     setLoading(false);
@@ -34,7 +34,19 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
 
             try {
                 // Use file_url if available (from Supabase), otherwise fall back to local storage
-                const urlToFetch = file.file_url || `/storage/${file.file_path}`;
+                const urlToFetch = (file.file_url && file.file_url !== '0' && file.file_url !== '' && file.file_url !== null) 
+                    ? file.file_url 
+                    : `/storage/${file.file_path}`;
+                
+                // Don't fetch if the URL is still invalid
+                if (!urlToFetch || urlToFetch === '/storage/0' || urlToFetch === '/storage/' || urlToFetch === '/storage/null') {
+                    if (!isCancelled) {
+                        setError('Invalid file path');
+                        setLoading(false);
+                    }
+                    return;
+                }
+                
                 const response = await fetch(urlToFetch);
                 if (response.ok) {
                     const blob = await response.blob();
@@ -93,6 +105,16 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    };
+
+    const getValidUrl = (file: FileData) => {
+        if (file.file_url && file.file_url !== '0' && file.file_url !== '' && file.file_url !== null) {
+            return file.file_url;
+        }
+        if (file.file_path && file.file_path !== '0' && file.file_path !== '' && file.file_path !== null) {
+            return `/storage/${file.file_path}`;
+        }
+        return null;
     };
 
     const isPreviewable = (fileType: string) => {
@@ -160,10 +182,15 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                             <p className="text-gray-500 mb-2 font-medium">Preview Error</p>
                             <p className="text-sm text-gray-400 mb-4">{error}</p>
                             <a
-                                href={file.file_url || `/storage/${file.file_path}`}
+                                href={getValidUrl(file) || '#'}
                                 download={file.nama_file}
                                 className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                                 aria-label={`Download ${file.nama_file}`}
+                                onClick={(e) => {
+                                    if (!getValidUrl(file)) {
+                                        e.preventDefault();
+                                    }
+                                }}
                             >
                                 <Download className="w-4 h-4" />
                                 <span>Download File</span>
@@ -209,18 +236,28 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                             <p className="text-sm text-gray-400 mb-4">Download the file to view its contents</p>
                             <div className="flex space-x-3">
                                 <a
-                                    href={file.file_url || `/storage/${file.file_path}`}
+                                    href={getValidUrl(file) || '#'}
                                     download={file.nama_file}
                                     className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                                    onClick={(e) => {
+                                        if (!getValidUrl(file)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                 >
                                     <Download className="w-4 h-4" />
                                     <span>Download</span>
                                 </a>
                                 <a
-                                    href={file.file_url || `/storage/${file.file_path}`}
+                                    href={getValidUrl(file) || '#'}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center space-x-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+                                    onClick={(e) => {
+                                        if (!getValidUrl(file)) {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                 >
                                     <ExternalLink className="w-4 h-4" />
                                     <span>Open in New Tab</span>
@@ -240,10 +277,15 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
                         Close
                     </button>
                     <a
-                        href={file.file_url || `/storage/${file.file_path}`}
+                        href={getValidUrl(file) || '#'}
                         download={file.nama_file}
                         className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                         aria-label={`Download ${file.nama_file}`}
+                        onClick={(e) => {
+                            if (!getValidUrl(file)) {
+                                e.preventDefault();
+                            }
+                        }}
                     >
                         <Download className="w-4 h-4" />
                         <span>Download</span>

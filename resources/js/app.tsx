@@ -10,6 +10,20 @@ import ErrorBoundary from './Components/ErrorBoundary';
 
 const appName = (import.meta as any).env.VITE_APP_NAME || 'Laravel';
 
+// Add global fetch interceptor to prevent invalid storage requests
+const originalFetch = window.fetch;
+window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+    
+    // Prevent requests to invalid storage paths
+    if (url.includes('/storage/0') || url.includes('/storage/null') || url === '/storage/' || url.endsWith('/storage/')) {
+        console.warn('Prevented request to invalid storage path:', url);
+        return Promise.reject(new Error('Invalid storage path'));
+    }
+    
+    return originalFetch.call(this, input, init);
+};
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>

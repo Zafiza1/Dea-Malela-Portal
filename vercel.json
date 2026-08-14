@@ -44,7 +44,12 @@
         "APP_SERVICES_CACHE": "/tmp/services.php",
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
-        "DB_CONNECTION": "pgsql"
+        "DB_CONNECTION": "pgsql",
+        "DB_HOST": "ep-lively-hill-auf3qss9.c-10.us-east-1.aws.neon.tech",
+        "DB_PORT": "5432",
+        "DB_DATABASE": "neondb",
+        "DB_USERNAME": "neondb_owner",
+        "DB_PASSWORD": "npg_NXOd2x7sCpie"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "php artisan migrate --force && php artisan db:seed --force"

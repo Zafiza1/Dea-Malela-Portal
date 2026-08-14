@@ -11,6 +11,8 @@ interface Guru {
     email: string;
     jabatan: string;
     status: string;
+    foto?: string;
+    foto_url?: string;
 }
 
 interface GuruIndexProps {
@@ -122,6 +124,7 @@ export default function GuruIndex({ gurus, auth }: GuruIndexProps) {
                         <table className="w-full min-w-full">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
                                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jabatan</th>
                                     <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -131,13 +134,29 @@ export default function GuruIndex({ gurus, auth }: GuruIndexProps) {
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {gurus.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                                        <td colSpan={5} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
                                             <p className="text-sm text-gray-500">Tidak ada data guru</p>
                                         </td>
                                     </tr>
                                 ) : (
                                     gurus.data.map((guru: Guru) => (
                                         <tr key={guru.id} className="hover:bg-gray-50 transition">
+                                            <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
+                                                {guru.foto_url ? (
+                                                    <img
+                                                        src={guru.foto_url}
+                                                        alt={guru.nama_lengkap}
+                                                        className="h-10 w-10 object-cover rounded-full"
+                                                        onError={(e) => {
+                                                            e.currentTarget.style.display = 'none';
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                                        <span className="text-gray-500 text-xs">{guru.nama_lengkap.charAt(0)}</span>
+                                                    </div>
+                                                )}
+                                            </td>
                                             <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
                                                 <div>
                                                     <div className="font-medium text-gray-900">{guru.nama_lengkap}</div>

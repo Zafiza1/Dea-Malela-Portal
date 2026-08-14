@@ -230,9 +230,17 @@ export default function GuruEdit({ guru }: any) {
                                             accept="image/*"
                                         />
                                         {guru.foto && (
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                Foto saat ini: {guru.foto}
-                                            </p>
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-500 mb-1">Foto saat ini:</p>
+                                                <img
+                                                    src={guru.foto_url}
+                                                    alt="Foto guru"
+                                                    className="h-20 w-20 object-cover rounded-lg border"
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                            </div>
                                         )}
                                         {errors.foto && <p className="text-red-500 text-sm mt-1">{errors.foto}</p>}
                                     </div>
@@ -248,9 +256,17 @@ export default function GuruEdit({ guru }: any) {
                                             accept=".pdf,.jpg,.jpeg,.png"
                                         />
                                         {guru.ktp_path && (
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                KTP saat ini: {guru.ktp_path}
-                                            </p>
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-500 mb-1">KTP saat ini:</p>
+                                                <a
+                                                    href={guru.ktp_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 text-sm"
+                                                >
+                                                    Lihat KTP
+                                                </a>
+                                            </div>
                                         )}
                                         {errors.ktp && <p className="text-red-500 text-sm mt-1">{errors.ktp}</p>}
                                     </div>
@@ -266,9 +282,17 @@ export default function GuruEdit({ guru }: any) {
                                             accept=".pdf"
                                         />
                                         {guru.sk_kerja_path && (
-                                            <p className="text-sm text-gray-500 mt-1">
-                                                SK saat ini: {guru.sk_kerja_path}
-                                            </p>
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-500 mb-1">SK saat ini:</p>
+                                                <a
+                                                    href={guru.sk_kerja_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:text-blue-800 text-sm"
+                                                >
+                                                    Lihat SK Kerja
+                                                </a>
+                                            </div>
                                         )}
                                         {errors.sk_kerja && <p className="text-red-500 text-sm mt-1">{errors.sk_kerja}</p>}
                                     </div>

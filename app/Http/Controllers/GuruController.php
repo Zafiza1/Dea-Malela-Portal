@@ -25,6 +25,14 @@ class GuruController extends Controller
 
         $gurus = $query->latest()->paginate(10);
 
+        // Generate URLs for existing files
+        $gurus->getCollection()->transform(function ($guru) {
+            $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
+            $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+            $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
+            return $guru;
+        });
+
         return Inertia::render('Guru/Index', [
             'gurus' => $gurus,
             'auth' => [
@@ -104,6 +112,11 @@ class GuruController extends Controller
     {
         $guru->load('user');
 
+        // Generate URLs for existing files
+        $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
+        $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+        $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
+
         return Inertia::render('Guru/Show', [
             'guru' => $guru,
         ]);
@@ -112,6 +125,11 @@ class GuruController extends Controller
     public function edit(Guru $guru)
     {
         $guru->load('user');
+
+        // Generate URLs for existing files
+        $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
+        $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+        $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
 
         return Inertia::render('Guru/Edit', [
             'guru' => $guru,

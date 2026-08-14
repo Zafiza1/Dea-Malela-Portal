@@ -41,11 +41,14 @@ export default function GuruShow({ guru, auth }: any) {
                                 {/* Left Column - Photo and Basic Info */}
                                 <div>
                                     <div className="mb-6 flex justify-center">
-                                        {guru.foto ? (
+                                        {guru.foto_url ? (
                                             <img
-                                                src={`/storage/${guru.foto}`}
+                                                src={guru.foto_url}
                                                 alt={guru.nama_lengkap}
                                                 className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-lg"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
                                             />
                                         ) : (
                                             <div className="w-40 h-40 sm:w-48 sm:h-48 bg-gray-200 rounded-lg flex items-center justify-center">

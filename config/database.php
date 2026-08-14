@@ -114,6 +114,25 @@ return [
             'dsn_options' => env('DB_DSN_OPTIONS'),
         ],
 
+        'pgsql-direct' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_HOST_DIRECT', 'db.wzlhobpewqaxbucoafdl.supabase.co'),
+            'port' => env('DB_PORT_DIRECT', '5432'),
+            'database' => env('DB_DATABASE_DIRECT', 'postgres'),
+            'username' => env('DB_USERNAME_DIRECT', 'postgres'),
+            'password' => env('DB_PASSWORD_DIRECT', 'deamalela@123'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'require',
+            'options' => [
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ],
+            'schema' => 'public',
+            'connect_timeout' => 10,
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
@@ -145,6 +164,7 @@ return [
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
+        'connection' => env('DB_MIGRATION_CONNECTION', 'pgsql-direct'),
     ],
 
     /*

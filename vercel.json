@@ -59,7 +59,12 @@
         "PGHOST": "aws-0-ap-south-1.pooler.supabase.com",
         "PGDATABASE": "postgres",
         "PGUSER": "postgres.wzlhobpewqaxbucoafdl",
-        "PGPASSWORD": "deamalela@123"
+        "PGPASSWORD": "deamalela@123",
+        "DB_HOST_DIRECT": "db.wzlhobpewqaxbucoafdl.supabase.co",
+        "DB_PORT_DIRECT": "5432",
+        "DB_DATABASE_DIRECT": "postgres",
+        "DB_USERNAME_DIRECT": "postgres",
+        "DB_PASSWORD_DIRECT": "deamalela@123"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build"

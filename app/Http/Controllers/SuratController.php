@@ -31,7 +31,7 @@ class SuratController extends Controller
                 return [
                     'id' => $file->id,
                     'nama_file' => $file->nama_file,
-                    'file_path' => $file->path, // Map 'path' to 'file_path'
+                    'file_path' => $file->path,
                     'file_type' => $file->file_type,
                     'file_size' => $file->file_size,
                 ];

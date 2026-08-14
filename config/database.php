@@ -20,6 +20,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Custom Database Connectors
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'connectors' => [
+        'pgsql' => \App\Database\NeonPostgresConnector::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |
@@ -94,10 +105,13 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'require',
+            'sslmode' => env('DB_SSLMODE', 'require'),
             'options' => [
                 PDO::ATTR_EMULATE_PREPARES => false,
             ],
+            'schema' => env('DB_SCHEMA', 'public'),
+            'connect_timeout' => 5,
+            'dsn_options' => env('DB_DSN_OPTIONS'),
         ],
 
         'sqlsrv' => [

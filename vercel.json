@@ -70,8 +70,8 @@
         "SUPABASE_STORAGE_SECRET": "",
         "SUPABASE_STORAGE_REGION": "auto",
         "SUPABASE_STORAGE_BUCKET": "",
-        "SUPABASE_STORAGE_URL": "",
-        "SUPABASE_STORAGE_ENDPOINT": "https://YOUR_PROJECT_ID.supabase.co/storage/v1"
+        "SUPABASE_STORAGE_PUBLIC_URL": "",
+        "SUPABASE_STORAGE_ENDPOINT": "https://YOUR_PROJECT_ID.supabase.co/storage/v1/s3"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build"

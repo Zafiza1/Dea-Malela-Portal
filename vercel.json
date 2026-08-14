@@ -64,7 +64,14 @@
         "DB_PORT_DIRECT": "5432",
         "DB_DATABASE_DIRECT": "postgres",
         "DB_USERNAME_DIRECT": "postgres",
-        "DB_PASSWORD_DIRECT": "deamalela@123"
+        "DB_PASSWORD_DIRECT": "deamalela@123",
+        "FILESYSTEM_DISK": "supabase",
+        "SUPABASE_STORAGE_KEY": "",
+        "SUPABASE_STORAGE_SECRET": "",
+        "SUPABASE_STORAGE_REGION": "auto",
+        "SUPABASE_STORAGE_BUCKET": "",
+        "SUPABASE_STORAGE_URL": "",
+        "SUPABASE_STORAGE_ENDPOINT": "https://YOUR_PROJECT_ID.supabase.co/storage/v1"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "npm run build"

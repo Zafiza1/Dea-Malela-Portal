@@ -81,17 +81,17 @@ class GuruController extends Controller
         $guru->save();
 
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('guru/foto', 'public');
+            $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
             $guru->foto = $fotoPath;
         }
 
         if ($request->hasFile('ktp')) {
-            $ktpPath = $request->file('ktp')->store('guru/ktp', 'public');
+            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
             $guru->ktp_path = $ktpPath;
         }
 
         if ($request->hasFile('sk_kerja')) {
-            $skPath = $request->file('sk_kerja')->store('guru/sk', 'public');
+            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
             $guru->sk_kerja_path = $skPath;
         }
 
@@ -149,25 +149,25 @@ class GuruController extends Controller
 
         if ($request->hasFile('foto')) {
             if ($guru->foto) {
-                Storage::disk('public')->delete($guru->foto);
+                Storage::disk('supabase')->delete($guru->foto);
             }
-            $fotoPath = $request->file('foto')->store('guru/foto', 'public');
+            $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
             $guru->foto = $fotoPath;
         }
 
         if ($request->hasFile('ktp')) {
             if ($guru->ktp_path) {
-                Storage::disk('public')->delete($guru->ktp_path);
+                Storage::disk('supabase')->delete($guru->ktp_path);
             }
-            $ktpPath = $request->file('ktp')->store('guru/ktp', 'public');
+            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
             $guru->ktp_path = $ktpPath;
         }
 
         if ($request->hasFile('sk_kerja')) {
             if ($guru->sk_kerja_path) {
-                Storage::disk('public')->delete($guru->sk_kerja_path);
+                Storage::disk('supabase')->delete($guru->sk_kerja_path);
             }
-            $skPath = $request->file('sk_kerja')->store('guru/sk', 'public');
+            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
             $guru->sk_kerja_path = $skPath;
         }
 
@@ -179,13 +179,13 @@ class GuruController extends Controller
     public function destroy(Guru $guru)
     {
         if ($guru->foto) {
-            Storage::disk('public')->delete($guru->foto);
+            Storage::disk('supabase')->delete($guru->foto);
         }
         if ($guru->ktp_path) {
-            Storage::disk('public')->delete($guru->ktp_path);
+            Storage::disk('supabase')->delete($guru->ktp_path);
         }
         if ($guru->sk_kerja_path) {
-            Storage::disk('public')->delete($guru->sk_kerja_path);
+            Storage::disk('supabase')->delete($guru->sk_kerja_path);
         }
 
         $guru->delete();
@@ -200,10 +200,10 @@ class GuruController extends Controller
         ]);
 
         if ($guru->ktp_path) {
-            Storage::disk('public')->delete($guru->ktp_path);
+            Storage::disk('supabase')->delete($guru->ktp_path);
         }
 
-        $ktpPath = $request->file('ktp')->store('guru/ktp', 'public');
+        $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
         $guru->ktp_path = $ktpPath;
         $guru->save();
 
@@ -217,10 +217,10 @@ class GuruController extends Controller
         ]);
 
         if ($guru->sk_kerja_path) {
-            Storage::disk('public')->delete($guru->sk_kerja_path);
+            Storage::disk('supabase')->delete($guru->sk_kerja_path);
         }
 
-        $skPath = $request->file('sk_kerja')->store('guru/sk', 'public');
+        $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
         $guru->sk_kerja_path = $skPath;
         $guru->save();
 
@@ -233,7 +233,7 @@ class GuruController extends Controller
             return back()->with('error', 'KTP tidak tersedia');
         }
 
-        return Storage::disk('public')->download($guru->ktp_path);
+        return Storage::disk('supabase')->download($guru->ktp_path);
     }
 
     public function downloadSk(Guru $guru)
@@ -242,6 +242,6 @@ class GuruController extends Controller
             return back()->with('error', 'SK Kerja tidak tersedia');
         }
 
-        return Storage::disk('public')->download($guru->sk_kerja_path);
+        return Storage::disk('supabase')->download($guru->sk_kerja_path);
     }
 }

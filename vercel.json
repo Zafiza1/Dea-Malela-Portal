@@ -49,6 +49,7 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
         "DB_CONNECTION": "pgsql",
+        "DATABASE_URL": "postgresql://postgres:deamalela@123@db.wzlhobpewqaxbucoafdl.supabase.co:5432/postgres?sslmode=require",
         "DB_HOST": "db.wzlhobpewqaxbucoafdl.supabase.co",
         "DB_PORT": "5432",
         "DB_DATABASE": "postgres",

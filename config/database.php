@@ -110,7 +110,7 @@ return [
                 PDO::ATTR_EMULATE_PREPARES => false,
             ],
             'schema' => env('DB_SCHEMA', 'public'),
-            'connect_timeout' => 5,
+            'connect_timeout' => 10,
             'dsn_options' => env('DB_DSN_OPTIONS'),
         ],
 

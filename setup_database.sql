@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS surat_files (
 -- Insert default admin user (password: admin123)
 -- Note: You should change this password after first login
 INSERT INTO users (name, username, email, password, is_active) 
-VALUES ('Administrator', 'admin', 'admin@deamalela.com', '$2y$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', TRUE)
+VALUES ('Administrator', 'admin', 'admin@deamalela.com', '$2y$12$/jdyWr4AqgkuOvohTjkvL.4r1ofVzdc2bXm6zRt97kYCnw1juXcpO', TRUE)
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert default role

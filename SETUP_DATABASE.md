@@ -61,6 +61,19 @@ File `setup_database.sql` akan membuat:
 - ✅ User admin default (username: admin, password: admin123)
 - ✅ Role admin dan assign ke user admin
 
+## Jika Login Gagal
+
+Jika login dengan password `admin123` gagal, jalankan SQL berikut di Supabase Dashboard:
+
+```sql
+-- Update admin user password to admin123
+UPDATE users 
+SET password = '$2y$12$/jdyWr4AqgkuOvohTjkvL.4r1ofVzdc2bXm6zRt97kYCnw1juXcpO' 
+WHERE username = 'admin';
+```
+
+Atau jalankan file `update_admin_password.sql` di SQL Editor Supabase.
+
 ## Penjelasan Konfigurasi
 
 ### Vercel Environment

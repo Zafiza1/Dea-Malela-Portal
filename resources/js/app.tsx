@@ -17,7 +17,8 @@ window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<R
     
     // Prevent requests to invalid storage paths
     if (url.includes('/storage/0') || url.includes('/storage/null') || url === '/storage/' || url.endsWith('/storage/')) {
-        console.warn('Prevented request to invalid storage path:', url);
+        console.error('BLOCKED: Invalid storage request:', url);
+        console.trace('Request stack trace:');
         return Promise.reject(new Error('Invalid storage path'));
     }
     
@@ -30,11 +31,31 @@ document.addEventListener('error', (event) => {
     if (target && target.tagName === 'IMG') {
         const src = target.src;
         if (src.includes('/storage/0') || src.includes('/storage/null') || src === '/storage/' || src.endsWith('/storage/')) {
-            console.warn('Prevented image load for invalid storage path:', src);
+            console.error('BLOCKED: Invalid image src:', src);
+            console.trace('Image element:');
             target.style.display = 'none';
+            event.preventDefault();
+            event.stopPropagation();
         }
     }
 }, true);
+
+// Block all requests to invalid storage paths via XMLHttpRequest
+const originalXMLHttpRequest = window.XMLHttpRequest;
+window.XMLHttpRequest = function() {
+    const xhr = new originalXMLHttpRequest();
+    const originalOpen = xhr.open;
+    xhr.open = function(method: string, url: string | URL, ...args: any[]) {
+        const urlString = typeof url === 'string' ? url : url.toString();
+        if (urlString.includes('/storage/0') || urlString.includes('/storage/null') || urlString === '/storage/' || urlString.endsWith('/storage/')) {
+            console.error('BLOCKED: Invalid XHR request:', urlString);
+            console.trace('XHR origin:');
+            throw new Error('Invalid storage path');
+        }
+        return originalOpen.call(this, method, url, ...args);
+    };
+    return xhr;
+};
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

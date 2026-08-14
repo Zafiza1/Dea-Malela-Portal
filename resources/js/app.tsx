@@ -52,7 +52,7 @@ window.XMLHttpRequest = function(this: XMLHttpRequest) {
             console.trace('XHR origin:');
             throw new Error('Invalid storage path');
         }
-        return originalOpen.call(this, method, url, async, user, password);
+        return originalOpen.call(this, method, url, async ?? true, user, password);
     };
     return xhr;
 } as any;

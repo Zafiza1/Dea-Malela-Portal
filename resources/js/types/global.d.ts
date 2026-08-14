@@ -69,6 +69,7 @@ export interface User {
   email: string;
   email_verified_at?: string | null;
   profile_photo_path?: string | null;
+  profile_photo_url?: string | null;
   roles: Role[];
   guru?: Guru;
 }

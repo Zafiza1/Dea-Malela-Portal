@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -34,6 +35,11 @@ class HandleInertiaRequests extends Middleware
         // Force HTTPS for asset URLs in production
         if (app()->environment('production')) {
             $this->forceHttpsForAssets();
+        }
+        
+        // Generate URLs for user files
+        if ($user) {
+            $user->profile_photo_url = $user->profile_photo_path ? Storage::disk('supabase')->url($user->profile_photo_path) : null;
         }
         
         return [

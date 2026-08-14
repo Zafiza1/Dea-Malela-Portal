@@ -62,11 +62,14 @@ export default function UpdateProfileInformation({
                 {/* Profile Photo Section */}
                 <div className="flex items-center space-x-6">
                     <div className="relative">
-                        {user.profile_photo_path ? (
+                        {user.profile_photo_url ? (
                             <img
-                                src={`/storage/${user.profile_photo_path}`}
+                                src={user.profile_photo_url}
                                 alt={user.name}
                                 className="h-20 w-20 rounded-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                }}
                             />
                         ) : (
                             <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">

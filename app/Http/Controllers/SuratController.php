@@ -54,13 +54,17 @@ class SuratController extends Controller
             'parent_id' => 'nullable|exists:surat_folders,id',
         ]);
 
-        SuratFolder::create([
-            'nama' => $validated['nama'],
-            'parent_id' => $validated['parent_id'] ?? null,
-            'created_by' => auth()->id(),
-        ]);
+        try {
+            SuratFolder::create([
+                'nama' => $validated['nama'],
+                'parent_id' => $validated['parent_id'] ?? null,
+                'created_by' => auth()->id(),
+            ]);
 
-        return back()->with('success', 'Folder berhasil dibuat');
+            return back()->with('success', 'Folder berhasil dibuat');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
+        }
     }
 
     public function updateFolder(Request $request, SuratFolder $folder)
@@ -97,23 +101,27 @@ class SuratController extends Controller
             'folder_id' => 'nullable|exists:surat_folders,id',
         ]);
 
-        $file = $request->file('file');
-        $fileName = $file->getClientOriginalName();
-        $fileType = $file->getClientOriginalExtension();
-        $fileSize = $file->getSize();
+        try {
+            $file = $request->file('file');
+            $fileName = $file->getClientOriginalName();
+            $fileType = $file->getClientOriginalExtension();
+            $fileSize = $file->getSize();
 
-        $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'public');
+            $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'public');
 
-        SuratFile::create([
-            'nama_file' => $fileName,
-            'path' => $path,
-            'file_type' => $fileType,
-            'file_size' => $fileSize,
-            'folder_id' => $request->folder_id,
-            'uploaded_by' => auth()->id(),
-        ]);
+            SuratFile::create([
+                'nama_file' => $fileName,
+                'path' => $path,
+                'file_type' => $fileType,
+                'file_size' => $fileSize,
+                'folder_id' => $request->folder_id,
+                'uploaded_by' => auth()->id(),
+            ]);
 
-        return back()->with('success', 'File berhasil diupload');
+            return back()->with('success', 'File berhasil diupload');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
+        }
     }
 
     public function downloadFile(SuratFile $file)

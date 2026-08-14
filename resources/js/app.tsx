@@ -42,20 +42,20 @@ document.addEventListener('error', (event) => {
 
 // Block all requests to invalid storage paths via XMLHttpRequest
 const originalXMLHttpRequest = window.XMLHttpRequest;
-window.XMLHttpRequest = function() {
+window.XMLHttpRequest = function(this: XMLHttpRequest) {
     const xhr = new originalXMLHttpRequest();
     const originalOpen = xhr.open;
-    xhr.open = function(method: string, url: string | URL, ...args: any[]) {
+    xhr.open = function(method: string, url: string | URL, async?: boolean, user?: string | null, password?: string | null) {
         const urlString = typeof url === 'string' ? url : url.toString();
         if (urlString.includes('/storage/0') || urlString.includes('/storage/null') || urlString === '/storage/' || urlString.endsWith('/storage/')) {
             console.error('BLOCKED: Invalid XHR request:', urlString);
             console.trace('XHR origin:');
             throw new Error('Invalid storage path');
         }
-        return originalOpen.call(this, method, url, ...args);
+        return originalOpen.call(this, method, url, async, user, password);
     };
     return xhr;
-};
+} as any;
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

@@ -45,7 +45,7 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "APP_DEBUG": "true",
         "DB_CONNECTION": "pgsql",
-        "DATABASE_URL": "postgresql://neondb_owner:npg_NXOd2x7sCpie@ep-lively-hill-auf3qss9.c-10.us-east-1.aws.neon.tech/neondb?sslmode=require&options=endpoint%3Dep-lively-hill-auf3qss9"
+        "DATABASE_URL": "postgresql://neondb_owner:npg_NXOd2x7sCpie@ep-lively-hill-auf3qss9-pooler.c-10.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "php artisan migrate --force && php artisan db:seed --force"

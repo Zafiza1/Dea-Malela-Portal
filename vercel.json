@@ -12,6 +12,14 @@
     ],
     "routes": [
         {
+            "src": "/storage/0",
+            "status": 404
+        },
+        {
+            "src": "/storage/null",
+            "status": 404
+        },
+        {
             "src": "/build/assets/(.*)",
             "dest": "/public/build/assets/$1"
         },

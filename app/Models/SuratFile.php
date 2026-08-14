@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,7 +13,6 @@ class SuratFile extends Model
     protected $fillable = [
         'nama_file',
         'path',
-        'file_path',
         'file_type',
         'file_size',
         'folder_id',

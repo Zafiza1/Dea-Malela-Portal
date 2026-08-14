@@ -48,7 +48,7 @@ class GuruController extends Controller
             'tanggal_lahir' => 'required|date',
             'jabatan' => 'required|string|max:255',
             'nomor_hp' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|unique:users,email|max:255',
             'alamat' => 'required|string',
             'pendidikan_terakhir' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
@@ -73,7 +73,7 @@ class GuruController extends Controller
         $user->assignRole('guru');
 
         // Remove user-related fields from validated data
-        $guruData = array_diff_key($validated, array_flip(['username', 'password', 'password_confirmation']));
+        $guruData = array_diff_key($validated, array_flip(['username', 'password', 'password_confirmation', 'email']));
 
         // Create guru with user relationship
         $guru = Guru::create($guruData);
@@ -127,7 +127,7 @@ class GuruController extends Controller
             'tanggal_lahir' => 'required|date',
             'jabatan' => 'required|string|max:255',
             'nomor_hp' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $guru->user_id . '|max:255',
             'alamat' => 'required|string',
             'pendidikan_terakhir' => 'required|string|max:255',
             'tanggal_masuk' => 'required|date',
@@ -138,9 +138,14 @@ class GuruController extends Controller
         ]);
 
         // Remove file fields from validated data to prevent overwriting with null
-        $validated = array_diff_key($validated, array_flip(['foto', 'ktp', 'sk_kerja']));
+        $validated = array_diff_key($validated, array_flip(['foto', 'ktp', 'sk_kerja', 'email']));
 
         $guru->update($validated);
+
+        // Update user email if provided
+        if ($request->has('email') && $guru->user) {
+            $guru->user->update(['email' => $request->email]);
+        }
 
         if ($request->hasFile('foto')) {
             if ($guru->foto) {

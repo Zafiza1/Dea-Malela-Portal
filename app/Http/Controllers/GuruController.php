@@ -378,8 +378,15 @@ class GuruController extends Controller
             }
 
             \Log::info('Attempting to store file to Supabase...');
-            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
-            \Log::info('File stored with path: ' . $ktpPath);
+            $ktpPath = null;
+            try {
+                $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+                \Log::info('File stored with path: ' . $ktpPath);
+            } catch (\Exception $storageError) {
+                \Log::error('Storage operation failed: ' . $storageError->getMessage());
+                \Log::error('Storage error trace: ' . $storageError->getTraceAsString());
+                throw $storageError;
+            }
             
             $guru->ktp_path = $ktpPath;
             $guru->save();

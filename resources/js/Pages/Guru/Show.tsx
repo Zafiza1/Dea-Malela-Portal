@@ -1,4 +1,4 @@
-import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft } from 'lucide-react';
 

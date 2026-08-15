@@ -358,6 +358,7 @@ class GuruController extends Controller
             'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
             'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
             'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
         ]));
         
         $validated = $request->validate([
@@ -365,11 +366,21 @@ class GuruController extends Controller
         ]);
 
         try {
+            \Log::info('File details: ' . json_encode([
+                'name' => $request->file('ktp')->getClientOriginalName(),
+                'size' => $request->file('ktp')->getSize(),
+                'mime' => $request->file('ktp')->getMimeType(),
+            ]));
+            
             if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
+                \Log::info('Deleting old KTP: ' . $guru->ktp_path);
                 Storage::disk('supabase')->delete($guru->ktp_path);
             }
 
+            \Log::info('Attempting to store file to Supabase...');
             $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+            \Log::info('File stored with path: ' . $ktpPath);
+            
             $guru->ktp_path = $ktpPath;
             $guru->save();
             

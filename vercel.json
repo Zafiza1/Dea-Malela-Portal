@@ -83,5 +83,5 @@
         "SESSION_LIFETIME": "480"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
-    "buildCommand": "npm run build"
+    "buildCommand": "php artisan config:clear && php artisan cache:clear && npm run build"
 }

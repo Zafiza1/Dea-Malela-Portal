@@ -77,7 +77,7 @@
         "SUPABASE_STORAGE_KEY": "",
         "SUPABASE_STORAGE_SECRET": "",
         "SUPABASE_STORAGE_REGION": "ap-south-1",
-        "SUPABASE_STORAGE_BUCKET": "public",
+        "SUPABASE_STORAGE_BUCKET": "",
         "SUPABASE_STORAGE_PUBLIC_URL": "https://wzlhobpewqaxbucoafdl.supabase.co/storage/v1/object/public",
         "SUPABASE_STORAGE_ENDPOINT": "https://wzlhobpewqaxbucoafdl.storage.supabase.co/storage/v1/s3"
     },

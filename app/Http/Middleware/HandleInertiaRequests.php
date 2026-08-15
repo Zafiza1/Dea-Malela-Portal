@@ -37,17 +37,8 @@ class HandleInertiaRequests extends Middleware
             $this->forceHttpsForAssets();
         }
         
-        // Generate URLs for user files with validation
-        if ($user) {
-            $user->profile_photo_url = null;
-            if ($user->profile_photo_path && $user->profile_photo_path !== '0' && $user->profile_photo_path !== '' && $user->profile_photo_path !== null) {
-                try {
-                    $user->profile_photo_url = Storage::disk('supabase')->url($user->profile_photo_path);
-                } catch (\Exception $e) {
-                    $user->profile_photo_url = null;
-                }
-            }
-        }
+        // No need to generate profile_photo_url here to avoid database issues
+        // It should be handled only in frontend via accessor
         
         return [
             ...parent::share($request),

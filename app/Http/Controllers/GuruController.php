@@ -353,6 +353,13 @@ class GuruController extends Controller
 
     public function uploadKtp(Request $request, Guru $guru)
     {
+        \Log::info('Upload KTP requested for guru ' . $guru->id);
+        \Log::info('Supabase config: ' . json_encode([
+            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
+            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
+            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+        ]));
+        
         $validated = $request->validate([
             'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -365,16 +372,26 @@ class GuruController extends Controller
             $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
             $guru->ktp_path = $ktpPath;
             $guru->save();
+            
+            \Log::info('KTP uploaded successfully: ' . $ktpPath);
 
             return back()->with('success', 'KTP berhasil diupload');
         } catch (\Exception $e) {
             \Log::error('Error uploading KTP: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return back()->with('error', 'Gagal mengupload KTP');
         }
     }
 
     public function uploadSk(Request $request, Guru $guru)
     {
+        \Log::info('Upload SK requested for guru ' . $guru->id);
+        \Log::info('Supabase config: ' . json_encode([
+            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
+            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
+            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+        ]));
+        
         $validated = $request->validate([
             'sk_kerja' => 'required|file|mimes:pdf|max:2048',
         ]);
@@ -387,10 +404,13 @@ class GuruController extends Controller
             $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
             $guru->sk_kerja_path = $skPath;
             $guru->save();
+            
+            \Log::info('SK uploaded successfully: ' . $skPath);
 
             return back()->with('success', 'SK Kerja berhasil diupload');
         } catch (\Exception $e) {
             \Log::error('Error uploading SK Kerja: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return back()->with('error', 'Gagal mengupload SK Kerja');
         }
     }

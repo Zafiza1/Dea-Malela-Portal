@@ -274,8 +274,8 @@ class GuruController extends Controller
         }
 
         if ($request->hasFile('foto')) {
-            // Delete old photo if exists and is valid
-            if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
+            // Delete old photo if exists and is valid (only if it's a file path, not base64)
+            if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0 && strpos($guru->foto, 'data:') !== 0) {
                 try {
                     Storage::disk('public')->delete($guru->foto);
                 } catch (\Exception $e) {
@@ -284,29 +284,47 @@ class GuruController extends Controller
                 }
             }
             try {
-                $fotoPath = $request->file('foto')->store('guru/foto', 'public');
-                \Log::info('Photo uploaded to public storage: ' . $fotoPath);
-                $guru->foto = $fotoPath;
+                $file = $request->file('foto');
+                \Log::info('File details: ' . json_encode([
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]));
+                
+                // Convert to base64 for direct storage in database
+                $base64Image = base64_encode(file_get_contents($file->getPathname()));
+                $guru->foto = 'data:' . $file->getMimeType() . ';base64,' . $base64Image;
+                
+                \Log::info('Photo converted to base64, length: ' . strlen($guru->foto));
             } catch (\Exception $e) {
                 \Log::error('Error uploading photo: ' . $e->getMessage());
+                \Log::error('Stack trace: ' . $e->getTraceAsString());
                 // Continue without saving the photo
             }
         }
 
         if ($request->hasFile('ktp')) {
-            if ($guru->ktp_path) {
-                Storage::disk('supabase')->delete($guru->ktp_path);
+            try {
+                if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
+                    Storage::disk('public')->delete($guru->ktp_path);
+                }
+                $ktpPath = $request->file('ktp')->store('guru/ktp', 'public');
+                $guru->ktp_path = $ktpPath;
+            } catch (\Exception $e) {
+                \Log::error('Error uploading KTP: ' . $e->getMessage());
             }
-            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
-            $guru->ktp_path = $ktpPath;
         }
 
         if ($request->hasFile('sk_kerja')) {
-            if ($guru->sk_kerja_path) {
-                Storage::disk('supabase')->delete($guru->sk_kerja_path);
+            try {
+                if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
+                    Storage::disk('public')->delete($guru->sk_kerja_path);
+                }
+                $skPath = $request->file('sk_kerja')->store('guru/sk', 'public');
+                $guru->sk_kerja_path = $skPath;
+            } catch (\Exception $e) {
+                \Log::error('Error uploading SK Kerja: ' . $e->getMessage());
             }
-            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
-            $guru->sk_kerja_path = $skPath;
         }
 
         $guru->save();

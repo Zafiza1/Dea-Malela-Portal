@@ -73,7 +73,7 @@
         "DB_DATABASE_DIRECT": "postgres",
         "DB_USERNAME_DIRECT": "postgres",
         "DB_PASSWORD_DIRECT": "deamalela@123",
-        "FILESYSTEM_DISK": "public",
+        "FILESYSTEM_DISK": "supabase",
         "SUPABASE_STORAGE_KEY": "",
         "SUPABASE_STORAGE_SECRET": "",
         "SUPABASE_STORAGE_REGION": "ap-south-1",

@@ -355,15 +355,20 @@ class GuruController extends Controller
             'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        if ($guru->ktp_path) {
-            Storage::disk('supabase')->delete($guru->ktp_path);
+        try {
+            if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
+                Storage::disk('supabase')->delete($guru->ktp_path);
+            }
+
+            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+            $guru->ktp_path = $ktpPath;
+            $guru->save();
+
+            return back()->with('success', 'KTP berhasil diupload');
+        } catch (\Exception $e) {
+            \Log::error('Error uploading KTP: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengupload KTP');
         }
-
-        $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
-        $guru->ktp_path = $ktpPath;
-        $guru->save();
-
-        return back()->with('success', 'KTP berhasil diupload');
     }
 
     public function uploadSk(Request $request, Guru $guru)
@@ -372,15 +377,20 @@ class GuruController extends Controller
             'sk_kerja' => 'required|file|mimes:pdf|max:2048',
         ]);
 
-        if ($guru->sk_kerja_path) {
-            Storage::disk('supabase')->delete($guru->sk_kerja_path);
+        try {
+            if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
+                Storage::disk('supabase')->delete($guru->sk_kerja_path);
+            }
+
+            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
+            $guru->sk_kerja_path = $skPath;
+            $guru->save();
+
+            return back()->with('success', 'SK Kerja berhasil diupload');
+        } catch (\Exception $e) {
+            \Log::error('Error uploading SK Kerja: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengupload SK Kerja');
         }
-
-        $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
-        $guru->sk_kerja_path = $skPath;
-        $guru->save();
-
-        return back()->with('success', 'SK Kerja berhasil diupload');
     }
 
     public function downloadKtp(Guru $guru)
@@ -389,7 +399,12 @@ class GuruController extends Controller
             return back()->with('error', 'KTP tidak tersedia');
         }
 
-        return Storage::disk('supabase')->download($guru->ktp_path);
+        try {
+            return Storage::disk('supabase')->download($guru->ktp_path);
+        } catch (\Exception $e) {
+            \Log::error('Error downloading KTP: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mendownload KTP');
+        }
     }
 
     public function downloadSk(Guru $guru)
@@ -398,6 +413,11 @@ class GuruController extends Controller
             return back()->with('error', 'SK Kerja tidak tersedia');
         }
 
-        return Storage::disk('supabase')->download($guru->sk_kerja_path);
+        try {
+            return Storage::disk('supabase')->download($guru->sk_kerja_path);
+        } catch (\Exception $e) {
+            \Log::error('Error downloading SK Kerja: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mendownload SK Kerja');
+        }
     }
 }

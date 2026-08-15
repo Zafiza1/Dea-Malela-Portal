@@ -27,7 +27,10 @@ class GuruController extends Controller
 
         // Generate URLs for existing files
         $gurus->getCollection()->transform(function ($guru) {
-            if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
+            // Check if foto is base64 data
+            if ($guru->foto && strpos($guru->foto, 'data:') === 0) {
+                $guru->foto_url = $guru->foto;
+            } elseif ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
                 try {
                     $guru->foto_url = Storage::disk('public')->url($guru->foto);
                 } catch (\Exception $e) {
@@ -121,11 +124,21 @@ class GuruController extends Controller
                 $guru->foto = null;
             }
             try {
-                $fotoPath = $request->file('foto')->store('guru/foto', 'public');
-                \Log::info('Photo uploaded to public storage: ' . $fotoPath);
-                $guru->foto = $fotoPath;
+                $file = $request->file('foto');
+                \Log::info('File details: ' . json_encode([
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ]));
+                
+                // Convert to base64 for direct storage in database
+                $base64Image = base64_encode(file_get_contents($file->getPathname()));
+                $guru->foto = 'data:' . $file->getMimeType() . ';base64,' . $base64Image;
+                
+                \Log::info('Photo converted to base64, length: ' . strlen($guru->foto));
             } catch (\Exception $e) {
                 \Log::error('Error uploading photo: ' . $e->getMessage());
+                \Log::error('Stack trace: ' . $e->getTraceAsString());
                 // Continue without saving the photo
             }
         }
@@ -150,7 +163,10 @@ class GuruController extends Controller
         $guru->load('user');
 
         // Generate URLs for existing files
-        if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
+        // Check if foto is base64 data
+        if ($guru->foto && strpos($guru->foto, 'data:') === 0) {
+            $guru->foto_url = $guru->foto;
+        } elseif ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
                 $guru->foto_url = Storage::disk('public')->url($guru->foto);
             } catch (\Exception $e) {
@@ -190,7 +206,10 @@ class GuruController extends Controller
         $guru->load('user');
 
         // Generate URLs for existing files
-        if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
+        // Check if foto is base64 data
+        if ($guru->foto && strpos($guru->foto, 'data:') === 0) {
+            $guru->foto_url = $guru->foto;
+        } elseif ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
                 $guru->foto_url = Storage::disk('public')->url($guru->foto);
             } catch (\Exception $e) {

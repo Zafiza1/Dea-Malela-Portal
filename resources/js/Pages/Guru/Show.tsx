@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft } from 'lucide-react';
 
@@ -131,14 +131,14 @@ export default function GuruShow({ guru, auth }: any) {
                                         <h3 className="font-medium mb-2">KTP</h3>
                                         {guru.ktp_path ? (
                                             <div className="space-y-2">
-                                                <a
-                                                    href={`/guru/${guru.id}/download-ktp`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline"
+                                                <button
+                                                    onClick={() => {
+                                                        window.open(`/guru/${guru.id}/download-ktp`, '_blank');
+                                                    }}
+                                                    className="text-blue-600 hover:underline text-left"
                                                 >
                                                     Download KTP
-                                                </a>
+                                                </button>
                                                 <form
                                                     method="POST"
                                                     action={`/guru/${guru.id}/upload-ktp`}
@@ -177,14 +177,14 @@ export default function GuruShow({ guru, auth }: any) {
                                         <h3 className="font-medium mb-2">SK Kerja</h3>
                                         {guru.sk_kerja_path ? (
                                             <div className="space-y-2">
-                                                <a
-                                                    href={`/guru/${guru.id}/download-sk`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline"
+                                                <button
+                                                    onClick={() => {
+                                                        window.open(`/guru/${guru.id}/download-sk`, '_blank');
+                                                    }}
+                                                    className="text-blue-600 hover:underline text-left"
                                                 >
                                                     Download SK Kerja
-                                                </a>
+                                                </button>
                                                 <form
                                                     method="POST"
                                                     action={`/guru/${guru.id}/upload-sk`}

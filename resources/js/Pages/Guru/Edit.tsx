@@ -258,14 +258,14 @@ export default function GuruEdit({ guru }: any) {
                                         {guru.ktp_path && (
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 mb-1">KTP saat ini:</p>
-                                                <a
-                                                    href={`/guru/${guru.id}/download-ktp`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:text-blue-800 text-sm"
+                                                <button
+                                                    onClick={() => {
+                                                        window.open(`/guru/${guru.id}/download-ktp`, '_blank');
+                                                    }}
+                                                    className="text-blue-600 hover:text-blue-800 text-sm text-left"
                                                 >
                                                     Lihat KTP
-                                                </a>
+                                                </button>
                                             </div>
                                         )}
                                         {errors.ktp && <p className="text-red-500 text-sm mt-1">{errors.ktp}</p>}
@@ -284,14 +284,14 @@ export default function GuruEdit({ guru }: any) {
                                         {guru.sk_kerja_path && (
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 mb-1">SK saat ini:</p>
-                                                <a
-                                                    href={`/guru/${guru.id}/download-sk`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:text-blue-800 text-sm"
+                                                <button
+                                                    onClick={() => {
+                                                        window.open(`/guru/${guru.id}/download-sk`, '_blank');
+                                                    }}
+                                                    className="text-blue-600 hover:text-blue-800 text-sm text-left"
                                                 >
                                                     Lihat SK Kerja
-                                                </a>
+                                                </button>
                                             </div>
                                         )}
                                         {errors.sk_kerja && <p className="text-red-500 text-sm mt-1">{errors.sk_kerja}</p>}

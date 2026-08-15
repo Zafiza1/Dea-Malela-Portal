@@ -42,7 +42,7 @@ class GuruController extends Controller
             
             if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
                 try {
-                    $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
+                    $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
                 } catch (\Exception $e) {
                     $guru->ktp_url = null;
                 }
@@ -52,7 +52,7 @@ class GuruController extends Controller
             
             if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
                 try {
-                    $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
+                    $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
                 } catch (\Exception $e) {
                     $guru->sk_kerja_url = null;
                 }
@@ -178,7 +178,7 @@ class GuruController extends Controller
         
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
             } catch (\Exception $e) {
                 $guru->ktp_url = null;
             }
@@ -188,7 +188,7 @@ class GuruController extends Controller
         
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
             } catch (\Exception $e) {
                 $guru->sk_kerja_url = null;
             }
@@ -221,7 +221,7 @@ class GuruController extends Controller
         
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
             } catch (\Exception $e) {
                 $guru->ktp_url = null;
             }
@@ -231,7 +231,7 @@ class GuruController extends Controller
         
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
             } catch (\Exception $e) {
                 $guru->sk_kerja_url = null;
             }
@@ -306,10 +306,11 @@ class GuruController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
-                    Storage::disk('public')->delete($guru->ktp_path);
+                    Storage::disk('supabase')->delete($guru->ktp_path);
                 }
-                $ktpPath = $request->file('ktp')->store('guru/ktp', 'public');
+                $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
                 $guru->ktp_path = $ktpPath;
+                \Log::info('KTP uploaded successfully: ' . $ktpPath);
             } catch (\Exception $e) {
                 \Log::error('Error uploading KTP: ' . $e->getMessage());
             }
@@ -318,10 +319,11 @@ class GuruController extends Controller
         if ($request->hasFile('sk_kerja')) {
             try {
                 if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
-                    Storage::disk('public')->delete($guru->sk_kerja_path);
+                    Storage::disk('supabase')->delete($guru->sk_kerja_path);
                 }
-                $skPath = $request->file('sk_kerja')->store('guru/sk', 'public');
+                $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
                 $guru->sk_kerja_path = $skPath;
+                \Log::info('SK Kerja uploaded successfully: ' . $skPath);
             } catch (\Exception $e) {
                 \Log::error('Error uploading SK Kerja: ' . $e->getMessage());
             }
@@ -395,29 +397,39 @@ class GuruController extends Controller
 
     public function downloadKtp(Guru $guru)
     {
+        \Log::info('Download KTP requested for guru ' . $guru->id . ', ktp_path: ' . $guru->ktp_path);
+        
         if (!$guru->ktp_path) {
+            \Log::error('KTP path is empty for guru ' . $guru->id);
             return back()->with('error', 'KTP tidak tersedia');
         }
 
         try {
+            \Log::info('Attempting to download KTP from Supabase: ' . $guru->ktp_path);
             return Storage::disk('supabase')->download($guru->ktp_path);
         } catch (\Exception $e) {
             \Log::error('Error downloading KTP: ' . $e->getMessage());
-            return back()->with('error', 'Gagal mendownload KTP');
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return back()->with('error', 'Gagal mendownload KTP: ' . $e->getMessage());
         }
     }
 
     public function downloadSk(Guru $guru)
     {
+        \Log::info('Download SK requested for guru ' . $guru->id . ', sk_kerja_path: ' . $guru->sk_kerja_path);
+        
         if (!$guru->sk_kerja_path) {
+            \Log::error('SK path is empty for guru ' . $guru->id);
             return back()->with('error', 'SK Kerja tidak tersedia');
         }
 
         try {
+            \Log::info('Attempting to download SK from Supabase: ' . $guru->sk_kerja_path);
             return Storage::disk('supabase')->download($guru->sk_kerja_path);
         } catch (\Exception $e) {
             \Log::error('Error downloading SK Kerja: ' . $e->getMessage());
-            return back()->with('error', 'Gagal mendownload SK Kerja');
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return back()->with('error', 'Gagal mendownload SK Kerja: ' . $e->getMessage());
         }
     }
 }

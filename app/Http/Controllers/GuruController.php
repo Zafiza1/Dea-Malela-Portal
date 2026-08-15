@@ -29,13 +29,9 @@ class GuruController extends Controller
         $gurus->getCollection()->transform(function ($guru) {
             if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
                 try {
-                    $guru->foto_url = Storage::disk('supabase')->url($guru->foto);
+                    $guru->foto_url = Storage::disk('public')->url($guru->foto);
                 } catch (\Exception $e) {
-                    try {
-                        $guru->foto_url = Storage::disk('public')->url($guru->foto);
-                    } catch (\Exception $e2) {
-                        $guru->foto_url = null;
-                    }
+                    $guru->foto_url = null;
                 }
             } else {
                 $guru->foto_url = null;
@@ -43,13 +39,9 @@ class GuruController extends Controller
             
             if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
                 try {
-                    $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                    $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
                 } catch (\Exception $e) {
-                    try {
-                        $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
-                    } catch (\Exception $e2) {
-                        $guru->ktp_url = null;
-                    }
+                    $guru->ktp_url = null;
                 }
             } else {
                 $guru->ktp_url = null;
@@ -57,13 +49,9 @@ class GuruController extends Controller
             
             if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
                 try {
-                    $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                    $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
                 } catch (\Exception $e) {
-                    try {
-                        $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
-                    } catch (\Exception $e2) {
-                        $guru->sk_kerja_url = null;
-                    }
+                    $guru->sk_kerja_url = null;
                 }
             } else {
                 $guru->sk_kerja_url = null;
@@ -133,15 +121,8 @@ class GuruController extends Controller
                 $guru->foto = null;
             }
             try {
-                // Try to use Supabase storage, fallback to public if it fails
-                try {
-                    $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
-                    \Log::info('Photo uploaded to Supabase: ' . $fotoPath);
-                } catch (\Exception $e) {
-                    \Log::error('Supabase upload failed, trying public storage: ' . $e->getMessage());
-                    $fotoPath = $request->file('foto')->store('guru/foto', 'public');
-                    \Log::info('Photo uploaded to public storage: ' . $fotoPath);
-                }
+                $fotoPath = $request->file('foto')->store('guru/foto', 'public');
+                \Log::info('Photo uploaded to public storage: ' . $fotoPath);
                 $guru->foto = $fotoPath;
             } catch (\Exception $e) {
                 \Log::error('Error uploading photo: ' . $e->getMessage());
@@ -168,16 +149,12 @@ class GuruController extends Controller
     {
         $guru->load('user');
 
-        // Generate URLs for existing files with fallback
+        // Generate URLs for existing files
         if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
-                $guru->foto_url = Storage::disk('supabase')->url($guru->foto);
+                $guru->foto_url = Storage::disk('public')->url($guru->foto);
             } catch (\Exception $e) {
-                try {
-                    $guru->foto_url = Storage::disk('public')->url($guru->foto);
-                } catch (\Exception $e2) {
-                    $guru->foto_url = null;
-                }
+                $guru->foto_url = null;
             }
         } else {
             $guru->foto_url = null;
@@ -185,13 +162,9 @@ class GuruController extends Controller
         
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
             } catch (\Exception $e) {
-                try {
-                    $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
-                } catch (\Exception $e2) {
-                    $guru->ktp_url = null;
-                }
+                $guru->ktp_url = null;
             }
         } else {
             $guru->ktp_url = null;
@@ -199,13 +172,9 @@ class GuruController extends Controller
         
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
             } catch (\Exception $e) {
-                try {
-                    $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
-                } catch (\Exception $e2) {
-                    $guru->sk_kerja_url = null;
-                }
+                $guru->sk_kerja_url = null;
             }
         } else {
             $guru->sk_kerja_url = null;
@@ -220,16 +189,12 @@ class GuruController extends Controller
     {
         $guru->load('user');
 
-        // Generate URLs for existing files with fallback
+        // Generate URLs for existing files
         if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
-                $guru->foto_url = Storage::disk('supabase')->url($guru->foto);
+                $guru->foto_url = Storage::disk('public')->url($guru->foto);
             } catch (\Exception $e) {
-                try {
-                    $guru->foto_url = Storage::disk('public')->url($guru->foto);
-                } catch (\Exception $e2) {
-                    $guru->foto_url = null;
-                }
+                $guru->foto_url = null;
             }
         } else {
             $guru->foto_url = null;
@@ -237,13 +202,9 @@ class GuruController extends Controller
         
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
             } catch (\Exception $e) {
-                try {
-                    $guru->ktp_url = Storage::disk('public')->url($guru->ktp_path);
-                } catch (\Exception $e2) {
-                    $guru->ktp_url = null;
-                }
+                $guru->ktp_url = null;
             }
         } else {
             $guru->ktp_url = null;
@@ -251,13 +212,9 @@ class GuruController extends Controller
         
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
             } catch (\Exception $e) {
-                try {
-                    $guru->sk_kerja_url = Storage::disk('public')->url($guru->sk_kerja_path);
-                } catch (\Exception $e2) {
-                    $guru->sk_kerja_url = null;
-                }
+                $guru->sk_kerja_url = null;
             }
         } else {
             $guru->sk_kerja_url = null;
@@ -301,22 +258,15 @@ class GuruController extends Controller
             // Delete old photo if exists and is valid
             if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
                 try {
-                    Storage::disk('supabase')->delete($guru->foto);
+                    Storage::disk('public')->delete($guru->foto);
                 } catch (\Exception $e) {
                     // Ignore deletion errors
                     \Log::error('Error deleting old photo: ' . $e->getMessage());
                 }
             }
             try {
-                // Try to use Supabase storage, fallback to public if it fails
-                try {
-                    $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
-                    \Log::info('Photo uploaded to Supabase: ' . $fotoPath);
-                } catch (\Exception $e) {
-                    \Log::error('Supabase upload failed, trying public storage: ' . $e->getMessage());
-                    $fotoPath = $request->file('foto')->store('guru/foto', 'public');
-                    \Log::info('Photo uploaded to public storage: ' . $fotoPath);
-                }
+                $fotoPath = $request->file('foto')->store('guru/foto', 'public');
+                \Log::info('Photo uploaded to public storage: ' . $fotoPath);
                 $guru->foto = $fotoPath;
             } catch (\Exception $e) {
                 \Log::error('Error uploading photo: ' . $e->getMessage());

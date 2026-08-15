@@ -259,7 +259,7 @@ export default function GuruEdit({ guru }: any) {
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 mb-1">KTP saat ini:</p>
                                                 <a
-                                                    href={guru.ktp_url}
+                                                    href={`/guru/${guru.id}/download-ktp`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-blue-600 hover:text-blue-800 text-sm"
@@ -285,7 +285,7 @@ export default function GuruEdit({ guru }: any) {
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 mb-1">SK saat ini:</p>
                                                 <a
-                                                    href={guru.sk_kerja_url}
+                                                    href={`/guru/${guru.id}/download-sk`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="text-blue-600 hover:text-blue-800 text-sm"

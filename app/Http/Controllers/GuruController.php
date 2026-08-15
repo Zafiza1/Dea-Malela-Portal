@@ -398,6 +398,12 @@ class GuruController extends Controller
     public function downloadKtp(Guru $guru)
     {
         \Log::info('Download KTP requested for guru ' . $guru->id . ', ktp_path: ' . $guru->ktp_path);
+        \Log::info('Supabase config: ' . json_encode([
+            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
+            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
+            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
+        ]));
         
         if (!$guru->ktp_path) {
             \Log::error('KTP path is empty for guru ' . $guru->id);
@@ -417,6 +423,12 @@ class GuruController extends Controller
     public function downloadSk(Guru $guru)
     {
         \Log::info('Download SK requested for guru ' . $guru->id . ', sk_kerja_path: ' . $guru->sk_kerja_path);
+        \Log::info('Supabase config: ' . json_encode([
+            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
+            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
+            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
+            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
+        ]));
         
         if (!$guru->sk_kerja_path) {
             \Log::error('SK path is empty for guru ' . $guru->id);

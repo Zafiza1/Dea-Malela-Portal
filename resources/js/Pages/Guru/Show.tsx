@@ -133,6 +133,8 @@ export default function GuruShow({ guru, auth }: any) {
                                             <div className="space-y-2">
                                                 <a
                                                     href={`/guru/${guru.id}/download-ktp`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     className="text-blue-600 hover:underline"
                                                 >
                                                     Download KTP
@@ -177,6 +179,8 @@ export default function GuruShow({ guru, auth }: any) {
                                             <div className="space-y-2">
                                                 <a
                                                     href={`/guru/${guru.id}/download-sk`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     className="text-blue-600 hover:underline"
                                                 >
                                                     Download SK Kerja

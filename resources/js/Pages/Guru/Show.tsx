@@ -48,10 +48,16 @@ export default function GuruShow({ guru, auth }: any) {
                                                 className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-lg"
                                                 onError={(e) => {
                                                     e.currentTarget.style.display = 'none';
+                                                    // Show placeholder when image fails to load
+                                                    const placeholder = e.currentTarget.parentElement?.querySelector('.placeholder');
+                                                    if (placeholder) {
+                                                        placeholder.style.display = 'flex';
+                                                    }
                                                 }}
                                             />
-                                        ) : (
-                                            <div className="w-40 h-40 sm:w-48 sm:h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                                        ) : null}
+                                        {(!guru.foto_url || guru.foto === '0' || guru.foto === 0) && (
+                                            <div className="placeholder w-40 h-40 sm:w-48 sm:h-48 bg-gray-200 rounded-lg flex items-center justify-center">
                                                 <span className="text-gray-500">No Photo</span>
                                             </div>
                                         )}

@@ -27,9 +27,9 @@ class GuruController extends Controller
 
         // Generate URLs for existing files
         $gurus->getCollection()->transform(function ($guru) {
-            $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
-            $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
-            $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
+            $guru->foto_url = ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) ? Storage::disk('supabase')->url($guru->foto) : null;
+            $guru->ktp_url = ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+            $guru->sk_kerja_url = ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
             return $guru;
         });
 
@@ -89,6 +89,10 @@ class GuruController extends Controller
         $guru->save();
 
         if ($request->hasFile('foto')) {
+            // Check if there's an invalid foto value and clean it up
+            if ($guru->foto === '0' || $guru->foto === 0) {
+                $guru->foto = null;
+            }
             $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
             $guru->foto = $fotoPath;
         }
@@ -113,9 +117,9 @@ class GuruController extends Controller
         $guru->load('user');
 
         // Generate URLs for existing files
-        $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
-        $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
-        $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
+        $guru->foto_url = ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) ? Storage::disk('supabase')->url($guru->foto) : null;
+        $guru->ktp_url = ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+        $guru->sk_kerja_url = ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
 
         return Inertia::render('Guru/Show', [
             'guru' => $guru,
@@ -127,9 +131,9 @@ class GuruController extends Controller
         $guru->load('user');
 
         // Generate URLs for existing files
-        $guru->foto_url = $guru->foto ? Storage::disk('supabase')->url($guru->foto) : null;
-        $guru->ktp_url = $guru->ktp_path ? Storage::disk('supabase')->url($guru->ktp_path) : null;
-        $guru->sk_kerja_url = $guru->sk_kerja_path ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
+        $guru->foto_url = ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) ? Storage::disk('supabase')->url($guru->foto) : null;
+        $guru->ktp_url = ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) ? Storage::disk('supabase')->url($guru->ktp_path) : null;
+        $guru->sk_kerja_url = ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) ? Storage::disk('supabase')->url($guru->sk_kerja_path) : null;
 
         return Inertia::render('Guru/Edit', [
             'guru' => $guru,
@@ -166,8 +170,13 @@ class GuruController extends Controller
         }
 
         if ($request->hasFile('foto')) {
-            if ($guru->foto) {
-                Storage::disk('supabase')->delete($guru->foto);
+            // Delete old photo if exists and is valid
+            if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
+                try {
+                    Storage::disk('supabase')->delete($guru->foto);
+                } catch (\Exception $e) {
+                    // Ignore deletion errors
+                }
             }
             $fotoPath = $request->file('foto')->store('guru/foto', 'supabase');
             $guru->foto = $fotoPath;

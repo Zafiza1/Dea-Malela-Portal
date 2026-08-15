@@ -142,7 +142,7 @@ export default function GuruIndex({ gurus, auth }: GuruIndexProps) {
                                     gurus.data.map((guru: Guru) => (
                                         <tr key={guru.id} className="hover:bg-gray-50 transition">
                                             <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm">
-                                                {guru.foto_url ? (
+                                                {guru.foto_url && guru.foto !== '0' && guru.foto !== 0 ? (
                                                     <img
                                                         src={guru.foto_url}
                                                         alt={guru.nama_lengkap}

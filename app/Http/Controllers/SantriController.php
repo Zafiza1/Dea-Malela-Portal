@@ -31,7 +31,7 @@ class SantriController extends Controller
 
         // Generate URLs for existing files
         $santri->getCollection()->transform(function ($s) {
-            $s->foto_url = $s->foto ? Storage::disk('supabase')->url($s->foto) : null;
+            $s->foto_url = ($s->foto && $s->foto !== '0' && $s->foto !== 0) ? Storage::disk('supabase')->url($s->foto) : null;
             return $s;
         });
 
@@ -83,7 +83,7 @@ class SantriController extends Controller
     public function show(Santri $santri)
     {
         // Generate URL for existing file
-        $santri->foto_url = $santri->foto ? Storage::disk('supabase')->url($santri->foto) : null;
+        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? Storage::disk('supabase')->url($santri->foto) : null;
 
         return Inertia::render('Santri/Show', [
             'santri' => $santri,
@@ -96,7 +96,7 @@ class SantriController extends Controller
     public function edit(Santri $santri)
     {
         // Generate URL for existing file
-        $santri->foto_url = $santri->foto ? Storage::disk('supabase')->url($santri->foto) : null;
+        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? Storage::disk('supabase')->url($santri->foto) : null;
 
         return Inertia::render('Santri/Edit', [
             'santri' => $santri,

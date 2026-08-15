@@ -22,7 +22,7 @@ class ProfileController extends Controller
         $user = $request->user();
         
         // Generate URL for profile photo if exists
-        $user->profile_photo_url = $user->profile_photo_path ? Storage::disk('supabase')->url($user->profile_photo_path) : null;
+        $user->profile_photo_url = ($user->profile_photo_path && $user->profile_photo_path !== '0' && $user->profile_photo_path !== 0) ? Storage::disk('supabase')->url($user->profile_photo_path) : null;
         
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,

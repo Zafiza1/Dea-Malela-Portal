@@ -229,7 +229,7 @@ export default function GuruEdit({ guru }: any) {
                                             className="w-full px-4 py-2 border rounded-lg"
                                             accept="image/*"
                                         />
-                                        {guru.foto && (
+                                        {guru.foto && guru.foto !== '0' && guru.foto !== 0 && (
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 mb-1">Foto saat ini:</p>
                                                 <img

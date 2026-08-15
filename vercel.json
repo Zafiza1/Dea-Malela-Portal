@@ -75,7 +75,7 @@
         "DB_PASSWORD_DIRECT": "deamalela@123",
         "FILESYSTEM_DISK": "supabase",
         "SUPABASE_STORAGE_REGION": "ap-south-1",
-        "SUPABASE_STORAGE_BUCKET": "guru-files",
+        "SUPABASE_STORAGE_BUCKET": "files",
         "SUPABASE_STORAGE_PUBLIC_URL": "https://wzlhobpewqaxbucoafdl.supabase.co/storage/v1/object/public",
         "SUPABASE_STORAGE_ENDPOINT": "https://wzlhobpewqaxbucoafdl.storage.supabase.co/storage/v1/s3",
         "SESSION_LIFETIME": "480"

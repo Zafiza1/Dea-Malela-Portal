@@ -34,7 +34,7 @@ class SuratController extends Controller
                     'file_path' => $file->path,
                     'file_type' => $file->file_type,
                     'file_size' => $file->file_size,
-                    'file_url' => $file->path ? Storage::disk('supabase')->url($file->path) : null,
+                    'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::disk('supabase')->url($file->path) : null,
                 ];
             });
 

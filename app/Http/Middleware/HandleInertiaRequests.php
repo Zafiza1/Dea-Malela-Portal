@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user ? $user->load('roles', 'guru') : null,
             ],
+            'csrf_token' => csrf_token(),
         ];
     }
 

@@ -33,6 +33,9 @@
                     return element;
                 };
             })();
+            
+            // Make CSRF token available globally
+            window.csrf_token = '{{ csrf_token() }}';
         </script>
 
         <!-- Scripts -->

@@ -1,11 +1,13 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft } from 'lucide-react';
 
 export default function GuruShow({ guru, auth }: any) {
+    const { props } = usePage();
     const isAdmin = auth.user.roles?.some((r: any) => r.name === 'admin');
     const isGuru = auth.user.roles?.some((r: any) => r.name === 'guru');
     const isOwnProfile = isGuru && auth.user.guru?.id === guru.id;
+    const csrfToken = (props as any).csrf_token;
 
     return (
         <DashboardLayout header={isOwnProfile ? 'Profil Saya' : 'Profil Guru'}>
@@ -49,11 +51,6 @@ export default function GuruShow({ guru, auth }: any) {
                                                     className="w-full h-full object-cover rounded-lg"
                                                     onError={(e) => {
                                                         e.currentTarget.style.display = 'none';
-                                                        // Show placeholder when image fails to load
-                                                        const placeholder = e.currentTarget.parentElement?.querySelector('.placeholder');
-                                                        if (placeholder) {
-                                                            placeholder.style.display = 'flex';
-                                                        }
                                                     }}
                                                 />
                                             ) : null}
@@ -146,6 +143,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                     encType="multipart/form-data"
                                                     className="mt-2"
                                                 >
+                                                    <input type="hidden" name="_token" value={csrfToken} />
                                                     <input type="file" name="ktp" className="w-full px-2 py-1 border rounded text-sm" />
                                                     <button
                                                         type="submit"
@@ -161,6 +159,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                 action={`/guru/${guru.id}/upload-ktp`}
                                                 encType="multipart/form-data"
                                             >
+                                                <input type="hidden" name="_token" value={csrfToken} />
                                                 <input type="file" name="ktp" className="w-full px-2 py-1 border rounded text-sm" />
                                                 <button
                                                     type="submit"
@@ -188,6 +187,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                     encType="multipart/form-data"
                                                     className="mt-2"
                                                 >
+                                                    <input type="hidden" name="_token" value={csrfToken} />
                                                     <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded text-sm" />
                                                     <button
                                                         type="submit"
@@ -203,6 +203,7 @@ export default function GuruShow({ guru, auth }: any) {
                                                 action={`/guru/${guru.id}/upload-sk`}
                                                 encType="multipart/form-data"
                                             >
+                                                <input type="hidden" name="_token" value={csrfToken} />
                                                 <input type="file" name="sk_kerja" className="w-full px-2 py-1 border rounded text-sm" />
                                                 <button
                                                     type="submit"

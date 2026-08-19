@@ -21,6 +21,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Test GET route first
     Route::get('/test-folder-create', [SuratController::class, 'createFolder'])->name('surat.test-create-folder');
     
+    // Test POST route without validation
+    Route::post('/test-post-simple', [SuratController::class, 'testPostSimple'])->name('surat.test-post-simple');
+    
     // Guru Routes
     Route::middleware('can:viewAny,App\Models\Guru')->group(function () {
         Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');

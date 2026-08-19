@@ -57,6 +57,11 @@ class SuratController extends Controller
         ]);
     }
 
+    public function testPostSimple(Request $request)
+    {
+        return response()->json(['message' => 'POST test successful', 'data' => $request->all()]);
+    }
+
     public function createFolder(Request $request)
     {
         try {

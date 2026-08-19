@@ -4,6 +4,8 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import { ArrowLeft } from 'lucide-react';
 
 export default function SantriCreate() {
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+
     const { data, setData, post, processing, errors } = useForm({
         nis: '',
         nama: '',
@@ -21,6 +23,18 @@ export default function SantriCreate() {
         catatan: '',
         foto: null as File | null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setData('foto', file);
+        
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+        } else {
+            setPreviewUrl(null);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -260,10 +274,19 @@ export default function SantriCreate() {
                                     </label>
                                     <input
                                         type="file"
-                                        onChange={(e) => setData('foto', e.target.files?.[0] || null)}
+                                        onChange={handleFileChange}
                                         className="w-full px-4 py-2 border rounded-lg"
                                         accept="image/*"
                                     />
+                                    {previewUrl && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={previewUrl}
+                                                alt="Preview"
+                                                className="h-32 w-32 object-cover rounded-lg border"
+                                            />
+                                        </div>
+                                    )}
                                     {errors.foto && <p className="text-red-500 text-sm mt-1">{errors.foto}</p>}
                                 </div>
 

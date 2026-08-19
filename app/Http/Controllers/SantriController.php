@@ -29,9 +29,9 @@ class SantriController extends Controller
 
         $santri = $query->latest()->paginate(10);
 
-        // Generate URLs for existing files
+        // Generate URLs for existing files through proxy
         $santri->getCollection()->transform(function ($s) {
-            $s->foto_url = ($s->foto && $s->foto !== '0' && $s->foto !== 0) ? Storage::disk('supabase')->url($s->foto) : null;
+            $s->foto_url = ($s->foto && $s->foto !== '0' && $s->foto !== 0) ? route('santri.foto', $s) : null;
             return $s;
         });
 
@@ -82,8 +82,8 @@ class SantriController extends Controller
 
     public function show(Santri $santri)
     {
-        // Generate URL for existing file
-        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? Storage::disk('supabase')->url($santri->foto) : null;
+        // Generate URL for existing file through proxy
+        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? route('santri.foto', $santri) : null;
 
         return Inertia::render('Santri/Show', [
             'santri' => $santri,
@@ -93,10 +93,22 @@ class SantriController extends Controller
         ]);
     }
 
+    public function showFoto(Santri $santri)
+    {
+        if (!$santri->foto || $santri->foto === '0' || $santri->foto === 0) {
+            abort(404);
+        }
+
+        $file = Storage::disk('supabase')->get($santri->foto);
+        $mimeType = Storage::disk('supabase')->mimeType($santri->foto);
+
+        return response($file)->header('Content-Type', $mimeType);
+    }
+
     public function edit(Santri $santri)
     {
-        // Generate URL for existing file
-        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? Storage::disk('supabase')->url($santri->foto) : null;
+        // Generate URL for existing file through proxy
+        $santri->foto_url = ($santri->foto && $santri->foto !== '0' && $santri->foto !== 0) ? route('santri.foto', $santri) : null;
 
         return Inertia::render('Santri/Edit', [
             'santri' => $santri,

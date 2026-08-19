@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/santri/{santri}/edit', [SantriController::class, 'edit'])->name('santri.edit')->middleware('can:update,santri');
     Route::put('/santri/{santri}', [SantriController::class, 'update'])->name('santri.update')->middleware('can:update,santri');
     Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy')->middleware('can:delete,santri');
+    Route::get('/santri/{santri}/foto', [SantriController::class, 'showFoto'])->name('santri.foto')->middleware('can:view,santri');
 
     // Surat Routes
     Route::get('/surat', [SuratController::class, 'index'])->name('surat.index')->middleware('can:viewAny,App\Models\SuratFile');

@@ -10,6 +10,8 @@ const formatDateForInput = (dateString: string | null | undefined): string => {
 };
 
 export default function SantriEdit({ santri }: any) {
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(santri.foto_url || null);
+
     const { data, setData, put, processing, errors } = useForm({
         nis: santri.nis,
         nama: santri.nama,
@@ -27,6 +29,18 @@ export default function SantriEdit({ santri }: any) {
         catatan: santri.catatan || '',
         foto: null as File | null,
     });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        setData('foto', file);
+        
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+        } else {
+            setPreviewUrl(santri.foto_url || null);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -271,11 +285,20 @@ export default function SantriEdit({ santri }: any) {
                                     </label>
                                     <input
                                         type="file"
-                                        onChange={(e) => setData('foto', e.target.files?.[0] || null)}
+                                        onChange={handleFileChange}
                                         className="w-full px-4 py-2 border rounded-lg"
                                         accept="image/*"
                                     />
-                                    {santri.foto && (
+                                    {previewUrl && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={previewUrl}
+                                                alt="Preview"
+                                                className="h-32 w-32 object-cover rounded-lg border"
+                                            />
+                                        </div>
+                                    )}
+                                    {santri.foto && !previewUrl && (
                                         <p className="text-sm text-gray-500 mt-1">
                                             Foto saat ini: {santri.foto}
                                         </p>

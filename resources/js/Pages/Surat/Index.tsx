@@ -34,19 +34,16 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
     const createFolder = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         console.log('Creating folder with data:', folderForm.data);
-        console.log('Parent folder ID:', currentFolder?.id);
         
         folderForm.post('/surat/folder', {
-            onSuccess: (page) => {
-                console.log('Folder created successfully', page);
-                console.log('Response folders:', page.props.folders);
-                console.log('Response files:', page.props.files);
+            onSuccess: () => {
+                console.log('Folder created successfully');
                 folderForm.reset();
                 setShowCreateFolder(false);
-                // Use router.get instead of reload to ensure fresh data
-                router.get('/surat', { folder_id: currentFolder?.id }, {
-                    preserveState: false,
-                });
+                // Force full page reload to get fresh data
+                window.location.href = currentFolder 
+                    ? `/surat?folder_id=${currentFolder.id}` 
+                    : '/surat';
             },
             onError: (errors) => {
                 console.error('Error creating folder:', errors);

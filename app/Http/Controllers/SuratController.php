@@ -16,19 +16,15 @@ class SuratController extends Controller
     {
         $folderId = $request->folder_id;
         
-        \Log::info('Surat index called with folder_id: ' . $folderId);
-        
-        // Simple query to get all folders first
-        $allFolders = SuratFolder::all();
-        \Log::info('All folders in database: ' . $allFolders->count());
-        
-        // Then filter by parent_id
-        $folders = SuratFolder::where('parent_id', $folderId)
-            ->with('createdBy')
-            ->get();
-
-        \Log::info('Folders query result: ' . $folders->count() . ' folders found');
-        \Log::info('Folders data: ' . json_encode($folders->toArray()));
+        // Get folders - try both approaches
+        try {
+            $folders = SuratFolder::where('parent_id', $folderId)
+                ->with('createdBy')
+                ->get();
+        } catch (\Exception $e) {
+            // Fallback to simple query if there's an error
+            $folders = SuratFolder::where('parent_id', $folderId)->get();
+        }
 
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);
@@ -50,12 +46,6 @@ class SuratController extends Controller
 
         $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
 
-        \Log::info('Returning data: ' . json_encode([
-            'folders_count' => $folders->count(),
-            'files_count' => $files->count(),
-            'current_folder' => $currentFolder ? $currentFolder->id : null,
-        ]));
-
         return Inertia::render('Surat/Index', [
             'folders' => $folders,
             'files' => $files,
@@ -67,18 +57,11 @@ class SuratController extends Controller
     public function createFolder(Request $request)
     {
         try {
-            \Log::info('createFolder called');
-            \Log::info('Request data: ' . json_encode($request->all()));
-            \Log::info('User authenticated: ' . (auth()->check() ? 'yes' : 'no'));
-            \Log::info('User ID: ' . auth()->id());
-
             // Simplified validation
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'parent_id' => 'nullable|integer',
             ]);
-
-            \Log::info('Creating folder with validated data: ' . json_encode($validated));
 
             $folder = SuratFolder::create([
                 'nama' => $validated['nama'],
@@ -86,12 +69,8 @@ class SuratController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            \Log::info('Folder created successfully with ID: ' . $folder->id);
-
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {
-            \Log::error('Error creating folder: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

@@ -14,7 +14,6 @@ export default function GuruCreate() {
         email: '',
         alamat: '',
         pendidikan_terakhir: '',
-        tanggal_masuk: '',
         status: 'aktif',
         username: '',
         password: '',
@@ -163,20 +162,6 @@ export default function GuruCreate() {
                                             required
                                         />
                                         {errors.pendidikan_terakhir && <p className="text-red-500 text-sm mt-1">{errors.pendidikan_terakhir}</p>}
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Tanggal Masuk
-                                        </label>
-                                        <input
-                                            type="date"
-                                            value={data.tanggal_masuk}
-                                            onChange={(e) => setData('tanggal_masuk', e.target.value)}
-                                            className="w-full px-4 py-2 border rounded-lg"
-                                            required
-                                        />
-                                        {errors.tanggal_masuk && <p className="text-red-500 text-sm mt-1">{errors.tanggal_masuk}</p>}
                                     </div>
 
                                     <div>

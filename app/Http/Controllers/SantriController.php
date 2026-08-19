@@ -64,7 +64,6 @@ class SantriController extends Controller
             'jenjang' => 'required|string|max:255',
             'kelas' => 'required|string|max:255',
             'status' => 'required|in:aktif,tidak_aktif',
-            'tanggal_masuk' => 'required|date',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|max:2048',
         ]);
@@ -130,7 +129,6 @@ class SantriController extends Controller
             'jenjang' => 'required|string|max:255',
             'kelas' => 'required|string|max:255',
             'status' => 'required|in:aktif,tidak_aktif',
-            'tanggal_masuk' => 'required|date',
             'catatan' => 'nullable|string',
             'foto' => 'nullable|image|max:2048',
         ]);

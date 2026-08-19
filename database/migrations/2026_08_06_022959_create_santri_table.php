@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('jenjang');
             $table->string('kelas');
             $table->string('status', 20)->default('aktif'); // 'aktif' or 'tidak_aktif'
-            $table->date('tanggal_masuk');
             $table->text('catatan')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();

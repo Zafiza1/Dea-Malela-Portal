@@ -112,11 +112,6 @@ export default function GuruShow({ guru, auth }: any) {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-500">Tanggal Masuk</label>
-                                        <p>{new Date(guru.tanggal_masuk).toLocaleDateString('id-ID')}</p>
-                                    </div>
-
-                                    <div>
                                         <label className="block text-sm font-medium text-gray-500">Alamat</label>
                                         <p>{guru.alamat}</p>
                                     </div>

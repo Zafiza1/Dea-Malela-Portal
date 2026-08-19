@@ -65,7 +65,6 @@ class GuruSeeder extends Seeder
                     'email' => $guruData['username'] . '@deamalela.com',
                     'alamat' => '-',
                     'pendidikan_terakhir' => 'S1',
-                    'tanggal_masuk' => '2024-01-01',
                     'status' => 'aktif',
                 ]
             );

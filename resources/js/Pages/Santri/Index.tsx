@@ -156,8 +156,6 @@ export default function SantriIndex({ santri, auth }: any) {
                                                         onError={(e) => {
                                                             e.currentTarget.style.display = 'none';
                                                         }}
-                                                        alt={s.nama}
-                                                        className="w-12 h-12 object-cover rounded-full"
                                                     />
                                                 ) : (
                                                     <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">

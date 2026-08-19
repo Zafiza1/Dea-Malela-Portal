@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->text('alamat');
             $table->string('pendidikan_terakhir');
-            $table->date('tanggal_masuk');
             $table->string('status', 20)->default('aktif'); // 'aktif' or 'tidak_aktif'
             $table->string('foto')->nullable();
             $table->string('ktp_path')->nullable();

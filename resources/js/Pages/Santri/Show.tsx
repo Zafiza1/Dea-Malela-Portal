@@ -113,11 +113,6 @@ export default function SantriShow({ santri, auth }: any) {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-500">Tanggal Masuk</label>
-                                        <p>{new Date(santri.tanggal_masuk).toLocaleDateString('id-ID')}</p>
-                                    </div>
-
-                                    <div>
                                         <label className="block text-sm font-medium text-gray-500">Alamat</label>
                                         <p>{santri.alamat}</p>
                                     </div>

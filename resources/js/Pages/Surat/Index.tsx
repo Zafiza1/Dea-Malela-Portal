@@ -34,19 +34,21 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
     const createFolder = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         console.log('Creating folder with data:', folderForm.data);
+        console.log('Parent folder ID:', currentFolder?.id);
         
         folderForm.post('/surat/folder', {
-            onSuccess: () => {
-                console.log('Folder created successfully');
+            onSuccess: (page) => {
+                console.log('Folder created successfully', page);
                 folderForm.reset();
                 setShowCreateFolder(false);
                 router.reload();
             },
             onError: (errors) => {
                 console.error('Error creating folder:', errors);
+                alert('Error creating folder: ' + JSON.stringify(errors));
             },
         });
-    }, [folderForm]);
+    }, [folderForm, currentFolder]);
 
     const uploadFile = useCallback((e: React.FormEvent) => {
         e.preventDefault();
@@ -147,6 +149,11 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                             required
                                             disabled={folderForm.processing}
                                         />
+                                        <input
+                                            type="hidden"
+                                            value={folderForm.data.parent_id || ''}
+                                            onChange={e => folderForm.setData('parent_id', e.target.value ? parseInt(e.target.value) : null)}
+                                        />
                                         <button
                                             type="submit"
                                             disabled={folderForm.processing}
@@ -159,6 +166,9 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                             )}
                                         </button>
                                     </form>
+                                    {folderForm.errors.nama && (
+                                        <p className="text-red-500 text-sm mt-2">{folderForm.errors.nama}</p>
+                                    )}
                                 </div>
                             )}
 

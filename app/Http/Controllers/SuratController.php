@@ -18,11 +18,17 @@ class SuratController extends Controller
         
         \Log::info('Surat index called with folder_id: ' . $folderId);
         
+        // Simple query to get all folders first
+        $allFolders = SuratFolder::all();
+        \Log::info('All folders in database: ' . $allFolders->count());
+        
+        // Then filter by parent_id
         $folders = SuratFolder::where('parent_id', $folderId)
             ->with('createdBy')
             ->get();
 
         \Log::info('Folders query result: ' . $folders->count() . ' folders found');
+        \Log::info('Folders data: ' . json_encode($folders->toArray()));
 
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);

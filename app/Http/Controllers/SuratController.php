@@ -60,11 +60,20 @@ class SuratController extends Controller
     public function createFolder(Request $request)
     {
         try {
+            \Log::info('createFolder called', [
+                'method' => $request->method(),
+                'all_data' => $request->all(),
+                'user_id' => auth()->id(),
+                'user_authenticated' => auth()->check()
+            ]);
+
             // Simple validation
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'parent_id' => 'nullable|integer',
             ]);
+
+            \Log::info('Validation passed', ['validated' => $validated]);
 
             // Simple database insert
             $folder = SuratFolder::create([
@@ -73,8 +82,15 @@ class SuratController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
+            \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
+
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {
+            \Log::error('createFolder error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

@@ -60,10 +60,44 @@ class SuratController extends Controller
     public function createFolder(Request $request)
     {
         try {
-            // Simple test - just return success without database operation
-            return back()->with('success', 'Test: Controller reached successfully');
+            // Test database connection first
+            \DB::connection()->getPdo();
+            \Log::info('Database connection successful');
+
+            // Test if surat_folders table exists
+            if (!\Schema::hasTable('surat_folders')) {
+                \Log::error('surat_folders table does not exist');
+                return back()->with('error', 'Tabel surat_folders tidak ditemukan');
+            }
+
+            // Simplified validation
+            $validated = $request->validate([
+                'nama' => 'required|string|max:255',
+                'parent_id' => 'nullable|integer',
+            ]);
+
+            \Log::info('Creating folder with data', [
+                'nama' => $validated['nama'],
+                'parent_id' => $validated['parent_id'] ?? null
+            ]);
+
+            // Try direct SQL insert first
+            $folderId = \DB::table('surat_folders')->insertGetId([
+                'nama' => $validated['nama'],
+                'parent_id' => $validated['parent_id'] ?? null,
+                'created_by' => auth()->id() ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            \Log::info('Folder created with ID: ' . $folderId);
+
+            return back()->with('success', 'Folder berhasil dibuat dengan ID: ' . $folderId);
         } catch (\Exception $e) {
-            return back()->with('error', 'Error: ' . $e->getMessage());
+            \Log::error('Error creating folder: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }
 

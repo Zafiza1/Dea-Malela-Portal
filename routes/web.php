@@ -18,6 +18,9 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
+    // Test route outside middleware group
+    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder');
+    
     // Guru Routes
     Route::middleware('can:viewAny,App\Models\Guru')->group(function () {
         Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
@@ -56,7 +59,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/test-folder', function() {
         return response()->json(['message' => 'Test route works']);
     });
-    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder');
     Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware(['auth']);
 
     // Separate folder delete route with manual permission check

@@ -18,8 +18,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Test route outside middleware group
-    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder');
+    // Test GET route first
+    Route::get('/test-folder-create', [SuratController::class, 'createFolder'])->name('surat.test-create-folder');
     
     // Guru Routes
     Route::middleware('can:viewAny,App\Models\Guru')->group(function () {

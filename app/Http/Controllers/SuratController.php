@@ -60,6 +60,11 @@ class SuratController extends Controller
     public function createFolder(Request $request)
     {
         try {
+            // Simple test for GET request
+            if ($request->isMethod('get')) {
+                return response()->json(['message' => 'GET test successful']);
+            }
+
             // Test database connection first
             \DB::connection()->getPdo();
             \Log::info('Database connection successful');

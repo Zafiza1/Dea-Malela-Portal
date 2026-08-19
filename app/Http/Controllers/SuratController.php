@@ -56,14 +56,21 @@ class SuratController extends Controller
         ]);
 
         try {
-            SuratFolder::create([
+            \Log::info('Creating folder with data: ' . json_encode($validated));
+            \Log::info('User ID: ' . auth()->id());
+
+            $folder = SuratFolder::create([
                 'nama' => $validated['nama'],
                 'parent_id' => $validated['parent_id'] ?? null,
                 'created_by' => auth()->id(),
             ]);
 
+            \Log::info('Folder created successfully: ' . $folder->id);
+
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {
+            \Log::error('Error creating folder: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

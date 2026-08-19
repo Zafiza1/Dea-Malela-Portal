@@ -33,11 +33,17 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
 
     const createFolder = useCallback((e: React.FormEvent) => {
         e.preventDefault();
+        console.log('Creating folder with data:', folderForm.data);
+        
         folderForm.post('/surat/folder', {
             onSuccess: () => {
+                console.log('Folder created successfully');
                 folderForm.reset();
                 setShowCreateFolder(false);
                 router.reload();
+            },
+            onError: (errors) => {
+                console.error('Error creating folder:', errors);
             },
         });
     }, [folderForm]);

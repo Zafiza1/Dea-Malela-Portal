@@ -21,9 +21,12 @@ class SuratController extends Controller
             $folders = SuratFolder::where('parent_id', $folderId)
                 ->with('createdBy')
                 ->get();
+            \Log::info('Folders loaded with createdBy', ['count' => $folders->count(), 'folderId' => $folderId]);
         } catch (\Exception $e) {
             // Fallback to simple query if there's an error
+            \Log::error('Error loading folders with createdBy: ' . $e->getMessage());
             $folders = SuratFolder::where('parent_id', $folderId)->get();
+            \Log::info('Folders loaded without createdBy', ['count' => $folders->count()]);
         }
 
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
@@ -69,8 +72,11 @@ class SuratController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
+            \Log::info('Folder created successfully', ['folder_id' => $folder->id, 'nama' => $folder->nama, 'parent_id' => $folder->parent_id]);
+
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {
+            \Log::error('Failed to create folder: ' . $e->getMessage());
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

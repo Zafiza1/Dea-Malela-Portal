@@ -53,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/surat/file/{file}', [SuratController::class, 'renameFile'])->name('surat.rename-file')->middleware('can:update,file');
 
     // Surat Folder Routes
+    Route::get('/test-folder', function() {
+        return response()->json(['message' => 'Test route works']);
+    });
     Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder');
     Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware(['auth']);
 

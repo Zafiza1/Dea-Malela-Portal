@@ -57,61 +57,24 @@ class SuratController extends Controller
         ]);
     }
 
-    public function testPostSimple(Request $request)
-    {
-        return response()->json(['message' => 'POST test successful', 'data' => $request->all()]);
-    }
-
     public function createFolder(Request $request)
     {
         try {
-            // Check if user is authenticated
-            if (!auth()->check()) {
-                \Log::error('User not authenticated when creating folder');
-                return back()->with('error', 'Anda harus login untuk membuat folder');
-            }
-
-            // Simplified validation
+            // Simple validation
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'parent_id' => 'nullable|integer',
             ]);
 
-            \Log::info('Creating folder', [
-                'nama' => $validated['nama'],
-                'parent_id' => $validated['parent_id'] ?? null,
-                'user_id' => auth()->id()
-            ]);
-
-            // Test database connection first
-            \DB::connection()->getPdo();
-            \Log::info('Database connection successful');
-
-            // Test if surat_folders table exists
-            if (!\Schema::hasTable('surat_folders')) {
-                \Log::error('surat_folders table does not exist');
-                return back()->with('error', 'Tabel surat_folders tidak ditemukan');
-            }
-
-            // Try direct SQL insert first
-            $folderId = \DB::table('surat_folders')->insertGetId([
+            // Simple database insert
+            $folder = SuratFolder::create([
                 'nama' => $validated['nama'],
                 'parent_id' => $validated['parent_id'] ?? null,
                 'created_by' => auth()->id(),
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
-
-            \Log::info('Folder created successfully', ['folder_id' => $folderId, 'nama' => $validated['nama']]);
 
             return back()->with('success', 'Folder berhasil dibuat');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation error creating folder: ' . json_encode($e->errors()));
-            return back()->with('error', 'Validasi gagal: ' . json_encode($e->errors()));
         } catch (\Exception $e) {
-            \Log::error('Failed to create folder: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

@@ -15,14 +15,13 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Test route outside middleware group
+Route::post('/test-simple-post', function(\Illuminate\Http\Request $request) {
+    return response()->json(['message' => 'Simple POST works', 'data' => $request->all()]);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Test GET route first
-    Route::get('/test-folder-create', [SuratController::class, 'createFolder'])->name('surat.test-create-folder');
-    
-    // Test POST route without validation
-    Route::post('/test-post-simple', [SuratController::class, 'testPostSimple'])->name('surat.test-post-simple');
     
     // Guru Routes
     Route::middleware('can:viewAny,App\Models\Guru')->group(function () {
@@ -59,9 +58,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/surat/file/{file}', [SuratController::class, 'renameFile'])->name('surat.rename-file')->middleware('can:update,file');
 
     // Surat Folder Routes
-    Route::get('/test-folder', function() {
-        return response()->json(['message' => 'Test route works']);
-    });
     Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder');
     Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware(['auth']);
 

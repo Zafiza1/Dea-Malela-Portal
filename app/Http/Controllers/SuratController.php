@@ -60,10 +60,22 @@ class SuratController extends Controller
     public function createFolder(Request $request)
     {
         try {
+            // Check if user is authenticated
+            if (!auth()->check()) {
+                \Log::error('User not authenticated when creating folder');
+                return back()->with('error', 'Anda harus login untuk membuat folder');
+            }
+
             // Simplified validation
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'parent_id' => 'nullable|integer',
+            ]);
+
+            \Log::info('Creating folder', [
+                'nama' => $validated['nama'],
+                'parent_id' => $validated['parent_id'] ?? null,
+                'user_id' => auth()->id()
             ]);
 
             $folder = SuratFolder::create([
@@ -72,11 +84,21 @@ class SuratController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
+            if (!$folder) {
+                \Log::error('Folder creation returned null/false');
+                return back()->with('error', 'Gagal membuat folder: Unknown error');
+            }
+
             \Log::info('Folder created successfully', ['folder_id' => $folder->id, 'nama' => $folder->nama, 'parent_id' => $folder->parent_id]);
 
             return back()->with('success', 'Folder berhasil dibuat');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error creating folder: ' . json_encode($e->errors()));
+            return back()->with('error', 'Validasi gagal: ' . json_encode($e->errors()));
         } catch (\Exception $e) {
-            \Log::error('Failed to create folder: ' . $e->getMessage());
+            \Log::error('Failed to create folder: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Gagal membuat folder: ' . $e->getMessage());
         }
     }

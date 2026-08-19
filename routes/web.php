@@ -53,8 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/surat/file/{file}', [SuratController::class, 'renameFile'])->name('surat.rename-file')->middleware('can:update,file');
 
     // Surat Folder Routes
-    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder')->middleware('can:create,App\Models\SuratFolder');
-    Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware('can:update,folder');
+    Route::post('/surat/folder', [SuratController::class, 'createFolder'])->name('surat.create-folder')->middleware(['auth', 'verified']);
+    Route::put('/surat/folder/{folder}', [SuratController::class, 'updateFolder'])->name('surat.update-folder')->middleware(['auth', 'verified']);
 
     // Separate folder delete route with manual permission check
     Route::delete('/surat/folder/{folder}', [SuratController::class, 'deleteFolder'])

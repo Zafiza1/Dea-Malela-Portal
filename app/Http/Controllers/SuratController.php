@@ -50,14 +50,18 @@ class SuratController extends Controller
 
     public function createFolder(Request $request)
     {
+        \Log::info('createFolder called');
+        \Log::info('Request data: ' . json_encode($request->all()));
+        \Log::info('User authenticated: ' . (auth()->check() ? 'yes' : 'no'));
+        \Log::info('User ID: ' . auth()->id());
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:surat_folders,id',
         ]);
 
         try {
-            \Log::info('Creating folder with data: ' . json_encode($validated));
-            \Log::info('User ID: ' . auth()->id());
+            \Log::info('Creating folder with validated data: ' . json_encode($validated));
 
             $folder = SuratFolder::create([
                 'nama' => $validated['nama'],
@@ -65,7 +69,7 @@ class SuratController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            \Log::info('Folder created successfully: ' . $folder->id);
+            \Log::info('Folder created successfully with ID: ' . $folder->id);
 
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {

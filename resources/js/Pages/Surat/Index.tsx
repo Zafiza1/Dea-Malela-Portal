@@ -39,9 +39,14 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
         folderForm.post('/surat/folder', {
             onSuccess: (page) => {
                 console.log('Folder created successfully', page);
+                console.log('Response folders:', page.props.folders);
+                console.log('Response files:', page.props.files);
                 folderForm.reset();
                 setShowCreateFolder(false);
-                router.reload();
+                // Use router.get instead of reload to ensure fresh data
+                router.get('/surat', { folder_id: currentFolder?.id }, {
+                    preserveState: false,
+                });
             },
             onError: (errors) => {
                 console.error('Error creating folder:', errors);

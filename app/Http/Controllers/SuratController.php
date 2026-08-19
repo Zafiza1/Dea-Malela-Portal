@@ -16,9 +16,13 @@ class SuratController extends Controller
     {
         $folderId = $request->folder_id;
         
+        \Log::info('Surat index called with folder_id: ' . $folderId);
+        
         $folders = SuratFolder::where('parent_id', $folderId)
             ->with('createdBy')
             ->get();
+
+        \Log::info('Folders query result: ' . $folders->count() . ' folders found');
 
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);
@@ -39,6 +43,12 @@ class SuratController extends Controller
             });
 
         $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
+
+        \Log::info('Returning data: ' . json_encode([
+            'folders_count' => $folders->count(),
+            'files_count' => $files->count(),
+            'current_folder' => $currentFolder ? $currentFolder->id : null,
+        ]));
 
         return Inertia::render('Surat/Index', [
             'folders' => $folders,

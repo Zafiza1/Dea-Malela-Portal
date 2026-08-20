@@ -108,7 +108,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                     <div className="flex items-center">
                                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                                             {currentFolder && currentFolder.nama ? (
-                                                <span className="text-red-600">Surat Menyurat > {currentFolder.nama}</span>
+                                                <span className="text-red-600">Surat Menyurat &gt; {currentFolder.nama}</span>
                                             ) : (
                                                 <span>Surat Menyurat</span>
                                             )}

@@ -75,14 +75,27 @@ class SuratController extends Controller
 
             \Log::info('Validation passed', ['validated' => $validated]);
 
-            // Simple database insert
-            $folder = SuratFolder::create([
-                'nama' => $validated['nama'],
-                'parent_id' => $validated['parent_id'] ?? null,
-                'created_by' => auth()->id(),
-            ]);
-
-            \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
+            // Simple database insert with retry
+            $folder = null;
+            $retries = 3;
+            for ($i = 0; $i < $retries; $i++) {
+                try {
+                    $folder = SuratFolder::create([
+                        'nama' => $validated['nama'],
+                        'parent_id' => $validated['parent_id'] ?? null,
+                        'created_by' => auth()->id(),
+                    ]);
+                    \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
+                    break;
+                } catch (\Exception $dbError) {
+                    \Log::error("Database error attempt " . ($i + 1) . ": " . $dbError->getMessage());
+                    if ($i < $retries - 1) {
+                        sleep(1); // Wait before retry
+                    } else {
+                        throw $dbError;
+                    }
+                }
+            }
 
             return back()->with('success', 'Folder berhasil dibuat');
         } catch (\Exception $e) {
@@ -137,17 +150,33 @@ class SuratController extends Controller
 
             $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'supabase');
 
-            SuratFile::create([
-                'nama_file' => $fileName,
-                'path' => $path,
-                'file_type' => $fileType,
-                'file_size' => $fileSize,
-                'folder_id' => $request->folder_id,
-                'uploaded_by' => auth()->id(),
-            ]);
+            // Database insert with retry
+            $retries = 3;
+            for ($i = 0; $i < $retries; $i++) {
+                try {
+                    SuratFile::create([
+                        'nama_file' => $fileName,
+                        'path' => $path,
+                        'file_type' => $fileType,
+                        'file_size' => $fileSize,
+                        'folder_id' => $request->folder_id,
+                        'uploaded_by' => auth()->id(),
+                    ]);
+                    \Log::info('File uploaded successfully');
+                    break;
+                } catch (\Exception $dbError) {
+                    \Log::error("Database error attempt " . ($i + 1) . ": " . $dbError->getMessage());
+                    if ($i < $retries - 1) {
+                        sleep(1);
+                    } else {
+                        throw $dbError;
+                    }
+                }
+            }
 
             return back()->with('success', 'File berhasil diupload');
         } catch (\Exception $e) {
+            \Log::error('uploadFile error: ' . $e->getMessage());
             return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }

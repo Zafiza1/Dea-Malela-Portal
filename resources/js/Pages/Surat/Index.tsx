@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import FileUpload from '@/Components/FileUpload';
 // import FilePreviewModal from '@/Components/FilePreviewModal';
 import DashboardLayout from '@/Layouts/DashboardLayout';
@@ -19,182 +19,64 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
     const [deletingFolderId, setDeletingFolderId] = useState<number | null>(null);
     const [deletingFileId, setDeletingFileId] = useState<number | null>(null);
-    const [localFolders, setLocalFolders] = useState<Folder[]>(folders);
-    const [localFiles, setLocalFiles] = useState<FileData[]>(files);
 
-    const [folderName, setFolderName] = useState('');
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const folderForm = useForm({
+        nama: '',
+        parent_id: currentFolder?.id || null,
+    });
+
+    const fileForm = useForm({
+        file: null as File | null,
+        folder_id: currentFolder?.id || null,
+    } as any);
 
     const createFolder = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Creating folder with data:', { nama: folderName, parent_id: currentFolder?.id || null });
-
-        fetch('/surat/folder', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-            },
-            body: JSON.stringify({
-                nama: folderName,
-                parent_id: currentFolder?.id || null,
-            }),
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-            
-            // Check if response is JSON
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return response.json();
-            } else {
-                // If not JSON, read as text for debugging
-                return response.text().then(text => {
-                    console.log('Non-JSON response:', text);
-                    throw new Error('Server returned non-JSON response');
-                });
-            }
-        })
-        .then(data => {
-            if (data.success) {
-                console.log('Folder created successfully', data.folder);
-                setLocalFolders([...localFolders, data.folder]);
-                setFolderName('');
+        folderForm.post('/surat/folder', {
+            onSuccess: () => {
+                folderForm.reset();
                 setShowCreateFolder(false);
-            } else {
-                console.error('Error creating folder:', data);
-                alert('Error creating folder');
-            }
-        })
-        .catch(error => {
-            console.error('Error creating folder:', error);
-            alert('Error creating folder: ' + error.message);
+            },
         });
-    }, [folderName, currentFolder, localFolders]);
+    }, [folderForm]);
 
     const uploadFile = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-
-        const formData = new FormData();
-        if (selectedFile) {
-            formData.append('file', selectedFile);
-        }
-        if (currentFolder?.id) {
-            formData.append('folder_id', currentFolder.id.toString());
-        }
-
-        fetch('/surat/upload', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-            },
-            body: formData,
-        })
-        .then(response => {
-            console.log('Upload response status:', response.status);
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return response.json();
-            } else {
-                return response.text().then(text => {
-                    console.log('Non-JSON upload response:', text);
-                    throw new Error('Server returned non-JSON response');
-                });
-            }
-        })
-        .then(data => {
-            if (data.success) {
-                console.log('File uploaded successfully', data.file);
-                setLocalFiles([...localFiles, data.file]);
-                setSelectedFile(null);
+        fileForm.post('/surat/upload', {
+            onSuccess: () => {
+                fileForm.reset();
                 setShowUploadFile(false);
-            } else {
-                console.error('Error uploading file:', data);
-                alert('Error uploading file');
-            }
-        })
-        .catch(error => {
-            console.error('Error uploading file:', error);
-            alert('Error uploading file: ' + error.message);
-        });
-    }, [selectedFile, currentFolder, localFiles]);
+            },
+        } as any);
+    }, [fileForm]);
 
     const deleteFolder = useCallback((folderId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus folder ini?')) {
             setDeletingFolderId(folderId);
-            fetch(`/surat/folder/${folderId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            router.delete(`/surat/folder/${folderId}`, {
+                onSuccess: () => {
+                    setDeletingFolderId(null);
                 },
-            })
-            .then(response => {
-                console.log('Delete folder response status:', response.status);
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
-                } else {
-                    return response.text().then(text => {
-                        console.log('Non-JSON delete response:', text);
-                        throw new Error('Server returned non-JSON response');
-                    });
-                }
-            })
-            .then(data => {
-                if (data.success) {
-                    setLocalFolders(localFolders.filter(folder => folder.id !== folderId));
+                onError: () => {
                     setDeletingFolderId(null);
-                } else {
-                    console.error('Error deleting folder:', data);
-                    setDeletingFolderId(null);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting folder:', error);
-                setDeletingFolderId(null);
+                },
             });
         }
-    }, [localFolders]);
+    }, []);
 
     const deleteFile = useCallback((fileId: number) => {
         if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
             setDeletingFileId(fileId);
-            fetch(`/surat/file/${fileId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            router.delete(`/surat/file/${fileId}`, {
+                onSuccess: () => {
+                    setDeletingFileId(null);
                 },
-            })
-            .then(response => {
-                console.log('Delete file response status:', response.status);
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json();
-                } else {
-                    return response.text().then(text => {
-                        console.log('Non-JSON delete response:', text);
-                        throw new Error('Server returned non-JSON response');
-                    });
-                }
-            })
-            .then(data => {
-                if (data.success) {
-                    setLocalFiles(localFiles.filter(file => file.id !== fileId));
+                onError: () => {
                     setDeletingFileId(null);
-                } else {
-                    console.error('Error deleting file:', data);
-                    setDeletingFileId(null);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting file:', error);
-                setDeletingFileId(null);
+                },
             });
         }
-    }, [localFiles]);
+    }, []);
 
     return (
         <DashboardLayout header="Surat Menyurat">
@@ -243,22 +125,32 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                             {showCreateFolder && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                                     <h3 className="font-semibold mb-3">Buat Folder Baru</h3>
-                                    <form onSubmit={createFolder} className="flex space-x-2" noValidate>
+                                    <form onSubmit={createFolder} className="flex space-x-2">
                                         <input
                                             type="text"
-                                            value={folderName}
-                                            onChange={e => setFolderName(e.target.value)}
+                                            value={folderForm.data.nama}
+                                            onChange={e => folderForm.setData('nama', e.target.value)}
                                             placeholder="Nama Folder"
                                             className="flex-1 px-4 py-2 border rounded-lg"
                                             required
+                                            disabled={folderForm.processing}
+                                        />
+                                        <input
+                                            type="hidden"
+                                            value={folderForm.data.parent_id || ''}
+                                            onChange={e => folderForm.setData('parent_id', e.target.value ? parseInt(e.target.value) : null)}
                                         />
                                         <button
                                             type="submit"
-                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center min-w-[100px] justify-center"
+                                            disabled={folderForm.processing}
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center min-w-[100px] justify-center"
                                         >
-                                            Buat
+                                            {folderForm.processing ? '...' : 'Buat'}
                                         </button>
                                     </form>
+                                    {folderForm.errors.nama && (
+                                        <p className="text-red-500 text-sm mt-2">{folderForm.errors.nama}</p>
+                                    )}
                                 </div>
                             )}
 
@@ -266,16 +158,18 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                             {showUploadFile && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                                     <h3 className="font-semibold mb-3">Upload File</h3>
-                                    <form onSubmit={uploadFile} noValidate>
+                                    <form onSubmit={uploadFile}>
                                         <FileUpload
-                                            onFileSelect={(file) => setSelectedFile(file)}
+                                            onFileSelect={(file) => fileForm.setData('file', file)}
+                                            disabled={fileForm.processing}
                                             className="mb-4"
                                         />
                                         <button
                                             type="submit"
-                                            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center justify-center min-h-[42px]"
+                                            disabled={fileForm.processing}
+                                            className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center min-h-[42px]"
                                         >
-                                            Upload
+                                            {fileForm.processing ? '...' : 'Upload'}
                                         </button>
                                     </form>
                                 </div>
@@ -286,7 +180,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                 <div>
                                     <h2 className="text-base sm:text-lg font-semibold mb-3">Folders</h2>
                                     <div className="space-y-2">
-                                        {localFolders.map((folder: any) => (
+                                        {folders.map((folder: any) => (
                                             <div
                                                 key={folder.id}
                                                 className="p-3 sm:p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
@@ -305,7 +199,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                                         className="flex items-center px-3 py-1.5 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center"
                                                     >
                                                         {deletingFolderId === folder.id ? (
-                                                            '...'
+                                                            'Loading...'
                                                         ) : (
                                                             <>
                                                                 <Trash2 className="w-4 h-4 mr-1" />
@@ -323,7 +217,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                 <div>
                                     <h2 className="text-base sm:text-lg font-semibold mb-3">Files</h2>
                                     <div className="space-y-2">
-                                        {localFiles.map((file: any) => (
+                                        {files.map((file: any) => (
                                             <div
                                                 key={file.id}
                                                 className="p-3 sm:p-4 bg-gray-50 rounded-lg"
@@ -359,7 +253,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                                             className="flex items-center px-3 py-1.5 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center"
                                                         >
                                                             {deletingFileId === file.id ? (
-                                                                '...'
+                                                                'Loading...'
                                                             ) : (
                                                                 <>
                                                                     <Trash2 className="w-4 h-4 mr-1" />

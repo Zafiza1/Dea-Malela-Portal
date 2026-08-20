@@ -84,7 +84,7 @@ class SuratController extends Controller
 
             \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
 
-            return back()->with('success', 'Folder berhasil dibuat');
+            return response()->json(['success' => true, 'folder' => $folder]);
         } catch (\Exception $e) {
             \Log::error('createFolder error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
@@ -103,7 +103,7 @@ class SuratController extends Controller
 
         $folder->update($validated);
 
-        return back()->with('success', 'Folder berhasil diubah');
+        return response()->json(['success' => true, 'folder' => $folder]);
     }
 
     public function deleteFolder(SuratFolder $folder)
@@ -119,7 +119,7 @@ class SuratController extends Controller
 
         $folder->delete();
 
-        return back()->with('success', 'Folder berhasil dihapus');
+        return response()->json(['success' => true]);
     }
 
     public function uploadFile(Request $request)
@@ -137,7 +137,7 @@ class SuratController extends Controller
 
             $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'supabase');
 
-            SuratFile::create([
+            $file = SuratFile::create([
                 'nama_file' => $fileName,
                 'path' => $path,
                 'file_type' => $fileType,
@@ -146,7 +146,14 @@ class SuratController extends Controller
                 'uploaded_by' => auth()->id(),
             ]);
 
-            return back()->with('success', 'File berhasil diupload');
+            return response()->json(['success' => true, 'file' => [
+                'id' => $file->id,
+                'nama_file' => $file->nama_file,
+                'file_path' => $file->path,
+                'file_type' => $file->file_type,
+                'file_size' => $file->file_size,
+                'file_url' => Storage::disk('supabase')->url($file->path),
+            ]]);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
@@ -162,7 +169,7 @@ class SuratController extends Controller
         Storage::disk('supabase')->delete($file->path);
         $file->delete();
 
-        return back()->with('success', 'File berhasil dihapus');
+        return response()->json(['success' => true]);
     }
 
     public function renameFile(Request $request, SuratFile $file)
@@ -173,6 +180,6 @@ class SuratController extends Controller
 
         $file->update($validated);
 
-        return back()->with('success', 'File berhasil diubah nama');
+        return response()->json(['success' => true, 'file' => $file]);
     }
 }

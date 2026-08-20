@@ -14,13 +14,6 @@ interface SuratIndexProps {
 }
 
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
-    // Debug logging - force render
-    console.log('=== DEBUG SURAT INDEX ===');
-    console.log('Current folder:', currentFolder);
-    console.log('Current folder nama:', currentFolder?.nama);
-    console.log('Has currentFolder:', !!currentFolder);
-    console.log('Has nama:', !!currentFolder?.nama);
-    
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
@@ -128,6 +121,13 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                             <span className="mx-2 text-gray-400 text-sm">(Root)</span>
                                         )}
                                     </div>
+                                </div>
+                                
+                                {/* Debug info - hapus setelah berhasil */}
+                                <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 p-2 rounded text-xs z-50">
+                                    <div>DEBUG: currentFolder: {currentFolder ? 'YES' : 'NO'}</div>
+                                    <div>DEBUG: nama: {currentFolder?.nama || 'NULL'}</div>
+                                    <div>DEBUG: folderId: {currentFolder?.id || 'NULL'}</div>
                                 </div>
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button

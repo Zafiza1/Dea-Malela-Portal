@@ -16,20 +16,20 @@ class SuratController extends Controller
     {
         $folderId = $request->folder_id;
         
-        // Get folders - try both approaches with explicit connection
+        // Get folders - try both approaches
         try {
-            $folders = SuratFolder::on('pgsql-direct')->where('parent_id', $folderId)
+            $folders = SuratFolder::where('parent_id', $folderId)
                 ->with('createdBy')
                 ->get();
             \Log::info('Folders loaded with createdBy', ['count' => $folders->count(), 'folderId' => $folderId]);
         } catch (\Exception $e) {
             // Fallback to simple query if there's an error
             \Log::error('Error loading folders with createdBy: ' . $e->getMessage());
-            $folders = SuratFolder::on('pgsql-direct')->where('parent_id', $folderId)->get();
+            $folders = SuratFolder::where('parent_id', $folderId)->get();
             \Log::info('Folders loaded without createdBy', ['count' => $folders->count()]);
         }
 
-        $files = SuratFile::on('pgsql-direct')->when($folderId, function ($query) use ($folderId) {
+        $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);
         })
             ->with(['uploadedBy', 'folder'])
@@ -47,7 +47,7 @@ class SuratController extends Controller
                 ];
             });
 
-        $currentFolder = $folderId ? SuratFolder::on('pgsql-direct')->find($folderId) : null;
+        $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
 
         return Inertia::render('Surat/Index', [
             'folders' => $folders,
@@ -75,8 +75,8 @@ class SuratController extends Controller
 
             \Log::info('Validation passed', ['validated' => $validated]);
 
-            // Simple database insert with explicit connection
-            $folder = SuratFolder::on('pgsql-direct')->create([
+            // Simple database insert
+            $folder = SuratFolder::create([
                 'nama' => $validated['nama'],
                 'parent_id' => $validated['parent_id'] ?? null,
                 'created_by' => auth()->id(),
@@ -101,7 +101,7 @@ class SuratController extends Controller
             'nama' => 'required|string|max:255',
         ]);
 
-        $folder->on('pgsql-direct')->update($validated);
+        $folder->update($validated);
 
         return back()->with('success', 'Folder berhasil diubah');
     }
@@ -113,11 +113,11 @@ class SuratController extends Controller
             abort(403, 'You do not have permission to delete this folder');
         }
 
-        if ($folder->on('pgsql-direct')->children()->exists() || $folder->on('pgsql-direct')->files()->exists()) {
+        if ($folder->children()->exists() || $folder->files()->exists()) {
             return back()->with('error', 'Folder tidak kosong');
         }
 
-        $folder->on('pgsql-direct')->delete();
+        $folder->delete();
 
         return back()->with('success', 'Folder berhasil dihapus');
     }
@@ -137,7 +137,7 @@ class SuratController extends Controller
 
             $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'supabase');
 
-            SuratFile::on('pgsql-direct')->create([
+            SuratFile::create([
                 'nama_file' => $fileName,
                 'path' => $path,
                 'file_type' => $fileType,
@@ -160,7 +160,7 @@ class SuratController extends Controller
     public function deleteFile(SuratFile $file)
     {
         Storage::disk('supabase')->delete($file->path);
-        $file->on('pgsql-direct')->delete();
+        $file->delete();
 
         return back()->with('success', 'File berhasil dihapus');
     }
@@ -171,7 +171,7 @@ class SuratController extends Controller
             'nama_file' => 'required|string|max:255',
         ]);
 
-        $file->on('pgsql-direct')->update($validated);
+        $file->update($validated);
 
         return back()->with('success', 'File berhasil diubah nama');
     }

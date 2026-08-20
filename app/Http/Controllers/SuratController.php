@@ -43,6 +43,13 @@ class SuratController extends Controller
         }
 
         $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
+        
+        \Log::info('Surat index data', [
+            'folderId' => $folderId,
+            'currentFolder' => $currentFolder ? $currentFolder->toArray() : null,
+            'foldersCount' => $folders->count(),
+            'filesCount' => $files->count(),
+        ]);
 
         return Inertia::render('Surat/Index', [
             'folders' => $folders,

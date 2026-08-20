@@ -124,10 +124,13 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                 </div>
                                 
                                 {/* Debug info - hapus setelah berhasil */}
-                                <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 p-2 rounded text-xs z-50">
-                                    <div>DEBUG: currentFolder: {currentFolder ? 'YES' : 'NO'}</div>
-                                    <div>DEBUG: nama: {currentFolder?.nama || 'NULL'}</div>
-                                    <div>DEBUG: folderId: {currentFolder?.id || 'NULL'}</div>
+                                <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg text-sm z-50 shadow-lg border-4 border-red-700">
+                                    <div className="font-bold text-lg">🔴 DEBUG INFO</div>
+                                    <div>currentFolder: {currentFolder ? '✅ YES' : '❌ NO'}</div>
+                                    <div>nama: {currentFolder?.nama || '❌ NULL'}</div>
+                                    <div>folderId: {currentFolder?.id || '❌ NULL'}</div>
+                                    <div className="mt-2 text-xs">Folder count: {folders.length}</div>
+                                    <div className="text-xs">File count: {files.length}</div>
                                 </div>
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button

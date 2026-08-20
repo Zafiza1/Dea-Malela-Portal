@@ -84,7 +84,9 @@ class SuratController extends Controller
 
             \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
 
-            return response()->json(['success' => true, 'folder' => $folder]);
+            return response()->json(['success' => true, 'folder' => $folder])
+                ->header('Content-Type', 'application/json')
+                ->header('X-Inertia', 'false');
         } catch (\Exception $e) {
             \Log::error('createFolder error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
@@ -103,7 +105,9 @@ class SuratController extends Controller
 
         $folder->update($validated);
 
-        return response()->json(['success' => true, 'folder' => $folder]);
+        return response()->json(['success' => true, 'folder' => $folder])
+            ->header('Content-Type', 'application/json')
+            ->header('X-Inertia', 'false');
     }
 
     public function deleteFolder(SuratFolder $folder)
@@ -119,7 +123,9 @@ class SuratController extends Controller
 
         $folder->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true])
+            ->header('Content-Type', 'application/json')
+            ->header('X-Inertia', 'false');
     }
 
     public function uploadFile(Request $request)
@@ -153,7 +159,9 @@ class SuratController extends Controller
                 'file_type' => $file->file_type,
                 'file_size' => $file->file_size,
                 'file_url' => Storage::disk('supabase')->url($file->path),
-            ]]);
+            ]])
+            ->header('Content-Type', 'application/json')
+            ->header('X-Inertia', 'false');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
@@ -169,7 +177,9 @@ class SuratController extends Controller
         Storage::disk('supabase')->delete($file->path);
         $file->delete();
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true])
+            ->header('Content-Type', 'application/json')
+            ->header('X-Inertia', 'false');
     }
 
     public function renameFile(Request $request, SuratFile $file)
@@ -180,6 +190,8 @@ class SuratController extends Controller
 
         $file->update($validated);
 
-        return response()->json(['success' => true, 'file' => $file]);
+        return response()->json(['success' => true, 'file' => $file])
+            ->header('Content-Type', 'application/json')
+            ->header('X-Inertia', 'false');
     }
 }

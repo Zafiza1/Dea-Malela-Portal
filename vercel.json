@@ -78,7 +78,10 @@
         "SUPABASE_STORAGE_BUCKET": "guru-files",
         "SUPABASE_STORAGE_PUBLIC_URL": "https://wzlhobpewqaxbucoafdl.supabase.co/storage/v1/object/public",
         "SUPABASE_STORAGE_ENDPOINT": "https://wzlhobpewqaxbucoafdl.storage.supabase.co/storage/v1/s3",
-        "SESSION_LIFETIME": "480"
+        "SESSION_LIFETIME": "480",
+        "SESSION_DRIVER": "cookie",
+        "SESSION_SAME_SITE": "none",
+        "SESSION_SECURE_COOKIE": "true"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
     "buildCommand": "php artisan config:clear && php artisan cache:clear && npm run build"

@@ -26,13 +26,8 @@ class GuruPolicy
             return true;
         }
 
-        // Guru can view their own profile
+        // Guru can only view their own profile
         if ($user->hasRole('guru') && $user->guru && $user->guru->id === $guru->id) {
-            return true;
-        }
-
-        // Guru can also view other gurus (for collaboration purposes)
-        if ($user->hasRole('guru')) {
             return true;
         }
 

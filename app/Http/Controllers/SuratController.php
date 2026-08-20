@@ -33,9 +33,9 @@ class SuratController extends Controller
                         'id' => $file->id,
                         'nama_file' => $file->nama_file,
                         'file_path' => $file->path,
-                        'file_type' => $file->tipe_file,
-                        'file_size' => $file->ukuran,
-                        'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::disk('supabase')->url($file->path) : null,
+                        'file_type' => $file->file_type,
+                        'file_size' => $file->file_size,
+                        'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::url($file->path) : null,
                     ];
                 });
         } else {
@@ -138,18 +138,37 @@ class SuratController extends Controller
 
     public function uploadFile(Request $request)
     {
-        $validated = $request->validate([
-            'file' => 'required|file|max:20480',
-            'folder_id' => 'nullable|exists:surat_folders,id',
-        ]);
-
         try {
+            // Check if file is present
+            if (!$request->hasFile('file')) {
+                \Log::error('No file in request', ['request_data' => $request->all()]);
+                return back()->with('error', 'Tidak ada file yang diupload');
+            }
+
             $file = $request->file('file');
+            if (!$file->isValid()) {
+                \Log::error('File upload validation failed', [
+                    'error' => $file->getErrorMessage(),
+                    'file_name' => $file->getClientOriginalName(),
+                ]);
+                return back()->with('error', 'File upload gagal: ' . $file->getErrorMessage());
+            }
+
             $fileName = $file->getClientOriginalName();
             $fileType = $file->getClientOriginalExtension();
             $fileSize = $file->getSize();
 
-            $path = $file->store('surat/' . ($request->folder_id ?? 'root'), 'supabase');
+            // Use default storage disk and folder-specific path
+            $folderPath = $request->folder_id ? 'surat/' . $request->folder_id : 'surat/root';
+            $path = $file->store($folderPath);
+
+            \Log::info('File upload details', [
+                'original_name' => $fileName,
+                'folder_id' => $request->folder_id,
+                'storage_path' => $path,
+                'storage_disk' => config('filesystems.default'),
+                'file_size' => $fileSize,
+            ]);
 
             // Database insert with retry
             $retries = 3;
@@ -158,11 +177,12 @@ class SuratController extends Controller
                     SuratFile::create([
                         'nama_file' => $fileName,
                         'path' => $path,
-                        'tipe_file' => $fileType,
-                        'ukuran' => $fileSize,
+                        'file_type' => $fileType,
+                        'file_size' => $fileSize,
                         'folder_id' => $request->folder_id,
+                        'uploaded_by' => auth()->id(),
                     ]);
-                    \Log::info('File uploaded successfully');
+                    \Log::info('File uploaded successfully', ['file_id' => $path]);
                     break;
                 } catch (\Exception $dbError) {
                     \Log::error("Database error attempt " . ($i + 1) . ": " . $dbError->getMessage());
@@ -177,18 +197,19 @@ class SuratController extends Controller
             return back()->with('success', 'File berhasil diupload');
         } catch (\Exception $e) {
             \Log::error('uploadFile error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return back()->with('error', 'Gagal upload file: ' . $e->getMessage());
         }
     }
 
     public function downloadFile(SuratFile $file)
     {
-        return Storage::disk('supabase')->download($file->path);
+        return Storage::download($file->path);
     }
 
     public function deleteFile(SuratFile $file)
     {
-        Storage::disk('supabase')->delete($file->path);
+        Storage::delete($file->path);
         $file->delete();
 
         return back()->with('success', 'File berhasil dihapus');

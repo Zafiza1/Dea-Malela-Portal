@@ -5,7 +5,6 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
 use App\Http\Controllers\SuratController;
-use App\Http\Controllers\UserController;
 use App\Models\SuratFolder;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/guru/{guru}', [GuruController::class, 'show'])->name('guru.show')->middleware('can:view,guru');
     Route::post('/guru/{guru}/upload-ktp', [GuruController::class, 'uploadKtp'])->name('guru.upload-ktp')->middleware('can:uploadDocuments,guru');
     Route::post('/guru/{guru}/upload-sk', [GuruController::class, 'uploadSk'])->name('guru.upload-sk')->middleware('can:uploadDocuments,guru');
+    Route::get('/guru/{guru}/view-ktp', [GuruController::class, 'viewKtp'])->name('guru.view-ktp')->middleware('can:view,guru');
+    Route::get('/guru/{guru}/view-sk', [GuruController::class, 'viewSk'])->name('guru.view-sk')->middleware('can:view,guru');
     Route::get('/guru/{guru}/download-ktp', [GuruController::class, 'downloadKtp'])->name('guru.download-ktp')->middleware('can:view,guru');
     Route::get('/guru/{guru}/download-sk', [GuruController::class, 'downloadSk'])->name('guru.download-sk')->middleware('can:view,guru');
 
@@ -65,15 +66,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/surat/folder/{folder}', [SuratController::class, 'deleteFolder'])
         ->name('surat.delete-folder')
         ->middleware(['auth', 'verified']);
-
-    // User Routes
-    Route::get('/user', [UserController::class, 'index'])->name('user.index')->middleware('can:viewAny,App\Models\User');
-    Route::get('/user/create', [UserController::class, 'create'])->name('user.create')->middleware('can:create,App\Models\User');
-    Route::post('/user', [UserController::class, 'store'])->name('user.store')->middleware('can:create,App\Models\User');
-    Route::get('/user/{user}/edit', [UserController::class, 'edit'])->name('user.edit')->middleware('can:update,user');
-    Route::put('/user/{user}', [UserController::class, 'update'])->name('user.update')->middleware('can:update,user');
-    Route::delete('/user/{user}', [UserController::class, 'destroy'])->name('user.destroy')->middleware('can:delete,user');
-    Route::post('/user/{user}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password')->middleware('can:resetPassword,user');
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

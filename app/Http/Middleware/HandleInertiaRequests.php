@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -31,6 +32,11 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        
+        // Force HTTP in local development to avoid HTTPS issues
+        if (app()->environment('local')) {
+            URL::forceScheme('http');
+        }
         
         // Force HTTPS for asset URLs in production
         if (app()->environment('production')) {

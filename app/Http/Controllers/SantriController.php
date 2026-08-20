@@ -71,7 +71,7 @@ class SantriController extends Controller
         $santri = Santri::create($validated);
 
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('santri/foto', 'supabase');
+            $fotoPath = $request->file('foto')->store('santri/foto');
             $santri->foto = $fotoPath;
             $santri->save();
         }
@@ -98,8 +98,8 @@ class SantriController extends Controller
             abort(404);
         }
 
-        $file = Storage::disk('supabase')->get($santri->foto);
-        $mimeType = Storage::disk('supabase')->mimeType($santri->foto);
+        $file = Storage::get($santri->foto);
+        $mimeType = Storage::mimeType($santri->foto);
 
         return response($file)->header('Content-Type', $mimeType);
     }
@@ -140,9 +140,9 @@ class SantriController extends Controller
 
         if ($request->hasFile('foto')) {
             if ($santri->foto) {
-                Storage::disk('supabase')->delete($santri->foto);
+                Storage::delete($santri->foto);
             }
-            $fotoPath = $request->file('foto')->store('santri/foto', 'supabase');
+            $fotoPath = $request->file('foto')->store('santri/foto');
             $santri->foto = $fotoPath;
             $santri->save();
         }
@@ -153,7 +153,7 @@ class SantriController extends Controller
     public function destroy(Santri $santri)
     {
         if ($santri->foto) {
-            Storage::disk('supabase')->delete($santri->foto);
+            Storage::delete($santri->foto);
         }
 
         $santri->delete();

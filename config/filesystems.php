@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'supabase'),
+    'default' => env('FILESYSTEM_DISK', env('APP_ENV') === 'local' ? 'public' : 'supabase'),
 
     /*
     |--------------------------------------------------------------------------

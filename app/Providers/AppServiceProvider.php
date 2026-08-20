@@ -31,6 +31,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTP in local development to avoid browser HTTPS upgrade
+        if (app()->environment('local')) {
+            \Illuminate\Support\Facades\URL::forceScheme('http');
+        }
+
         // Force HTTPS for all URLs in production
         if (app()->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');

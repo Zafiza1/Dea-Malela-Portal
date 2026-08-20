@@ -41,57 +41,6 @@ export default function GuruIndex({ gurus, auth }: GuruIndexProps) {
         }
     };
 
-    // const handleDelete = (guruId: number) => {
-    //     if (confirm('Apakah Anda yakin ingin menghapus data guru ini?')) {
-    //         setDeletingId(guruId);
-    //         router.delete(`/guru/${guruId}`, {
-    //             onSuccess: () => {
-    //                 setDeletingId(null);
-    //                 router.reload();
-    //             },
-    //             onError: () => {
-    //                 setDeletingId(null);
-    //             },
-    //         });
-    //     }
-    // };
-
-    // const columns = [
-    //     {
-    //         key: 'nama_lengkap',
-    //         label: 'Nama',
-    //         render: (guru: Guru) => (
-    //             <div>
-    //                 <div className="font-medium text-gray-900">{guru.nama_lengkap}</div>
-    //                 <div className="text-sm text-gray-500">{guru.email}</div>
-    //             </div>
-    //         ),
-    //     },
-    //     {
-    //         key: 'jabatan',
-    //         label: 'Jabatan',
-    //     },
-    //     {
-    //         key: 'status',
-    //         label: 'Status',
-    //         render: (guru: Guru) => (
-    //             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-    //                 guru.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-    //             }`}>
-    //                 {guru.status === 'aktif' ? 'Aktif' : 'Tidak Aktif'}
-    //             </span>
-    //         ),
-    //     },
-    // ];
-
-    // const handlePageChange = (page: number) => {
-    //     router.get('/guru', { page });
-    // };
-
-    // const handleSearch = (query: string) => {
-    //     router.get('/guru', { search: query });
-    // };
-
     return (
         <DashboardLayout header="Data Guru">
             <Head title="Data Guru" />

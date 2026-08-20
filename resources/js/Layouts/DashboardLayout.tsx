@@ -52,7 +52,6 @@ export default function DashboardLayout({ header, children }: DashboardLayoutPro
             { name: 'Data Santri', href: '/santri', icon: BookOpen },
         ] : []),
         { name: 'Surat Menyurat', href: '/surat', icon: FileText },
-        ...(isAdmin ? [{ name: 'User Management', href: '/user', icon: Settings }] : []),
         // Fallback untuk memastikan minimal menu selalu tampil
         ...((!isAdmin && !isGuru) ? [
             { name: 'Profile', href: '/profile', icon: Users },

@@ -42,17 +42,17 @@ class GuruController extends Controller
             
             if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
                 try {
-                    $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                    $guru->ktp_url = Storage::url($guru->ktp_path);
                 } catch (\Exception $e) {
                     $guru->ktp_url = null;
                 }
             } else {
                 $guru->ktp_url = null;
             }
-            
+
             if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
                 try {
-                    $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                    $guru->sk_kerja_url = Storage::url($guru->sk_kerja_path);
                 } catch (\Exception $e) {
                     $guru->sk_kerja_url = null;
                 }
@@ -143,12 +143,12 @@ class GuruController extends Controller
         }
 
         if ($request->hasFile('ktp')) {
-            $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+            $ktpPath = $request->file('ktp')->store('guru/ktp');
             $guru->ktp_path = $ktpPath;
         }
 
         if ($request->hasFile('sk_kerja')) {
-            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
+            $skPath = $request->file('sk_kerja')->store('guru/sk');
             $guru->sk_kerja_path = $skPath;
         }
 
@@ -167,27 +167,27 @@ class GuruController extends Controller
             $guru->foto_url = $guru->foto;
         } elseif ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
-                $guru->foto_url = Storage::disk('public')->url($guru->foto);
+                $guru->foto_url = Storage::url($guru->foto);
             } catch (\Exception $e) {
                 $guru->foto_url = null;
             }
         } else {
             $guru->foto_url = null;
         }
-        
+
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::url($guru->ktp_path);
             } catch (\Exception $e) {
                 $guru->ktp_url = null;
             }
         } else {
             $guru->ktp_url = null;
         }
-        
+
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::url($guru->sk_kerja_path);
             } catch (\Exception $e) {
                 $guru->sk_kerja_url = null;
             }
@@ -210,27 +210,27 @@ class GuruController extends Controller
             $guru->foto_url = $guru->foto;
         } elseif ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0) {
             try {
-                $guru->foto_url = Storage::disk('public')->url($guru->foto);
+                $guru->foto_url = Storage::url($guru->foto);
             } catch (\Exception $e) {
                 $guru->foto_url = null;
             }
         } else {
             $guru->foto_url = null;
         }
-        
+
         if ($guru->ktp_path && $guru->ktp_path !== '0' && $guru->ktp_path !== 0) {
             try {
-                $guru->ktp_url = Storage::disk('supabase')->url($guru->ktp_path);
+                $guru->ktp_url = Storage::url($guru->ktp_path);
             } catch (\Exception $e) {
                 $guru->ktp_url = null;
             }
         } else {
             $guru->ktp_url = null;
         }
-        
+
         if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0) {
             try {
-                $guru->sk_kerja_url = Storage::disk('supabase')->url($guru->sk_kerja_path);
+                $guru->sk_kerja_url = Storage::url($guru->sk_kerja_path);
             } catch (\Exception $e) {
                 $guru->sk_kerja_url = null;
             }
@@ -275,7 +275,7 @@ class GuruController extends Controller
             // Delete old photo if exists and is valid (only if it's a file path, not base64)
             if ($guru->foto && $guru->foto !== '0' && $guru->foto !== 0 && strpos($guru->foto, 'data:') !== 0) {
                 try {
-                    Storage::disk('public')->delete($guru->foto);
+                    Storage::delete($guru->foto);
                 } catch (\Exception $e) {
                     // Ignore deletion errors
                     \Log::error('Error deleting old photo: ' . $e->getMessage());
@@ -304,9 +304,9 @@ class GuruController extends Controller
         if ($request->hasFile('ktp')) {
             try {
                 if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
-                    Storage::disk('supabase')->delete($guru->ktp_path);
+                    Storage::delete($guru->ktp_path);
                 }
-                $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+                $ktpPath = $request->file('ktp')->store('guru/ktp');
                 $guru->ktp_path = $ktpPath;
                 \Log::info('KTP uploaded successfully: ' . $ktpPath);
             } catch (\Exception $e) {
@@ -316,10 +316,10 @@ class GuruController extends Controller
 
         if ($request->hasFile('sk_kerja')) {
             try {
-                if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
-                    Storage::disk('supabase')->delete($guru->sk_kerja_path);
+                if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0 && strpos($guru->sk_kerja_path, 'data:') !== 0) {
+                    Storage::delete($guru->sk_kerja_path);
                 }
-                $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
+                $skPath = $request->file('sk_kerja')->store('guru/sk');
                 $guru->sk_kerja_path = $skPath;
                 \Log::info('SK Kerja uploaded successfully: ' . $skPath);
             } catch (\Exception $e) {
@@ -334,14 +334,14 @@ class GuruController extends Controller
 
     public function destroy(Guru $guru)
     {
-        if ($guru->foto) {
-            Storage::disk('supabase')->delete($guru->foto);
+        if ($guru->foto && strpos($guru->foto, 'data:') !== 0) {
+            Storage::delete($guru->foto);
         }
-        if ($guru->ktp_path) {
-            Storage::disk('supabase')->delete($guru->ktp_path);
+        if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
+            Storage::delete($guru->ktp_path);
         }
-        if ($guru->sk_kerja_path) {
-            Storage::disk('supabase')->delete($guru->sk_kerja_path);
+        if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
+            Storage::delete($guru->sk_kerja_path);
         }
 
         $guru->delete();
@@ -352,13 +352,7 @@ class GuruController extends Controller
     public function uploadKtp(Request $request, Guru $guru)
     {
         \Log::info('Upload KTP requested for guru ' . $guru->id);
-        \Log::info('Supabase config: ' . json_encode([
-            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
-            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
-            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
-            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
-        ]));
-        
+
         $validated = $request->validate([
             'ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
@@ -369,26 +363,26 @@ class GuruController extends Controller
                 'size' => $request->file('ktp')->getSize(),
                 'mime' => $request->file('ktp')->getMimeType(),
             ]));
-            
+
             if ($guru->ktp_path && strpos($guru->ktp_path, 'data:') !== 0) {
                 \Log::info('Deleting old KTP: ' . $guru->ktp_path);
-                Storage::disk('supabase')->delete($guru->ktp_path);
+                Storage::delete($guru->ktp_path);
             }
 
-            \Log::info('Attempting to store file to Supabase...');
+            \Log::info('Attempting to store file to default storage...');
             $ktpPath = null;
             try {
-                $ktpPath = $request->file('ktp')->store('guru/ktp', 'supabase');
+                $ktpPath = $request->file('ktp')->store('guru/ktp');
                 \Log::info('File stored with path: ' . $ktpPath);
             } catch (\Exception $storageError) {
                 \Log::error('Storage operation failed: ' . $storageError->getMessage());
                 \Log::error('Storage error trace: ' . $storageError->getTraceAsString());
                 throw $storageError;
             }
-            
+
             $guru->ktp_path = $ktpPath;
             $guru->save();
-            
+
             \Log::info('KTP uploaded successfully: ' . $ktpPath);
 
             return back()->with('success', 'KTP berhasil diupload');
@@ -402,25 +396,20 @@ class GuruController extends Controller
     public function uploadSk(Request $request, Guru $guru)
     {
         \Log::info('Upload SK requested for guru ' . $guru->id);
-        \Log::info('Supabase config: ' . json_encode([
-            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
-            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
-            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
-        ]));
-        
+
         $validated = $request->validate([
             'sk_kerja' => 'required|file|mimes:pdf|max:2048',
         ]);
 
         try {
-            if ($guru->sk_kerja_path && strpos($guru->sk_kerja_path, 'data:') !== 0) {
-                Storage::disk('supabase')->delete($guru->sk_kerja_path);
+            if ($guru->sk_kerja_path && $guru->sk_kerja_path !== '0' && $guru->sk_kerja_path !== 0 && strpos($guru->sk_kerja_path, 'data:') !== 0) {
+                Storage::delete($guru->sk_kerja_path);
             }
 
-            $skPath = $request->file('sk_kerja')->store('guru/sk', 'supabase');
+            $skPath = $request->file('sk_kerja')->store('guru/sk');
             $guru->sk_kerja_path = $skPath;
             $guru->save();
-            
+
             \Log::info('SK uploaded successfully: ' . $skPath);
 
             return back()->with('success', 'SK Kerja berhasil diupload');
@@ -431,24 +420,40 @@ class GuruController extends Controller
         }
     }
 
+    public function viewKtp(Guru $guru)
+    {
+        \Log::info('View KTP requested for guru ' . $guru->id . ', ktp_path: ' . $guru->ktp_path);
+
+        if (!$guru->ktp_path) {
+            \Log::error('KTP path is empty for guru ' . $guru->id);
+            abort(404, 'KTP tidak tersedia');
+        }
+
+        try {
+            \Log::info('Attempting to view KTP from default storage: ' . $guru->ktp_path);
+            $file = Storage::get($guru->ktp_path);
+            $mimeType = Storage::mimeType($guru->ktp_path);
+
+            return response($file)->header('Content-Type', $mimeType);
+        } catch (\Exception $e) {
+            \Log::error('Error viewing KTP: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            abort(500, 'Gagal menampilkan KTP: ' . $e->getMessage());
+        }
+    }
+
     public function downloadKtp(Guru $guru)
     {
         \Log::info('Download KTP requested for guru ' . $guru->id . ', ktp_path: ' . $guru->ktp_path);
-        \Log::info('Supabase config: ' . json_encode([
-            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
-            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
-            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
-            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
-        ]));
-        
+
         if (!$guru->ktp_path) {
             \Log::error('KTP path is empty for guru ' . $guru->id);
             return back()->with('error', 'KTP tidak tersedia');
         }
 
         try {
-            \Log::info('Attempting to download KTP from Supabase: ' . $guru->ktp_path);
-            return Storage::disk('supabase')->download($guru->ktp_path);
+            \Log::info('Attempting to download KTP from default storage: ' . $guru->ktp_path);
+            return Storage::download($guru->ktp_path);
         } catch (\Exception $e) {
             \Log::error('Error downloading KTP: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
@@ -456,24 +461,40 @@ class GuruController extends Controller
         }
     }
 
+    public function viewSk(Guru $guru)
+    {
+        \Log::info('View SK requested for guru ' . $guru->id . ', sk_kerja_path: ' . $guru->sk_kerja_path);
+
+        if (!$guru->sk_kerja_path || $guru->sk_kerja_path === '0' || $guru->sk_kerja_path === 0) {
+            \Log::error('SK path is empty or invalid for guru ' . $guru->id);
+            abort(404, 'SK Kerja tidak tersedia');
+        }
+
+        try {
+            \Log::info('Attempting to view SK from default storage: ' . $guru->sk_kerja_path);
+            $file = Storage::get($guru->sk_kerja_path);
+            $mimeType = Storage::mimeType($guru->sk_kerja_path);
+
+            return response($file)->header('Content-Type', $mimeType);
+        } catch (\Exception $e) {
+            \Log::error('Error viewing SK: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            abort(500, 'Gagal menampilkan SK: ' . $e->getMessage());
+        }
+    }
+
     public function downloadSk(Guru $guru)
     {
         \Log::info('Download SK requested for guru ' . $guru->id . ', sk_kerja_path: ' . $guru->sk_kerja_path);
-        \Log::info('Supabase config: ' . json_encode([
-            'key' => env('SUPABASE_STORAGE_KEY') ? 'set' : 'empty',
-            'secret' => env('SUPABASE_STORAGE_SECRET') ? 'set' : 'empty',
-            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
-            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
-        ]));
-        
-        if (!$guru->sk_kerja_path) {
-            \Log::error('SK path is empty for guru ' . $guru->id);
+
+        if (!$guru->sk_kerja_path || $guru->sk_kerja_path === '0' || $guru->sk_kerja_path === 0) {
+            \Log::error('SK path is empty or invalid for guru ' . $guru->id);
             return back()->with('error', 'SK Kerja tidak tersedia');
         }
 
         try {
-            \Log::info('Attempting to download SK from Supabase: ' . $guru->sk_kerja_path);
-            return Storage::disk('supabase')->download($guru->sk_kerja_path);
+            \Log::info('Attempting to download SK from default storage: ' . $guru->sk_kerja_path);
+            return Storage::download($guru->sk_kerja_path);
         } catch (\Exception $e) {
             \Log::error('Error downloading SK Kerja: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());

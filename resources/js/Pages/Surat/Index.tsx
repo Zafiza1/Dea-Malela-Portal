@@ -115,14 +115,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                         </h1>
                                     </div>
                                 </div>
-                                
-                                {/* Debug info - hapus setelah berhasil */}
-                                <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg text-sm z-50 shadow-lg border-4 border-red-700">
-                                    <div className="font-bold text-lg">🔴 DEBUG</div>
-                                    <div>Has currentFolder: {currentFolder ? 'YES' : 'NO'}</div>
-                                    <div>Nama: {currentFolder?.nama || 'NULL'}</div>
-                                    <div>ID: {currentFolder?.id || 'NULL'}</div>
-                                </div>
+
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button
                                         onClick={() => setShowCreateFolder(!showCreateFolder)}

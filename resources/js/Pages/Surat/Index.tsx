@@ -14,6 +14,10 @@ interface SuratIndexProps {
 }
 
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
+    console.log('=== SURAT INDEX DEBUG ===');
+    console.log('Current folder:', currentFolder);
+    console.log('Current folder nama:', currentFolder?.nama);
+    
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
@@ -131,6 +135,9 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                     <div>folderId: {currentFolder?.id || '❌ NULL'}</div>
                                     <div className="mt-2 text-xs">Folder count: {folders.length}</div>
                                     <div className="text-xs">File count: {files.length}</div>
+                                    <div className="mt-2 text-xs border-t border-red-400 pt-2">
+                                        Current folder object: {JSON.stringify(currentFolder)}
+                                    </div>
                                 </div>
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button

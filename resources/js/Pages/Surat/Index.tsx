@@ -14,10 +14,6 @@ interface SuratIndexProps {
 }
 
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
-    console.log('=== SURAT INDEX DEBUG ===');
-    console.log('Current folder:', currentFolder);
-    console.log('Current folder nama:', currentFolder?.nama);
-    
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
@@ -111,22 +107,21 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                     </a>
                                     <div className="flex items-center">
                                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                                            {currentFolder ? `Surat Menyurat > ${currentFolder.nama}` : 'Surat Menyurat'}
+                                            {currentFolder && currentFolder.nama ? (
+                                                <span className="text-red-600">Surat Menyurat > {currentFolder.nama}</span>
+                                            ) : (
+                                                <span>Surat Menyurat</span>
+                                            )}
                                         </h1>
                                     </div>
                                 </div>
                                 
                                 {/* Debug info - hapus setelah berhasil */}
                                 <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg text-sm z-50 shadow-lg border-4 border-red-700">
-                                    <div className="font-bold text-lg">🔴 DEBUG INFO</div>
-                                    <div>currentFolder: {currentFolder ? '✅ YES' : '❌ NO'}</div>
-                                    <div>nama: {currentFolder?.nama || '❌ NULL'}</div>
-                                    <div>folderId: {currentFolder?.id || '❌ NULL'}</div>
-                                    <div className="mt-2 text-xs">Folder count: {folders.length}</div>
-                                    <div className="text-xs">File count: {files.length}</div>
-                                    <div className="mt-2 text-xs border-t border-red-400 pt-2">
-                                        Current folder object: {JSON.stringify(currentFolder)}
-                                    </div>
+                                    <div className="font-bold text-lg">🔴 DEBUG</div>
+                                    <div>Has currentFolder: {currentFolder ? 'YES' : 'NO'}</div>
+                                    <div>Nama: {currentFolder?.nama || 'NULL'}</div>
+                                    <div>ID: {currentFolder?.id || 'NULL'}</div>
                                 </div>
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">
                                     <button

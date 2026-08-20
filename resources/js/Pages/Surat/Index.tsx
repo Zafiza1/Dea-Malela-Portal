@@ -16,6 +16,7 @@ interface SuratIndexProps {
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
     // Debug logging
     console.log('SuratIndex props:', { folders, files, currentFolder, parentFolder });
+    console.log('Current folder name:', currentFolder?.nama);
     
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
@@ -110,7 +111,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                     </a>
                                     <div className="flex items-center">
                                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Surat Menyurat</h1>
-                                        {currentFolder && (
+                                        {currentFolder && currentFolder.nama && (
                                             <>
                                                 <span className="mx-2 text-gray-400 text-xl sm:text-2xl">›</span>
                                                 <div className="flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">

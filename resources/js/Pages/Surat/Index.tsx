@@ -40,10 +40,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                 console.log('Folder created successfully');
                 folderForm.reset();
                 setShowCreateFolder(false);
-                // Force full page reload to get fresh data
-                window.location.href = currentFolder 
-                    ? `/surat?folder_id=${currentFolder.id}` 
-                    : '/surat';
+                router.reload();
             },
             onError: (errors) => {
                 console.error('Error creating folder:', errors);

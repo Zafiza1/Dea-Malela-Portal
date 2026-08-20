@@ -85,8 +85,8 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
     }, []);
 
     return (
-        <DashboardLayout header="Surat Menyurat">
-            <Head title="Surat Menyurat" />
+        <DashboardLayout header={currentFolder ? `Surat Menyurat > ${currentFolder.nama}` : "Surat Menyurat"}>
+            <Head title={currentFolder ? `Surat Menyurat > ${currentFolder.nama}` : "Surat Menyurat"} />
             <div className="py-6 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -110,20 +110,9 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                         </span>
                                     </a>
                                     <div className="flex items-center">
-                                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Surat Menyurat</h1>
-                                        {currentFolder ? (
-                                            <>
-                                                <span className="mx-2 text-gray-400 text-xl sm:text-2xl">›</span>
-                                                <div className="flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
-                                                    <FolderOpen className="w-4 h-4 mr-2 text-blue-600" />
-                                                    <span className="text-sm sm:text-base font-semibold text-blue-800">
-                                                        {currentFolder.nama || 'Unknown Folder'}
-                                                    </span>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <span className="mx-2 text-gray-400 text-sm">(Root)</span>
-                                        )}
+                                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                                            {currentFolder ? `Surat Menyurat > ${currentFolder.nama}` : 'Surat Menyurat'}
+                                        </h1>
                                     </div>
                                 </div>
                                 

@@ -40,7 +40,22 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                 parent_id: currentFolder?.id || null,
             }),
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+            
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                // If not JSON, read as text for debugging
+                return response.text().then(text => {
+                    console.log('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
+            }
+        })
         .then(data => {
             if (data.success) {
                 console.log('Folder created successfully', data.folder);
@@ -76,7 +91,18 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
             },
             body: formData,
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Upload response status:', response.status);
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                return response.text().then(text => {
+                    console.log('Non-JSON upload response:', text);
+                    throw new Error('Server returned non-JSON response');
+                });
+            }
+        })
         .then(data => {
             if (data.success) {
                 console.log('File uploaded successfully', data.file);
@@ -104,7 +130,18 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Delete folder response status:', response.status);
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text().then(text => {
+                        console.log('Non-JSON delete response:', text);
+                        throw new Error('Server returned non-JSON response');
+                    });
+                }
+            })
             .then(data => {
                 if (data.success) {
                     setLocalFolders(localFolders.filter(folder => folder.id !== folderId));
@@ -131,7 +168,18 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Delete file response status:', response.status);
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text().then(text => {
+                        console.log('Non-JSON delete response:', text);
+                        throw new Error('Server returned non-JSON response');
+                    });
+                }
+            })
             .then(data => {
                 if (data.success) {
                     setLocalFiles(localFiles.filter(file => file.id !== fileId));
@@ -195,7 +243,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                             {showCreateFolder && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                                     <h3 className="font-semibold mb-3">Buat Folder Baru</h3>
-                                    <form onSubmit={createFolder} className="flex space-x-2">
+                                    <form onSubmit={createFolder} className="flex space-x-2" noValidate>
                                         <input
                                             type="text"
                                             value={folderName}
@@ -218,7 +266,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                             {showUploadFile && (
                                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                                     <h3 className="font-semibold mb-3">Upload File</h3>
-                                    <form onSubmit={uploadFile}>
+                                    <form onSubmit={uploadFile} noValidate>
                                         <FileUpload
                                             onFileSelect={(file) => setSelectedFile(file)}
                                             className="mb-4"

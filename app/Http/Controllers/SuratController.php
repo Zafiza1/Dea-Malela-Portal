@@ -24,6 +24,7 @@ class SuratController extends Controller
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);
         })
+            ->whereNotNull('folder_id') // Hanya tampilkan file yang ada di folder
             ->with(['folder'])
             ->latest()
             ->get()

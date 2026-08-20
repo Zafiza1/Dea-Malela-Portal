@@ -37,6 +37,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                 folderForm.reset();
                 setShowCreateFolder(false);
             },
+            preserveState: true,
         });
     }, [folderForm]);
 
@@ -47,6 +48,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                 fileForm.reset();
                 setShowUploadFile(false);
             },
+            preserveState: true,
         } as any);
     }, [fileForm]);
 
@@ -145,7 +147,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                             disabled={folderForm.processing}
                                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center min-w-[100px] justify-center"
                                         >
-                                            {folderForm.processing ? '...' : 'Buat'}
+                                            {folderForm.processing ? 'Loading...' : 'Buat'}
                                         </button>
                                     </form>
                                     {folderForm.errors.nama && (
@@ -169,7 +171,7 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                             disabled={fileForm.processing}
                                             className="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center min-h-[42px]"
                                         >
-                                            {fileForm.processing ? '...' : 'Upload'}
+                                            {fileForm.processing ? 'Loading...' : 'Upload'}
                                         </button>
                                     </form>
                                 </div>

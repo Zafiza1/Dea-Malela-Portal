@@ -14,9 +14,12 @@ interface SuratIndexProps {
 }
 
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
-    // Debug logging
-    console.log('SuratIndex props:', { folders, files, currentFolder, parentFolder });
-    console.log('Current folder name:', currentFolder?.nama);
+    // Debug logging - force render
+    console.log('=== DEBUG SURAT INDEX ===');
+    console.log('Current folder:', currentFolder);
+    console.log('Current folder nama:', currentFolder?.nama);
+    console.log('Has currentFolder:', !!currentFolder);
+    console.log('Has nama:', !!currentFolder?.nama);
     
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
@@ -111,16 +114,18 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                                     </a>
                                     <div className="flex items-center">
                                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Surat Menyurat</h1>
-                                        {currentFolder && currentFolder.nama && (
+                                        {currentFolder ? (
                                             <>
                                                 <span className="mx-2 text-gray-400 text-xl sm:text-2xl">›</span>
                                                 <div className="flex items-center px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
                                                     <FolderOpen className="w-4 h-4 mr-2 text-blue-600" />
                                                     <span className="text-sm sm:text-base font-semibold text-blue-800">
-                                                        {currentFolder.nama}
+                                                        {currentFolder.nama || 'Unknown Folder'}
                                                     </span>
                                                 </div>
                                             </>
+                                        ) : (
+                                            <span className="mx-2 text-gray-400 text-sm">(Root)</span>
                                         )}
                                     </div>
                                 </div>

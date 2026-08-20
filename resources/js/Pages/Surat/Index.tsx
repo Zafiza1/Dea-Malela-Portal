@@ -14,6 +14,9 @@ interface SuratIndexProps {
 }
 
 export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
+    // Debug logging
+    console.log('SuratIndex props:', { folders, files, currentFolder, parentFolder });
+    
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);

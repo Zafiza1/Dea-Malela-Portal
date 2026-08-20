@@ -26,7 +26,7 @@ return [
     */
 
     'connectors' => [
-        'pgsql' => \App\Database\NeonPostgresConnector::class,
+        // Using default connector for Vercel compatibility
     ],
 
     /*

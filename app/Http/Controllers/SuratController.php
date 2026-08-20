@@ -16,23 +16,15 @@ class SuratController extends Controller
     {
         $folderId = $request->folder_id;
         
-        // Get folders - try both approaches
-        try {
-            $folders = SuratFolder::where('parent_id', $folderId)
-                ->with('createdBy')
-                ->get();
-            \Log::info('Folders loaded with createdBy', ['count' => $folders->count(), 'folderId' => $folderId]);
-        } catch (\Exception $e) {
-            // Fallback to simple query if there's an error
-            \Log::error('Error loading folders with createdBy: ' . $e->getMessage());
-            $folders = SuratFolder::where('parent_id', $folderId)->get();
-            \Log::info('Folders loaded without createdBy', ['count' => $folders->count()]);
-        }
+        // Get folders
+        $folders = SuratFolder::where('parent_id', $folderId)
+            ->get();
+        \Log::info('Folders loaded', ['count' => $folders->count(), 'folderId' => $folderId]);
 
         $files = SuratFile::when($folderId, function ($query) use ($folderId) {
             return $query->where('folder_id', $folderId);
         })
-            ->with(['uploadedBy', 'folder'])
+            ->with(['folder'])
             ->latest()
             ->get()
             ->map(function ($file) {
@@ -41,8 +33,8 @@ class SuratController extends Controller
                     'id' => $file->id,
                     'nama_file' => $file->nama_file,
                     'file_path' => $file->path,
-                    'file_type' => $file->file_type,
-                    'file_size' => $file->file_size,
+                    'file_type' => $file->tipe_file,
+                    'file_size' => $file->ukuran,
                     'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::disk('supabase')->url($file->path) : null,
                 ];
             });
@@ -83,7 +75,6 @@ class SuratController extends Controller
                     $folder = SuratFolder::create([
                         'nama' => $validated['nama'],
                         'parent_id' => $validated['parent_id'] ?? null,
-                        'created_by' => auth()->id(),
                     ]);
                     \Log::info('Folder created', ['folder' => $folder, 'folder_id' => $folder->id ?? null]);
                     break;
@@ -157,10 +148,9 @@ class SuratController extends Controller
                     SuratFile::create([
                         'nama_file' => $fileName,
                         'path' => $path,
-                        'file_type' => $fileType,
-                        'file_size' => $fileSize,
+                        'tipe_file' => $fileType,
+                        'ukuran' => $fileSize,
                         'folder_id' => $request->folder_id,
-                        'uploaded_by' => auth()->id(),
                     ]);
                     \Log::info('File uploaded successfully');
                     break;

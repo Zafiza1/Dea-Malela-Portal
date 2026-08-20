@@ -37,7 +37,7 @@ class SuratFilePolicy
      */
     public function update(User $user, SuratFile $file): bool
     {
-        return $user->hasRole('admin') || ($user->hasRole('guru') && $file->uploaded_by === $user->id);
+        return $user->hasRole('admin') || $user->hasRole('guru');
     }
 
     /**
@@ -45,7 +45,7 @@ class SuratFilePolicy
      */
     public function delete(User $user, SuratFile $file): bool
     {
-        return $user->hasRole('admin') || ($user->hasRole('guru') && $file->uploaded_by === $user->id);
+        return $user->hasRole('admin') || $user->hasRole('guru');
     }
 
     /**

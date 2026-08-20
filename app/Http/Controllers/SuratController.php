@@ -21,24 +21,26 @@ class SuratController extends Controller
             ->get();
         \Log::info('Folders loaded', ['count' => $folders->count(), 'folderId' => $folderId]);
 
-        $files = SuratFile::when($folderId, function ($query) use ($folderId) {
-            return $query->where('folder_id', $folderId);
-        })
-            ->whereNotNull('folder_id') // Hanya tampilkan file yang ada di folder
-            ->with(['folder'])
-            ->latest()
-            ->get()
-            ->map(function ($file) {
-                // Map to match FilePreviewModal interface
-                return [
-                    'id' => $file->id,
-                    'nama_file' => $file->nama_file,
-                    'file_path' => $file->path,
-                    'file_type' => $file->tipe_file,
-                    'file_size' => $file->ukuran,
-                    'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::disk('supabase')->url($file->path) : null,
-                ];
-            });
+        // Hanya tampilkan file jika berada di dalam folder
+        if ($folderId) {
+            $files = SuratFile::where('folder_id', $folderId)
+                ->with(['folder'])
+                ->latest()
+                ->get()
+                ->map(function ($file) {
+                    // Map to match FilePreviewModal interface
+                    return [
+                        'id' => $file->id,
+                        'nama_file' => $file->nama_file,
+                        'file_path' => $file->path,
+                        'file_type' => $file->tipe_file,
+                        'file_size' => $file->ukuran,
+                        'file_url' => ($file->path && $file->path !== '0' && $file->path !== 0) ? Storage::disk('supabase')->url($file->path) : null,
+                    ];
+                });
+        } else {
+            $files = collect(); // Kosong di root
+        }
 
         $currentFolder = $folderId ? SuratFolder::find($folderId) : null;
 

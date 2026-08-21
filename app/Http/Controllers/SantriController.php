@@ -188,8 +188,7 @@ class SantriController extends Controller
             'jenjang',
             'kelas',
             'status',
-            'catatan',
-            'foto'
+            'catatan'
         ];
 
         // Write headers in first row
@@ -200,7 +199,7 @@ class SantriController extends Controller
         }
 
         // Style header row
-        $headerRange = 'A1:N1';
+        $headerRange = 'A1:M1';
         $sheet->getStyle($headerRange)->getFont()->setBold(true);
 
         // Add example data in second row
@@ -214,11 +213,10 @@ class SantriController extends Controller
             'Siti',
             'Jl. Contoh No. 123',
             '08123456789',
-            'smp',
+            'SMP',
             '7A',
             'aktif',
-            '-',
-            '24001.jpg'
+            '-'
         ];
 
         $col = 'A';
@@ -230,12 +228,13 @@ class SantriController extends Controller
         // Add note about valid values
         $sheet->setCellValue('A6', 'CATATAN:');
         $sheet->setCellValue('A7', 'jenis_kelamin: laki-laki, perempuan');
-        $sheet->setCellValue('A8', 'jenjang: sd, smp, sma');
+        $sheet->setCellValue('A8', 'jenjang: SD, SMP, SMA');
         $sheet->setCellValue('A9', 'status: aktif, tidak aktif');
-        $sheet->getStyle('A6:A9')->getFont()->setItalic(true);
+        $sheet->setCellValue('A10', 'foto: Upload terpisah dari admin');
+        $sheet->getStyle('A6:A10')->getFont()->setItalic(true);
 
         // Auto-size columns
-        foreach (range('A', 'N') as $column) {
+        foreach (range('A', 'M') as $column) {
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
@@ -262,10 +261,10 @@ class SantriController extends Controller
     public function previewImport(Request $request)
     {
         $request->validate([
-            'zip_file' => 'required|file|mimes:zip|max:10240', // 10MB max
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:10240', // 10MB max
         ]);
 
-        $zipFile = $request->file('zip_file');
+        $excelFile = $request->file('excel_file');
         $tempDir = storage_path('app/temp/import_' . time() . '_' . Str::random(8));
 
         try {
@@ -274,32 +273,12 @@ class SantriController extends Controller
                 mkdir($tempDir, 0755, true);
             }
 
-            // Extract ZIP
-            $zip = new \ZipArchive();
-            $openResult = $zip->open($zipFile->getPathname());
-
-            if ($openResult !== true) {
-                return response()->json([
-                    'error' => 'File ZIP tidak dapat dibaca. Error code: ' . $openResult
-                ], 400);
-            }
-
-            $zip->extractTo($tempDir);
-            $zip->close();
-
-            // Check for data-santri.xlsx
-            $excelFile = $tempDir . '/data-santri.xlsx';
-
-            if (!file_exists($excelFile)) {
-                // Clean up
-                $this->cleanupTempDir($tempDir);
-                return response()->json([
-                    'error' => 'File data-santri.xlsx tidak ditemukan dalam ZIP.'
-                ], 400);
-            }
+            // Store uploaded file
+            $excelPath = $tempDir . '/data-santri.xlsx';
+            $excelFile->move($tempDir, 'data-santri.xlsx');
 
             // Parse Excel file
-            $rows = $this->parseExcelFile($excelFile);
+            $rows = $this->parseExcelFile($excelPath);
 
             if (empty($rows)) {
                 $this->cleanupTempDir($tempDir);
@@ -312,18 +291,6 @@ class SantriController extends Controller
             $validData = [];
             $errors = [];
             $existingNis = Santri::pluck('nis')->toArray();
-
-            // Check for photos
-            $photoDir = $tempDir . '/foto';
-            $availablePhotos = [];
-            if (is_dir($photoDir)) {
-                $files = scandir($photoDir);
-                foreach ($files as $file) {
-                    if ($file !== '.' && $file !== '..') {
-                        $availablePhotos[] = $file;
-                    }
-                }
-            }
 
             foreach ($rows as $index => $row) {
                 $rowNum = $index + 2; // +2 because row 1 is header
@@ -349,7 +316,6 @@ class SantriController extends Controller
                     'kelas' => $row[10] ?? '',
                     'status' => $row[11] ?? '',
                     'catatan' => $row[12] ?? '',
-                    'foto' => $row[13] ?? '',
                 ];
 
                 // Convert Excel date format if needed
@@ -379,9 +345,9 @@ class SantriController extends Controller
                 }
 
                 // Validate jenjang
-                $validJenjang = ['sd', 'smp', 'sma'];
-                if (!empty($data['jenjang']) && !in_array(strtolower($data['jenjang']), $validJenjang)) {
-                    $rowErrors[] = 'jenjang harus sd/smp/sma';
+                $validJenjang = ['sd', 'smp', 'sma', 'SD', 'SMP', 'SMA'];
+                if (!empty($data['jenjang']) && !in_array($data['jenjang'], $validJenjang)) {
+                    $rowErrors[] = 'jenjang harus SD/SMP/SMA';
                 }
 
                 // Validate status
@@ -402,12 +368,6 @@ class SantriController extends Controller
                     }
                 }
 
-                // Check photo availability
-                $photoFound = false;
-                if (!empty($data['foto'])) {
-                    $photoFound = in_array($data['foto'], $availablePhotos);
-                }
-
                 if (empty($rowErrors)) {
                     // Convert jenis_kelamin to DB format
                     $jenisKelaminMap = [
@@ -415,6 +375,9 @@ class SantriController extends Controller
                         'perempuan' => 'P'
                     ];
                     $data['jenis_kelamin'] = $jenisKelaminMap[strtolower($data['jenis_kelamin'])] ?? $data['jenis_kelamin'];
+
+                    // Convert jenjang to uppercase for consistency
+                    $data['jenjang'] = strtoupper($data['jenjang']);
 
                     // Convert status to DB format
                     $statusMap = [
@@ -425,7 +388,6 @@ class SantriController extends Controller
 
                     $validData[] = [
                         'data' => $data,
-                        'photo_found' => $photoFound,
                         'row_num' => $rowNum
                     ];
                 } else {
@@ -446,8 +408,6 @@ class SantriController extends Controller
                 'total_rows' => count($rows),
                 'valid_count' => count($validData),
                 'error_count' => count($errors),
-                'photo_found_count' => count(array_filter($validData, fn($d) => $d['photo_found'])),
-                'photo_missing_count' => count(array_filter($validData, fn($d) => !$d['photo_found'])),
             ];
 
             // Store in cache for 1 hour
@@ -458,8 +418,6 @@ class SantriController extends Controller
                 'total_rows' => $importData['total_rows'],
                 'valid_count' => $importData['valid_count'],
                 'error_count' => $importData['error_count'],
-                'photo_found_count' => $importData['photo_found_count'],
-                'photo_missing_count' => $importData['photo_missing_count'],
                 'errors' => $errors
             ]);
 
@@ -492,52 +450,12 @@ class SantriController extends Controller
             DB::beginTransaction();
 
             $importedCount = 0;
-            $photoSuccessCount = 0;
-            $photoFailedCount = 0;
 
             foreach ($importData['valid_data'] as $item) {
                 $data = $item['data'];
-                $photoFound = $item['photo_found'];
-
-                // Remove foto from data array (handle separately)
-                $fotoFilename = $data['foto'];
-                unset($data['foto']);
 
                 // Create santri
                 $santri = Santri::create($data);
-
-                // Handle photo
-                if ($photoFound && !empty($fotoFilename)) {
-                    $sourcePath = $importData['temp_dir'] . '/foto/' . $fotoFilename;
-
-                    if (file_exists($sourcePath)) {
-                        // Validate photo
-                        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-                        $extension = strtolower(pathinfo($fotoFilename, PATHINFO_EXTENSION));
-
-                        if (in_array($extension, $allowedExtensions)) {
-                            // Validate file size (max 2MB)
-                            $fileSize = filesize($sourcePath);
-                            if ($fileSize <= 2 * 1024 * 1024) {
-                                // Store photo using environment-aware storage
-                                $fotoPath = 'santri/foto/' . $fotoFilename;
-                                $fileContent = file_get_contents($sourcePath);
-
-                                Storage::put($fotoPath, $fileContent);
-
-                                $santri->foto = $fotoPath;
-                                $santri->save();
-                                $photoSuccessCount++;
-                            } else {
-                                $photoFailedCount++;
-                            }
-                        } else {
-                            $photoFailedCount++;
-                        }
-                    } else {
-                        $photoFailedCount++;
-                    }
-                }
 
                 $importedCount++;
             }
@@ -553,8 +471,6 @@ class SantriController extends Controller
             return response()->json([
                 'success' => true,
                 'imported_count' => $importedCount,
-                'photo_success_count' => $photoSuccessCount,
-                'photo_failed_count' => $photoFailedCount,
                 'skipped_count' => $importData['error_count'],
                 'message' => "Import berhasil. {$importedCount} data Santri berhasil ditambahkan."
             ]);
@@ -586,7 +502,7 @@ class SantriController extends Controller
             // Skip header row (row 1), start from row 2
             for ($row = 2; $row <= $highestRow; $row++) {
                 $rowData = [];
-                for ($col = 'A'; $col <= 'N'; $col++) {
+                for ($col = 'A'; $col <= 'M'; $col++) {
                     $cellValue = $sheet->getCell($col . $row)->getValue();
                     $rowData[] = $cellValue;
                 }

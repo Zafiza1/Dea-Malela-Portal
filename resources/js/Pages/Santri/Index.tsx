@@ -38,7 +38,7 @@ export default function SantriIndex({ santri, auth }: any) {
 
     const handlePreviewImport = async () => {
         if (!selectedFile) {
-            setError('Silakan pilih file ZIP terlebih dahulu');
+            setError('Silakan pilih file Excel terlebih dahulu');
             return;
         }
 
@@ -46,7 +46,7 @@ export default function SantriIndex({ santri, auth }: any) {
         setError(null);
 
         const formData = new FormData();
-        formData.append('zip_file', selectedFile);
+        formData.append('excel_file', selectedFile);
 
         try {
             const response = await fetch('/santri/import/preview', {
@@ -393,41 +393,36 @@ export default function SantriIndex({ santri, auth }: any) {
 
                                     {/* Instructions */}
                                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                                        <h3 className="font-semibold text-gray-900 mb-2">2. Siapkan File ZIP</h3>
+                                        <h3 className="font-semibold text-gray-900 mb-2">2. Siapkan File Excel</h3>
                                         <div className="text-sm text-gray-700 space-y-2">
-                                            <p>Buat file ZIP dengan struktur:</p>
-                                            <pre className="bg-gray-100 p-3 rounded text-xs overflow-x-auto">
-{`import-santri.zip
-├── data-santri.xlsx
-└── foto/
-    ├── 24001.jpg
-    ├── 24002.jpg
-    └── ...`}
-                                            </pre>
-                                            <p className="text-xs text-gray-500">
-                                                Format foto: jpg, jpeg, png, webp (maks. 2MB per file)
-                                            </p>
+                                            <p>Isi template Excel dengan data santri:</p>
+                                            <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+                                                <li>NIS harus unik</li>
+                                                <li>Jenjang: SD, SMP, SMA</li>
+                                                <li>Status: aktif, tidak aktif</li>
+                                                <li>Foto akan diupload terpisah oleh admin</li>
+                                            </ul>
                                         </div>
                                     </div>
 
                                     {/* Upload Section */}
                                     <div>
-                                        <h3 className="font-semibold text-gray-900 mb-2">3. Upload File ZIP</h3>
+                                        <h3 className="font-semibold text-gray-900 mb-2">3. Upload File Excel</h3>
                                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                                             <input
                                                 type="file"
-                                                id="zip-upload"
-                                                accept=".zip"
+                                                id="excel-upload"
+                                                accept=".xlsx,.xls"
                                                 onChange={handleFileSelect}
                                                 className="hidden"
                                             />
                                             <label
-                                                htmlFor="zip-upload"
+                                                htmlFor="excel-upload"
                                                 className="cursor-pointer"
                                             >
                                                 <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
                                                 <p className="text-sm text-gray-600">
-                                                    {selectedFile ? selectedFile.name : 'Klik untuk memilih file ZIP'}
+                                                    {selectedFile ? selectedFile.name : 'Klik untuk memilih file Excel'}
                                                 </p>
                                                 <p className="text-xs text-gray-400 mt-1">
                                                     Maksimal 10MB
@@ -489,14 +484,6 @@ export default function SantriIndex({ santri, auth }: any) {
                                             <div>
                                                 <span className="text-gray-600">Data error:</span>
                                                 <span className="ml-2 font-medium text-red-600">{previewData.error_count}</span>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">Foto ditemukan:</span>
-                                                <span className="ml-2 font-medium text-green-600">{previewData.photo_found_count}</span>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-600">Foto tidak ditemukan:</span>
-                                                <span className="ml-2 font-medium text-orange-600">{previewData.photo_missing_count}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -563,14 +550,6 @@ export default function SantriIndex({ santri, auth }: any) {
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Data berhasil diimport:</span>
                                                 <span className="font-medium">{importResult.imported_count}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-600">Foto berhasil:</span>
-                                                <span className="font-medium text-green-600">{importResult.photo_success_count}</span>
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <span className="text-gray-600">Foto gagal:</span>
-                                                <span className="font-medium text-red-600">{importResult.photo_failed_count}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="text-gray-600">Data dilewati (error):</span>

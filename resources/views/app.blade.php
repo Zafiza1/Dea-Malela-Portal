@@ -15,6 +15,9 @@
             <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
         @endif
 
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         <!-- Prevent invalid storage requests at DOM level -->
         <script>
             (function() {

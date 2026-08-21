@@ -51,6 +51,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/santri/{santri}', [SantriController::class, 'destroy'])->name('santri.destroy')->middleware('can:delete,santri');
     Route::get('/santri/{santri}/foto', [SantriController::class, 'showFoto'])->name('santri.foto')->middleware('can:view,santri');
 
+    // Santri Import Routes (Admin only)
+    Route::get('/santri/import/template', [SantriController::class, 'downloadTemplate'])->name('santri.import.template')->middleware('can:import,App\Models\Santri');
+    Route::post('/santri/import/preview', [SantriController::class, 'previewImport'])->name('santri.import.preview')->middleware('can:import,App\Models\Santri');
+    Route::post('/santri/import/execute', [SantriController::class, 'executeImport'])->name('santri.import.execute')->middleware('can:import,App\Models\Santri');
+
     // Surat Routes
     Route::get('/surat', [SuratController::class, 'index'])->name('surat.index')->middleware('can:viewAny,App\Models\SuratFile');
     Route::post('/surat/upload', [SuratController::class, 'uploadFile'])->name('surat.upload')->middleware('can:create,App\Models\SuratFile');

@@ -33,6 +33,14 @@ class SantriPolicy
     }
 
     /**
+     * Determine whether the user can import models.
+     */
+    public function import(User $user): bool
+    {
+        return $user->hasRole('admin');
+    }
+
+    /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Santri $santri): bool

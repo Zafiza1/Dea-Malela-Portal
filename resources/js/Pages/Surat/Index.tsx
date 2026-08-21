@@ -3,17 +3,16 @@ import { Head, useForm, router } from '@inertiajs/react';
 import FileUpload from '@/Components/FileUpload';
 // import FilePreviewModal from '@/Components/FilePreviewModal';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft, Download, Trash2, FolderOpen } from 'lucide-react';
+import { Download, Trash2, FolderOpen, ArrowLeft } from 'lucide-react';
 import type { FileData, Folder } from '../../types/global';
 
 interface SuratIndexProps {
     folders: Folder[];
     files: FileData[];
     currentFolder?: Folder | null;
-    parentFolder?: Folder | null;
 }
 
-export default function SuratIndex({ folders, files, currentFolder, parentFolder }: SuratIndexProps) {
+export default function SuratIndex({ folders, files, currentFolder }: SuratIndexProps) {
     const [showCreateFolder, setShowCreateFolder] = useState(false);
     const [showUploadFile, setShowUploadFile] = useState(false);
     // const [selectedFileForPreview, setSelectedFileForPreview] = useState<FileData | null>(null);
@@ -89,31 +88,24 @@ export default function SuratIndex({ folders, files, currentFolder, parentFolder
                         <div className="p-4 sm:p-6">
                             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                                 <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
-                                    <a
-                                        href={
-                                            currentFolder 
-                                                ? (parentFolder ? `/surat?folder_id=${parentFolder.id}` : '/surat')
-                                                : '/dashboard'
-                                        }
-                                        className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
-                                    >
-                                        <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                                        <span className="font-medium">
-                                            {currentFolder 
-                                                ? (parentFolder ? `Kembali ke ${parentFolder.nama}` : 'Kembali ke Root')
-                                                : 'Kembali ke Dashboard'
-                                            }
-                                        </span>
-                                    </a>
                                     <div className="flex items-center">
                                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                                             {currentFolder && currentFolder.nama ? (
-                                                <span className="text-red-600">Surat Menyurat &gt; {currentFolder.nama}</span>
+                                                <span>Surat Menyurat &gt; {currentFolder.nama}</span>
                                             ) : (
                                                 <span>Surat Menyurat</span>
                                             )}
                                         </h1>
                                     </div>
+                                    {currentFolder && (
+                                        <a
+                                            href="/surat"
+                                            className="flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+                                        >
+                                            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                                            <span className="font-medium">Kembali ke Root</span>
+                                        </a>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center space-x-2 w-full sm:w-auto">

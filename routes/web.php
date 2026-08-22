@@ -20,6 +20,35 @@ Route::post('/test-simple-post', function(\Illuminate\Http\Request $request) {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Debug route for dashboard stats
+    Route::get('/debug-stats', function() {
+        try {
+            $guruStats = \App\Models\Guru::selectRaw('
+                COUNT(*) as total_guru,
+                SUM(CASE WHEN status = \'aktif\' THEN 1 ELSE 0 END) as guru_aktif,
+                SUM(CASE WHEN status = \'tidak_aktif\' THEN 1 ELSE 0 END) as guru_tidak_aktif
+            ')->first();
+
+            $stats = [
+                'total_guru' => $guruStats->total_guru ?? 0,
+                'guru_aktif' => $guruStats->guru_aktif ?? 0,
+                'guru_tidak_aktif' => $guruStats->guru_tidak_aktif ?? 0,
+                'total_santri' => \App\Models\Santri::count(),
+                'total_surat' => \App\Models\SuratFile::count(),
+                'total_folder' => \App\Models\SuratFolder::count(),
+                'upload_hari_ini' => \App\Models\SuratFile::whereDate('created_at', today())->count(),
+            ];
+
+            return response()->json([
+                'guru_stats' => $guruStats,
+                'final_stats' => $stats,
+                'date_today' => today()->toDateString(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    })->name('debug.stats');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Guru Routes

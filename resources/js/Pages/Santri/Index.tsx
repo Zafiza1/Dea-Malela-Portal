@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { ArrowLeft, Eye, Edit, Trash2, Download, Upload, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Eye, Edit, Trash2, Download, Upload, X, CheckCircle, AlertCircle, Loader2, User } from 'lucide-react';
 import { useState } from 'react';
 
 // Add Google Fonts for education-friendly typography
@@ -252,11 +252,11 @@ export default function SantriIndex({ santri, auth }: any) {
             </Head>
             <div className="py-6 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: colors.background, fontFamily: 'Comic Neue, sans-serif' }}>
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
                             <Link
                                 href="/dashboard"
-                                className="flex items-center px-3 py-2 sm:px-4 bg-white border-2 rounded-lg transition-all duration-200 text-sm sm:text-base cursor-pointer"
+                                className="flex items-center px-4 py-3 sm:px-5 bg-white border-3 rounded-2xl transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-md hover:shadow-xl transform hover:-translate-y-1"
                                 style={{ 
                                     borderColor: colors.border, 
                                     color: colors.foreground,
@@ -264,58 +264,64 @@ export default function SantriIndex({ santri, auth }: any) {
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.backgroundColor = colors.muted;
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.backgroundColor = colors.card;
+                                    e.currentTarget.style.transform = 'translateY(0)';
                                 }}
                             >
-                                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                                <span className="font-medium" style={{ fontFamily: 'Baloo 2, cursive' }}>Kembali</span>
+                                <ArrowLeft className="w-5 h-5 mr-2 sm:mr-3" />
+                                <span className="font-bold text-lg" style={{ fontFamily: 'Baloo 2, cursive' }}>Kembali</span>
                             </Link>
-                            <h1 className="text-xl sm:text-2xl font-bold" style={{ color: colors.foreground, fontFamily: 'Baloo 2, cursive' }}>
+                            <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: colors.foreground, fontFamily: 'Baloo 2, cursive' }}>
                                 {isAdmin ? 'Data Santri' : 'Data Santri (View Only)'}
                             </h1>
                         </div>
                         {isAdmin && (
-                            <div className="flex items-center space-x-2 w-full sm:w-auto">
+                            <div className="flex items-center space-x-3 w-full sm:w-auto">
                                 <Link
                                     href="/santri/create"
-                                    className="flex items-center px-4 py-2 rounded-lg transition-all duration-200 justify-center cursor-pointer"
+                                    className="flex items-center px-6 py-3 rounded-2xl transition-all duration-300 justify-center cursor-pointer shadow-lg hover:shadow-2xl transform hover:-translate-y-1"
                                     style={{ 
                                         backgroundColor: colors.accent, 
                                         color: colors.onAccent
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.opacity = '0.9';
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.opacity = '1';
+                                        e.currentTarget.style.transform = 'translateY(0)';
                                     }}
                                 >
-                                    <span className="font-medium" style={{ fontFamily: 'Baloo 2, cursive' }}>Tambah Santri</span>
+                                    <span className="font-bold text-lg" style={{ fontFamily: 'Baloo 2, cursive' }}>+ Tambah Santri</span>
                                 </Link>
                                 <button
                                     onClick={() => setShowImportModal(true)}
-                                    className="flex items-center px-4 py-2 rounded-lg transition-all duration-200 justify-center cursor-pointer"
+                                    className="flex items-center px-6 py-3 rounded-2xl transition-all duration-300 justify-center cursor-pointer shadow-lg hover:shadow-2xl transform hover:-translate-y-1"
                                     style={{ 
                                         backgroundColor: colors.primary, 
                                         color: colors.onPrimary
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.opacity = '0.9';
+                                        e.currentTarget.style.transform = 'translateY(-2px)';
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.opacity = '1';
+                                        e.currentTarget.style.transform = 'translateY(0)';
                                     }}
                                 >
-                                    <Upload className="w-4 h-4 mr-2" />
-                                    <span className="font-medium" style={{ fontFamily: 'Baloo 2, cursive' }}>Import Data</span>
+                                    <Upload className="w-5 h-5 mr-3" />
+                                    <span className="font-bold text-lg" style={{ fontFamily: 'Baloo 2, cursive' }}>Import Data</span>
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    <div className="rounded-xl border-2 overflow-hidden" style={{ 
+                    <div className="rounded-xl border-2 overflow-hidden hover:shadow-md transition-all duration-300" style={{ 
                         backgroundColor: colors.card, 
                         borderColor: colors.border 
                     }}>
@@ -341,7 +347,7 @@ export default function SantriIndex({ santri, auth }: any) {
                                     </tr>
                                 ) : (
                                     santri.data.map((s: any) => (
-                                        <tr key={s.id} className="transition" style={{ 
+                                        <tr key={s.id} className="transition-all duration-200" style={{ 
                                             backgroundColor: colors.card 
                                         }} onMouseEnter={(e) => {
                                             e.currentTarget.style.backgroundColor = colors.muted;
@@ -353,14 +359,16 @@ export default function SantriIndex({ santri, auth }: any) {
                                                     <img
                                                         src={s.foto_url}
                                                         alt={s.nama}
-                                                        className="h-10 w-10 object-cover rounded-full"
+                                                        className="h-10 w-10 object-cover rounded-xl"
                                                         onError={(e) => {
                                                             e.currentTarget.style.display = 'none';
                                                         }}
                                                     />
                                                 ) : (
-                                                    <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: colors.muted }}>
-                                                        <span className="text-xs" style={{ color: colors.mutedForeground }}>No Photo</span>
+                                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: colors.muted }}>
+                                                        <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                            <User className="w-4 h-4 text-gray-400" />
+                                                        </div>
                                                     </div>
                                                 )}
                                             </td>
@@ -386,7 +394,7 @@ export default function SantriIndex({ santri, auth }: any) {
                                                 <div className="flex items-center space-x-2 justify-end">
                                                     <Link
                                                         href={`/santri/${s.id}`}
-                                                        className="flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+                                                        className="flex items-center px-3 py-1.5 text-sm rounded-xl transition-colors cursor-pointer"
                                                         style={{ 
                                                             backgroundColor: colors.secondary, 
                                                             color: colors.onSecondary
@@ -405,7 +413,7 @@ export default function SantriIndex({ santri, auth }: any) {
                                                         <>
                                                             <Link
                                                                 href={`/santri/${s.id}/edit`}
-                                                                className="flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+                                                                className="flex items-center px-3 py-1.5 text-sm rounded-xl transition-colors cursor-pointer"
                                                                 style={{ 
                                                                     backgroundColor: colors.primary, 
                                                                     color: colors.onPrimary
@@ -422,7 +430,7 @@ export default function SantriIndex({ santri, auth }: any) {
                                                             </Link>
                                                             <button
                                                                 onClick={() => handleDelete(s.id)}
-                                                                className="flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer"
+                                                                className="flex items-center px-3 py-1.5 text-sm rounded-xl transition-colors cursor-pointer"
                                                                 style={{ 
                                                                     backgroundColor: colors.destructive, 
                                                                     color: colors.onDestructive

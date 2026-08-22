@@ -16,12 +16,17 @@ class DashboardController extends Controller
     public function index()
     {
         try {
+            // Debug: Log query execution
+            \Log::info('Dashboard stats query started');
+
             // Optimize stats queries by grouping
             $guruStats = Guru::selectRaw('
                 COUNT(*) as total_guru,
-                SUM(CASE WHEN status = "aktif" THEN 1 ELSE 0 END) as guru_aktif,
-                SUM(CASE WHEN status = "tidak_aktif" THEN 1 ELSE 0 END) as guru_tidak_aktif
+                SUM(CASE WHEN status = \'aktif\' THEN 1 ELSE 0 END) as guru_aktif,
+                SUM(CASE WHEN status = \'tidak_aktif\' THEN 1 ELSE 0 END) as guru_tidak_aktif
             ')->first();
+
+            \Log::info('Guru stats result', ['stats' => $guruStats]);
 
             $stats = [
                 'total_guru' => $guruStats->total_guru ?? 0,
@@ -33,11 +38,16 @@ class DashboardController extends Controller
                 'upload_hari_ini' => SuratFile::whereDate('created_at', today())->count(),
             ];
 
+            \Log::info('Final stats', ['stats' => $stats]);
+
             $recentDocuments = SuratFile::with(['uploadedBy', 'folder'])
                 ->latest()
                 ->take(5)
                 ->get();
         } catch (\Exception $e) {
+            // Log error
+            \Log::error('Dashboard stats error', ['error' => $e->getMessage()]);
+
             // Fallback jika database tidak terhubung
             $stats = [
                 'total_guru' => 0,

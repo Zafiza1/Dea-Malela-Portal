@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
 
 class SuratFile extends Model
 {
@@ -25,5 +26,10 @@ class SuratFile extends Model
     public function folder(): BelongsTo
     {
         return $this->belongsTo(SuratFolder::class, 'folder_id');
+    }
+
+    public function uploadedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
     }
 }

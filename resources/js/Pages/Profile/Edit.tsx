@@ -1,9 +1,11 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import PageTransition, { StaggerContainer, StaggerItem, ClayCard } from '@/Components/PageTransition';
 
 interface EditProps {
     mustVerifyEmail?: boolean;
@@ -11,40 +13,106 @@ interface EditProps {
 }
 
 export default function Edit({ mustVerifyEmail, status }: EditProps) {
+    // Design system colors
+    const colors = {
+        primary: '#166534',
+        secondary: '#65A30D',
+        accent: '#EAB308',
+        background: '#F0FDF4',
+        card: '#FFFFFF',
+        muted: '#F0FDF4',
+        border: '#86EFAC',
+    };
+
     return (
         <DashboardLayout header="Pengaturan Profile">
             <Head title="Profile" />
 
-            <div className="py-6 px-4 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-7xl space-y-6">
-                    <div className="flex items-center space-x-2 sm:space-x-4 mb-6">
-                        <Link
-                            href="/dashboard"
-                            className="flex items-center px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-900 transition-all duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                            <span className="font-medium">Kembali</span>
-                        </Link>
-                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Pengaturan Profile</h1>
-                    </div>
+            <PageTransition>
+                <div className="py-6 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: colors.background }}>
+                    <div className="mx-auto max-w-7xl space-y-6">
+                        <StaggerContainer>
+                            {/* Header */}
+                            <StaggerItem>
+                                <div className="flex items-center space-x-2 sm:space-x-4 mb-6">
+                                    <motion.div
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <Link
+                                            href="/dashboard"
+                                            className="flex items-center px-5 py-3 rounded-2xl transition-all duration-300 cursor-pointer shadow-md"
+                                            style={{ 
+                                                backgroundColor: colors.card,
+                                                borderColor: colors.border,
+                                                borderWidth: '2px',
+                                                color: '#14532D'
+                                            }}
+                                        >
+                                            <ArrowLeft className="w-5 h-5 mr-2" />
+                                            <span className="font-bold" style={{ fontFamily: 'Baloo 2, cursive' }}>Kembali</span>
+                                        </Link>
+                                    </motion.div>
+                                    <motion.h1 
+                                        className="text-2xl sm:text-3xl font-bold"
+                                        style={{ color: '#1E1B4B', fontFamily: 'Baloo 2, cursive' }}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                    >
+                                        Pengaturan Profile
+                                    </motion.h1>
+                                </div>
+                            </StaggerItem>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
+                            {/* Profile Information Form */}
+                            <StaggerItem>
+                                <ClayCard 
+                                    className="rounded-3xl border-2 p-6 sm:p-8"
+                                    style={{ 
+                                        backgroundColor: colors.card,
+                                        borderColor: colors.border,
+                                        boxShadow: '0 8px 16px rgba(22, 101, 52, 0.1)'
+                                    }}
+                                >
+                                    <UpdateProfileInformationForm
+                                        mustVerifyEmail={mustVerifyEmail}
+                                        status={status}
+                                        className="max-w-xl"
+                                    />
+                                </ClayCard>
+                            </StaggerItem>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
+                            {/* Password Form */}
+                            <StaggerItem>
+                                <ClayCard 
+                                    className="rounded-3xl border-2 p-6 sm:p-8"
+                                    style={{ 
+                                        backgroundColor: colors.card,
+                                        borderColor: colors.border,
+                                        boxShadow: '0 8px 16px rgba(22, 101, 52, 0.1)'
+                                    }}
+                                >
+                                    <UpdatePasswordForm className="max-w-xl" />
+                                </ClayCard>
+                            </StaggerItem>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800">
-                        <DeleteUserForm className="max-w-xl" />
+                            {/* Delete Account Form */}
+                            <StaggerItem>
+                                <ClayCard 
+                                    className="rounded-3xl border-2 p-6 sm:p-8"
+                                    style={{ 
+                                        backgroundColor: colors.card,
+                                        borderColor: colors.border,
+                                        boxShadow: '0 8px 16px rgba(22, 101, 52, 0.1)'
+                                    }}
+                                >
+                                    <DeleteUserForm className="max-w-xl" />
+                                </ClayCard>
+                            </StaggerItem>
+                        </StaggerContainer>
                     </div>
                 </div>
-            </div>
+            </PageTransition>
         </DashboardLayout>
     );
 }

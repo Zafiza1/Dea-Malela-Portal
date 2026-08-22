@@ -3,6 +3,8 @@
     "regions": [
         "hnd1"
     ],
+    "buildCommand": "npm run build && composer install --no-dev --optimize-autoloader",
+    "outputDirectory": "public",
     "rewrites": [
         {
             "source": "/test",

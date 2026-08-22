@@ -2,5 +2,10 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "buildCommand": "npm run build",
     "outputDirectory": "public",
-    "installCommand": "composer install --no-dev --optimize-autoloader"
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/api/index.php"
+        }
+    ]
 }

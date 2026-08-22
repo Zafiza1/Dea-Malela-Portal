@@ -11,6 +11,10 @@ export default defineConfig({
     server: {
         watch: null,
         hmr: false,
+        https: false, // Force HTTP instead of HTTPS
+        host: 'localhost',
+        port: 5173,
+        strictPort: true,
     },
     base: '/', // Ensure assets are served from root
 });

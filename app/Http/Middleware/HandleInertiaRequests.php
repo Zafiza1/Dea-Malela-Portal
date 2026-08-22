@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
         // Force HTTP in local development to avoid HTTPS issues
         if (app()->environment('local')) {
             URL::forceScheme('http');
+            URL::forceRootUrl(config('app.url'));
         }
         
         // Force HTTPS for asset URLs in production

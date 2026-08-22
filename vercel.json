@@ -3,40 +3,38 @@
     "regions": [
         "hnd1"
     ],
-    "buildCommand": "composer install --no-dev --optimize-autoloader",
-    "outputDirectory": "public",
-    "routes": [
+    "rewrites": [
         {
-            "src": "/test",
-            "dest": "/api/index.php"
+            "source": "/test",
+            "destination": "/api/index.php"
         },
         {
-            "src": "/build/assets/(.*)",
-            "dest": "/public/build/assets/$1"
+            "source": "/build/assets/(.*)",
+            "destination": "/public/build/assets/$1"
         },
         {
-            "src": "/assets/(.*)",
-            "dest": "/public/build/assets/$1"
+            "source": "/assets/(.*)",
+            "destination": "/public/build/assets/$1"
         },
         {
-            "src": "/images/(.*)",
-            "dest": "/public/images/$1"
+            "source": "/images/(.*)",
+            "destination": "/public/images/$1"
         },
         {
-            "src": "/favicon.(.*)",
-            "dest": "/public/favicon.$1"
+            "source": "/favicon.(.*)",
+            "destination": "/public/favicon.$1"
         },
         {
-            "src": "/apple-touch-icon.png",
-            "dest": "/public/apple-touch-icon.png"
+            "source": "/apple-touch-icon.png",
+            "destination": "/public/apple-touch-icon.png"
         },
         {
-            "src": "/robots.txt",
-            "dest": "/public/robots.txt"
+            "source": "/robots.txt",
+            "destination": "/public/robots.txt"
         },
         {
-            "src": "/(.*)",
-            "dest": "/public/index.php"
+            "source": "/(.*)",
+            "destination": "/public/index.php"
         }
     ],
     "env": {

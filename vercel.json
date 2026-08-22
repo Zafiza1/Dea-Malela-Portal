@@ -44,8 +44,11 @@
         }
     ],
     "env": {
-        "APP_NAME": "Laravel Vercel",
-        "APP_DEBUG": "true",
+        "APP_NAME": "Pesantren Modern Internasional Dea Malela",
+        "APP_ENV": "production",
+        "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
+        "APP_DEBUG": "false",
+        "APP_URL": "https://dea-malela-portal-tau.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -54,8 +57,9 @@
         "CACHE_DRIVER": "array",
         "CACHE_STORE": "array",
         "LOG_CHANNEL": "stderr",
+        "LOG_LEVEL": "error",
         "SESSION_DRIVER": "cookie",
-        "SESSION_SAME_SITE": "none",
+        "SESSION_SAME_SITE": "lax",
         "SESSION_SECURE_COOKIE": "true",
         "SESSION_LIFETIME": "480",
         "VIEW_COMPILED_PATH": "/tmp",
@@ -66,10 +70,8 @@
         "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
         "DB_PASSWORD": "deamalela@123",
         "DB_SSLMODE": "require",
-        "FILESYSTEM_DISK": "supabase",
-        "SUPABASE_STORAGE_REGION": "ap-south-1",
-        "SUPABASE_STORAGE_BUCKET": "guru-files",
-        "SUPABASE_STORAGE_PUBLIC_URL": "https://wzlhobpewqaxbucoafdl.supabase.co/storage/v1/object/public",
-        "SUPABASE_STORAGE_ENDPOINT": "https://wzlhobpewqaxbucoafdl.storage.supabase.co/storage/v1/s3"
+        "FILESYSTEM_DISK": "public",
+        "APP_LOCALE": "id",
+        "APP_FALLBACK_LOCALE": "en"
     }
 }

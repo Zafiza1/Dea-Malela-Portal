@@ -3,40 +3,52 @@
     "regions": [
         "hnd1"
     ],
-    "buildCommand": "npm run build && composer install --no-dev --optimize-autoloader",
-    "outputDirectory": "public",
-    "rewrites": [
+    "builds": [
         {
-            "source": "/test",
-            "destination": "/api/index.php"
+            "src": "api/index.php",
+            "use": "vercel-php@0.8.0"
         },
         {
-            "source": "/build/assets/(.*)",
-            "destination": "/public/build/assets/$1"
+            "src": "public/index.php",
+            "use": "vercel-php@0.8.0"
         },
         {
-            "source": "/assets/(.*)",
-            "destination": "/public/build/assets/$1"
+            "src": "public/**",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/test",
+            "dest": "/api/index.php"
         },
         {
-            "source": "/images/(.*)",
-            "destination": "/public/images/$1"
+            "src": "/build/assets/(.*)",
+            "dest": "/public/build/assets/$1"
         },
         {
-            "source": "/favicon.(.*)",
-            "destination": "/public/favicon.$1"
+            "src": "/assets/(.*)",
+            "dest": "/public/build/assets/$1"
         },
         {
-            "source": "/apple-touch-icon.png",
-            "destination": "/public/apple-touch-icon.png"
+            "src": "/images/(.*)",
+            "dest": "/public/images/$1"
         },
         {
-            "source": "/robots.txt",
-            "destination": "/public/robots.txt"
+            "src": "/favicon.(.*)",
+            "dest": "/public/favicon.$1"
         },
         {
-            "source": "/(.*)",
-            "destination": "/public/index.php"
+            "src": "/apple-touch-icon.png",
+            "dest": "/public/apple-touch-icon.png"
+        },
+        {
+            "src": "/robots.txt",
+            "dest": "/public/robots.txt"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/public/index.php"
         }
     ],
     "env": {

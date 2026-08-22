@@ -3,20 +3,8 @@
     "regions": [
         "hnd1"
     ],
-    "builds": [
-        {
-            "src": "api/index.php",
-            "use": "vercel-php@0.8.0"
-        },
-        {
-            "src": "public/index.php",
-            "use": "vercel-php@0.8.0"
-        },
-        {
-            "src": "public/**",
-            "use": "@vercel/static"
-        }
-    ],
+    "buildCommand": "composer install --no-dev --optimize-autoloader",
+    "outputDirectory": "public",
     "routes": [
         {
             "src": "/test",

@@ -74,5 +74,5 @@
         "SESSION_SECURE_COOKIE": "true"
     },
     "installCommand": "composer install --no-dev --optimize-autoloader",
-    "buildCommand": "php artisan config:clear && php artisan cache:clear && npm run build"
+    "buildCommand": "php artisan config:clear && php artisan cache:clear && php artisan view:clear && npm run build"
 }

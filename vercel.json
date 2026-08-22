@@ -1,6 +1,5 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": "npm run build",
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.8.0"
@@ -60,7 +59,5 @@
         "SESSION_DRIVER": "cookie",
         "SESSION_SAME_SITE": "none",
         "SESSION_SECURE_COOKIE": "true"
-    },
-    "installCommand": "composer install --no-dev --optimize-autoloader",
-    "buildCommand": "php artisan config:clear && php artisan cache:clear && npm run build"
+    }
 }

@@ -14,6 +14,15 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Simple health check for debugging
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'environment' => app()->environment(),
+        'time' => now()->toIso8601String(),
+    ]);
+});
+
 // Test route outside middleware group
 Route::post('/test-simple-post', function(\Illuminate\Http\Request $request) {
     return response()->json(['message' => 'Simple POST works', 'data' => $request->all()]);

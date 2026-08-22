@@ -39,6 +39,10 @@
             "dest": "/public/robots.txt"
         },
         {
+            "src": "/test",
+            "dest": "/api/test.php"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
@@ -70,7 +74,7 @@
         "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
         "DB_PASSWORD": "deamalela@123",
         "DB_SSLMODE": "require",
-        "FILESYSTEM_DISK": "public",
+        "FILESYSTEM_DISK": "local",
         "APP_LOCALE": "id",
         "APP_FALLBACK_LOCALE": "en"
     }

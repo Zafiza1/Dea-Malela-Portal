@@ -23,6 +23,15 @@ Route::get('/health', function () {
     ]);
 });
 
+// Simple debug route outside middleware
+Route::get('/debug', function () {
+    return response()->json([
+        'message' => 'Debug route works',
+        'php_version' => phpversion(),
+        'time' => now()->toIso8601String(),
+    ]);
+});
+
 // Test route outside middleware group
 Route::post('/test-simple-post', function(\Illuminate\Http\Request $request) {
     return response()->json(['message' => 'Simple POST works', 'data' => $request->all()]);

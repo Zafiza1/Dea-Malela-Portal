@@ -163,7 +163,7 @@ return [
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
-        'connection' => env('DB_MIGRATION_CONNECTION', 'pgsql-direct'),
+        'connection' => env('DB_MIGRATION_CONNECTION', env('DB_CONNECTION', 'pgsql')),
     ],
 
     /*

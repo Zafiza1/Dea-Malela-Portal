@@ -5,7 +5,6 @@
 /storage/*.key
 /storage/pail
 /storage/logs
-/vendor
 .env
 .env.backup
 .env.production
@@ -26,3 +25,4 @@ yarn-error.log
 !/public/images
 RAILWAY_DEPLOYMENT.md
 railway.toml
+/vendor

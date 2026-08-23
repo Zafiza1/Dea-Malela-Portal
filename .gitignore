@@ -2,8 +2,6 @@
 /node_modules
 /public/hot
 /public/storage
-/public/D*
-/D*
 /storage/*.key
 /storage/pail
 /storage/logs

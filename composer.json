@@ -8,11 +8,11 @@
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
-        "laravel/framework": "^12.0",
+        "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.35",
-        "phpoffice/phpspreadsheet": "^5.9",
+        "phpoffice/phpspreadsheet": "^1.29",
         "spatie/laravel-permission": "^6.0",
         "tightenco/ziggy": "^2.0"
     },
@@ -24,8 +24,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3",
-        "revolution/laravel-vercel-installer": "^1.4"
+        "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
         "psr-4": {
@@ -62,7 +61,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "12.x-dev"
+            "dev-master": "11.x-dev"
         },
         "laravel": {
             "dont-discover": []

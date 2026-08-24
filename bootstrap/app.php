@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withProviders([
-        \App\Providers\NeonServiceProvider::class,
+        // No custom providers needed for Supabase
     ])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [

@@ -60,7 +60,7 @@
         "DB_PORT": "6543",
         "DB_DATABASE": "postgres",
         "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
-        "DB_PASSWORD": "@db_password",
+        "DB_PASSWORD": "deamalela@123",
         "DB_SSLMODE": "require",
         "DB_MIGRATION_CONNECTION": "pgsql",
         "FILESYSTEM_DISK": "local",

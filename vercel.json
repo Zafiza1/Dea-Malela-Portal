@@ -1,37 +1,15 @@
 {
     "version": 2,
-    "framework": null,
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php@0.8.0"
-        }
-    },
-    "routes": [
+    "builds": [
         {
-            "src": "/build/(.*)",
-            "dest": "/build/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
+            "src": "Dockerfile",
+            "use": "@vercel/docker"
         }
     ],
-    "outputDirectory": "public",
-    "env": {
-        "APP_ENV": "production",
-        "APP_DEBUG": "true",
-        "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
-        "APP_URL": "https://dea-malela-portal-roan.vercel.app",
-        "APP_LOCALE": "id",
-        "APP_FALLBACK_LOCALE": "en",
-        "LOG_CHANNEL": "stderr",
-        "CACHE_DRIVER": "array",
-        "SESSION_DRIVER": "cookie",
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "APP_SERVICES_CACHE": "/tmp/services.php",
-        "VIEW_COMPILED_PATH": "/tmp"
-    }
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ]
 }

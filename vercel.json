@@ -1,15 +1,12 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "builds": [
-        {
-            "src": "public/index.php",
-            "use": "@vercel/php"
-        }
-    ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/public/index.php"
+            "dest": "/public/index.php",
+            "headers": {
+                "Content-Type": "text/html; charset=UTF-8"
+            }
         }
     ]
 }

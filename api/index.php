@@ -30,9 +30,14 @@ try {
     }
     require $autoloadPath;
 
+    // Create HTTP request from Vercel environment
+    $request = Illuminate\Http\Request::capture();
+
     // Bootstrap Laravel and handle the request
     $app = require_once __DIR__.'/../bootstrap/app.php';
-    $app->handleRequest(Illuminate\Http\Request::capture());
+    $response = $app->handle($request);
+    $response->send();
+    $app->terminate($request, $response);
 
 } catch (Throwable $e) {
     // Log the error to stderr for Vercel

@@ -1,8 +1,14 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": null,
-    "installCommand": null,
-    "outputDirectory": null,
+    "buildCommand": "composer install --no-dev --optimize-autoloader --no-interaction",
+    "installCommand": "composer install --no-dev --optimize-autoloader --no-interaction",
+    "outputDirectory": "public",
+    "builds": [
+        {
+            "src": "public/index.php",
+            "use": "vercel-php@0.7.0"
+        }
+    ],
     "routes": [
         {
             "src": "/(.*)",

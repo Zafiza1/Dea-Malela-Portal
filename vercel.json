@@ -33,29 +33,5 @@
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
-    ],
-    "env": {
-        "APP_NAME": "Pesantren Modern Internasional Dea Malela",
-        "APP_ENV": "production",
-        "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
-        "APP_DEBUG": "false",
-        "APP_URL": "https://dea-malela-portal-tau.vercel.app",
-        "CACHE_DRIVER": "array",
-        "LOG_CHANNEL": "stderr",
-        "LOG_LEVEL": "debug",
-        "SESSION_DRIVER": "cookie",
-        "SESSION_SAME_SITE": "lax",
-        "SESSION_SECURE_COOKIE": "true",
-        "SESSION_LIFETIME": "480",
-        "DB_CONNECTION": "pgsql",
-        "DB_HOST": "aws-0-ap-south-1.pooler.supabase.com",
-        "DB_PORT": "6543",
-        "DB_DATABASE": "postgres",
-        "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
-        "DB_PASSWORD": "deamalela@123",
-        "DB_SSLMODE": "require",
-        "FILESYSTEM_DISK": "local",
-        "APP_LOCALE": "id",
-        "APP_FALLBACK_LOCALE": "en"
-    }
+    ]
 }

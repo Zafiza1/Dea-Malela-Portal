@@ -27,3 +27,5 @@ RAILWAY_DEPLOYMENT.md
 railway.toml
 /vendor
 composer.lock
+
+.vercel

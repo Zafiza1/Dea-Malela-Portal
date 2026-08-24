@@ -3,12 +3,6 @@
     "buildCommand": null,
     "installCommand": null,
     "outputDirectory": null,
-    "builds": [
-        {
-            "src": "public/index.php",
-            "use": "vercel-php"
-        }
-    ],
     "routes": [
         {
             "src": "/(.*)",

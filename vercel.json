@@ -1,8 +1,5 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": "composer install --no-dev --optimize-autoloader --no-interaction",
-    "installCommand": "composer install --no-dev --optimize-autoloader --no-interaction",
-    "outputDirectory": "public",
     "routes": [
         {
             "src": "/(.*)",

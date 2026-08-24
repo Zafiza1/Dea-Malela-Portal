@@ -1,6 +1,7 @@
 {
     "version": 2,
     "framework": null,
+    "buildCommand": "composer install --no-dev --optimize-autoloader && npm install && npm run build",
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.1"
@@ -20,7 +21,10 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
+        "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
         "APP_URL": "https://dea-malela-portal-roan.vercel.app",
+        "APP_LOCALE": "id",
+        "APP_FALLBACK_LOCALE": "en",
         "LOG_CHANNEL": "stderr",
         "CACHE_DRIVER": "array",
         "SESSION_DRIVER": "cookie",

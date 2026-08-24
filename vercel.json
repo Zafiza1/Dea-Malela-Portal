@@ -1,15 +1,12 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
-    "regions": [
-        "hnd1"
-    ],
     "builds": [
         {
-            "src": "/api/index.php",
+            "src": "api/index.php",
             "use": "vercel-php@0.9.0"
         },
         {
-            "src": "/public/**",
+            "src": "public/**",
             "use": "@vercel/static"
         }
     ],
@@ -41,20 +38,13 @@
         "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
         "APP_DEBUG": "false",
         "APP_URL": "https://dea-malela-portal-tau.vercel.app",
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "APP_SERVICES_CACHE": "/tmp/services.php",
         "CACHE_DRIVER": "array",
-        "CACHE_STORE": "array",
         "LOG_CHANNEL": "stderr",
         "LOG_LEVEL": "debug",
         "SESSION_DRIVER": "cookie",
         "SESSION_SAME_SITE": "lax",
         "SESSION_SECURE_COOKIE": "true",
         "SESSION_LIFETIME": "480",
-        "VIEW_COMPILED_PATH": "/tmp",
         "DB_CONNECTION": "pgsql",
         "DB_HOST": "aws-0-ap-south-1.pooler.supabase.com",
         "DB_PORT": "6543",
@@ -62,7 +52,6 @@
         "DB_USERNAME": "postgres.wzlhobpewqaxbucoafdl",
         "DB_PASSWORD": "deamalela@123",
         "DB_SSLMODE": "require",
-        "DB_MIGRATION_CONNECTION": "pgsql",
         "FILESYSTEM_DISK": "local",
         "APP_LOCALE": "id",
         "APP_FALLBACK_LOCALE": "en"

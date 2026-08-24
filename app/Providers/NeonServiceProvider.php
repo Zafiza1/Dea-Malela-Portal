@@ -20,6 +20,7 @@ class NeonServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Only process Neon.tech hosts, skip Supabase and other providers
         if (env('DB_CONNECTION') === 'pgsql' && env('DB_HOST')) {
             $dbHost = env('DB_HOST');
             if (strpos($dbHost, 'neon.tech') !== false) {

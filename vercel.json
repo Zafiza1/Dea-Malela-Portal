@@ -19,7 +19,7 @@
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_KEY": "base64:UtSqw+NLM6VSDGmvSeXSqlvFs0y2WowhYVI0HhHo6tI=",
         "APP_URL": "https://dea-malela-portal-roan.vercel.app",
         "APP_LOCALE": "id",

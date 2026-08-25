@@ -1,15 +1,6 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "Dockerfile",
-            "use": "@vercel/docker"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/"
-        }
-    ]
+    "buildCommand": "composer install --no-dev --optimize-autoloader && npm install && npm run build",
+    "outputDirectory": "public",
+    "installCommand": "composer install --no-dev --optimize-autoloader",
+    "framework": null
 }

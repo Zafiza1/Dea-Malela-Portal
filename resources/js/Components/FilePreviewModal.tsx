@@ -33,7 +33,7 @@ export default function FilePreviewModal({ isOpen, onClose, file }: FilePreviewM
             }
 
             try {
-                // Use file_url if available (from Supabase), otherwise fall back to local storage
+                // Use file_url if the backend provided one, otherwise fall back to local storage path
                 const urlToFetch = (file.file_url && file.file_url !== '0' && file.file_url !== '' && file.file_url !== null) 
                     ? file.file_url 
                     : `/storage/${file.file_path}`;

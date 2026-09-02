@@ -10,9 +10,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withProviders([
-        // No custom providers needed for Supabase
-    ])
+    ->withProviders()
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
         

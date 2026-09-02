@@ -21,11 +21,16 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-.vercel
 !/public/images
-RAILWAY_DEPLOYMENT.md
-railway.toml
 /vendor
-composer.lock
 
-.vercel
+# Local Windows tooling / bundled PHP (not for deployment)
+/php84
+/php84.zip
+/php.bat
+/composer.bat
+/test-import.zip
+
+# Vite temp files
+vite.config.js.timestamp-*
+/public/build/.vite

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', env('APP_ENV') === 'local' ? 'public' : 'supabase'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -58,20 +58,6 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
-        ],
-
-        'supabase' => [
-            'driver' => 's3',
-            'key' => env('SUPABASE_STORAGE_KEY'),
-            'secret' => env('SUPABASE_STORAGE_SECRET'),
-            'region' => env('SUPABASE_STORAGE_REGION', 'auto'),
-            'bucket' => env('SUPABASE_STORAGE_BUCKET'),
-            'url' => env('SUPABASE_STORAGE_PUBLIC_URL'),
-            'endpoint' => env('SUPABASE_STORAGE_ENDPOINT'),
-            'use_path_style_endpoint' => true,
-            'throw' => false,
-            'report' => false,
-            'visibility' => 'public',
         ],
 
     ],

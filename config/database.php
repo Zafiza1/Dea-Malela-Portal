@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => env('DB_CONNECTION', 'mariadb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,11 +56,11 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'database' => 'dea_malela_portal',
-            'username' => 'root',
-            'password' => 'sig1234',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'dea_malela_portal'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -113,25 +113,6 @@ return [
             'dsn_options' => env('DB_DSN_OPTIONS'),
         ],
 
-        'pgsql-direct' => [
-            'driver' => 'pgsql',
-            'host' => env('DB_HOST_DIRECT', 'db.wzlhobpewqaxbucoafdl.supabase.co'),
-            'port' => env('DB_PORT_DIRECT', '5432'),
-            'database' => env('DB_DATABASE_DIRECT', 'postgres'),
-            'username' => env('DB_USERNAME_DIRECT', 'postgres'),
-            'password' => env('DB_PASSWORD_DIRECT', 'deamalela@123'),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'require',
-            'options' => [
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ],
-            'schema' => 'public',
-            'connect_timeout' => 10,
-        ],
-
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
@@ -163,7 +144,7 @@ return [
     'migrations' => [
         'table' => 'migrations',
         'update_date_on_publish' => true,
-        'connection' => env('DB_MIGRATION_CONNECTION', env('DB_CONNECTION', 'pgsql')),
+        'connection' => env('DB_MIGRATION_CONNECTION', env('DB_CONNECTION', 'mariadb')),
     ],
 
     /*

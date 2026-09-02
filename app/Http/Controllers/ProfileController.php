@@ -22,7 +22,7 @@ class ProfileController extends Controller
         $user = $request->user();
         
         // Generate URL for profile photo if exists
-        $user->profile_photo_url = ($user->profile_photo_path && $user->profile_photo_path !== '0' && $user->profile_photo_path !== 0) ? Storage::disk('supabase')->url($user->profile_photo_path) : null;
+        $user->profile_photo_url = ($user->profile_photo_path && $user->profile_photo_path !== '0' && $user->profile_photo_path !== 0) ? Storage::disk('public')->url($user->profile_photo_path) : null;
         
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
@@ -51,10 +51,10 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_photo')) {
             // Delete old photo if exists
             if ($request->user()->profile_photo_path) {
-                Storage::disk('supabase')->delete($request->user()->profile_photo_path);
+                Storage::disk('public')->delete($request->user()->profile_photo_path);
             }
 
-            $photoPath = $request->file('profile_photo')->store('profile-photos', 'supabase');
+            $photoPath = $request->file('profile_photo')->store('profile-photos', 'public');
             $request->user()->profile_photo_path = $photoPath;
         }
 

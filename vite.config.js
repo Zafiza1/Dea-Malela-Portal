@@ -6,6 +6,7 @@ export default defineConfig({
         laravel({
             input: 'resources/js/app.tsx',
             refresh: false,
+            buildDirectory: 'build',
         }),
     ],
     server: {
@@ -17,4 +18,14 @@ export default defineConfig({
         strictPort: true,
     },
     base: '/', // Ensure assets are served from root
+    build: {
+        manifest: true,
+        assetsDir: 'assets',
+        outDir: 'public/build',
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+    },
 });
